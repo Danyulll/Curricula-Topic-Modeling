@@ -5,3 +5,11 @@ title: "Curricula-Topic-Modeling"
 ## Quarto
 
 Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+
+This is me testing to see how this stuff changes live:
+
+```{r}
+print("Hello World")
+```
+
