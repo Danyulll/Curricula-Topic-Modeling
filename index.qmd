@@ -163,6 +163,9 @@ With this our dimensionality has sufficiently reduced.
 LDA, like many unsupervised learning methods, is extremely dependent on its parameters. One such parameter that requires meticulous tuning is the number of topics. In the literature there exist many metrics for discovering the optimal number of topics with several being readily available in R.
 
 #### Coherence
+```{r}
+library(topicmodels)
+```
 
 
 
