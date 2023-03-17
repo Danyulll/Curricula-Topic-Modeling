@@ -97,13 +97,40 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
-<body class="fullcontent">
+<body>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction-to-topic-modeling-and-lda" id="toc-introduction-to-topic-modeling-and-lda" class="nav-link active" data-scroll-target="#introduction-to-topic-modeling-and-lda">Introduction to Topic Modeling and LDA</a>
+  <ul class="collapse">
+  <li><a href="#terminology" id="toc-terminology" class="nav-link" data-scroll-target="#terminology">Terminology</a></li>
+  <li><a href="#topic-models" id="toc-topic-models" class="nav-link" data-scroll-target="#topic-models">Topic Models</a></li>
+  <li><a href="#latent-dirichlet-allocation" id="toc-latent-dirichlet-allocation" class="nav-link" data-scroll-target="#latent-dirichlet-allocation">Latent Dirichlet Allocation</a></li>
+  </ul></li>
+  <li><a href="#feature-extraction-and-preprocessing" id="toc-feature-extraction-and-preprocessing" class="nav-link" data-scroll-target="#feature-extraction-and-preprocessing">Feature Extraction and Preprocessing</a>
+  <ul class="collapse">
+  <li><a href="#document-term-matrices" id="toc-document-term-matrices" class="nav-link" data-scroll-target="#document-term-matrices">Document-Term Matrices</a></li>
+  <li><a href="#complexity-reduction" id="toc-complexity-reduction" class="nav-link" data-scroll-target="#complexity-reduction">Complexity Reduction</a></li>
+  <li><a href="#tf-idf" id="toc-tf-idf" class="nav-link" data-scroll-target="#tf-idf">TF-IDf</a></li>
+  </ul></li>
+  <li><a href="#exploring-degree-pathways" id="toc-exploring-degree-pathways" class="nav-link" data-scroll-target="#exploring-degree-pathways">Exploring Degree Pathways</a>
+  <ul class="collapse">
+  <li><a href="#topic-number-discovery" id="toc-topic-number-discovery" class="nav-link" data-scroll-target="#topic-number-discovery">Topic Number Discovery</a></li>
+  <li><a href="#finding-the-number-of-topics" id="toc-finding-the-number-of-topics" class="nav-link" data-scroll-target="#finding-the-number-of-topics">Finding the Number of Topics</a></li>
+  </ul></li>
+  <li><a href="#exploring-courses" id="toc-exploring-courses" class="nav-link" data-scroll-target="#exploring-courses">Exploring Courses</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -123,19 +150,275 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
+<section id="introduction-to-topic-modeling-and-lda" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-to-topic-modeling-and-lda">Introduction to Topic Modeling and LDA</h2>
+<section id="terminology" class="level3">
+<h3 class="anchored" data-anchor-id="terminology">Terminology</h3>
+<p>Before beginning there are three important preliminary definitions one will need in any text analysis:</p>
+<ul>
+<li>Document: a distinct text object that one wishes to analyze. This could be a paper, a paragraph, etc.</li>
+<li>Term: an individual word in a given document.</li>
+<li>Corpus: The set of all documents.</li>
+</ul>
 </section>
-<section id="why-dont-you-work" class="level2">
-<h2 class="anchored" data-anchor-id="why-dont-you-work">Why don’t you work</h2>
-<p>This is me testing to see how this stuff changes live:</p>
+<section id="topic-models" class="level3">
+<h3 class="anchored" data-anchor-id="topic-models">Topic Models</h3>
+<p>Topic Modeling is a statistical model that attempts to cluster the words found in a document into various “topics”. The hope is that these topics would capture some underlying subject contained within the text. It is important to note that Topic Models are fuzzy in the sense that documents are assumed to be comprised of multiple topics with varying degrees of membership to each.</p>
+</section>
+<section id="latent-dirichlet-allocation" class="level3">
+<h3 class="anchored" data-anchor-id="latent-dirichlet-allocation">Latent Dirichlet Allocation</h3>
+<p>Perhaps the most famous topic model is <em>Latent Dirichlet Allocation</em> (LDA) (citation to LDA paper). It is a three-level hierarchical Bayesian model that defines a collection of documents as a random mixture over some underlying topic set where each topic is itself a distribution over our vocabulary.</p>
+<p>LDA works by assuming a data generating process (DGP) for our documents and then employs inference to discover the most likely parameters (reference to text as data book).</p>
+<p>Blei, Ng, and Jordan define the following DGP:</p>
+<ol type="1">
+<li>Choose <span class="math inline">\(N \sim\)</span> Poisson(<span class="math inline">\(\xi\)</span>)</li>
+<li>Choose <span class="math inline">\(\theta \sim\)</span> Dir(<span class="math inline">\(\alpha\)</span>)</li>
+<li>For each of the <span class="math inline">\(N\)</span> words <span class="math inline">\(w_n\)</span>:
+<ol type="1">
+<li>Choose a topic <span class="math inline">\(z_n\sim\)</span>Multinomial(<span class="math inline">\(\theta\)</span>)</li>
+<li>Choose a word <span class="math inline">\(w_n\)</span> from <span class="math inline">\(p(w_n|z_n,\beta)\)</span>, a multinomial probability conditioned on the topic <span class="math inline">\(z_n\)</span></li>
+</ol></li>
+</ol>
+<p>For the following analysis we estimate the parameters using the <em>collapsed Gibbs sampling method</em>, though it is important to note there are others that yield varied results. To further complicate things, when fitting LDA in R one must predefine the number of topics for the model. Finding a good estimate for the number of topics is paramount and many methods are explored.</p>
+</section>
+</section>
+<section id="feature-extraction-and-preprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="feature-extraction-and-preprocessing">Feature Extraction and Preprocessing</h2>
+<section id="document-term-matrices" class="level3">
+<h3 class="anchored" data-anchor-id="document-term-matrices">Document-Term Matrices</h3>
+<p>There are many methods of feature extraction from text, we opt for the <em>bag of words</em> model. To construct this model simply define a common set of words shared between documents and store a count of word appearances for each document. Commonly this is stored as a <em>Document-Term Matrix</em> (DTM), for example, given the documents:</p>
+<div id="tbl-panel" class="tbl-parent quarto-layout-panel anchored">
+<div class="panel-caption table-caption">
+<p>Corpus</p>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Document 1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">“I am happy”</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Document 2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">“I am sad”</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>the corresponding DTM would be</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: left;">I</th>
+<th style="text-align: right;">am</th>
+<th style="text-align: center;">happy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Doc 1</strong></td>
+<td style="text-align: left;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td><strong>Doc 2</strong></td>
+<td style="text-align: left;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+</tbody>
+</table>
+<p>In R we can us the tm package to create our Corpus and DTM objects. For these examples scrapped Data Science course information, from various universities, will be preprocessed.</p>
+<p>First this data will be examined from a degree pathway perspective with the documents being concatenated course descriptions for entire curricula. These curricula are constructed for each university by sampling courses from each university’s Data Science course calendar.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Hello World"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading in data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"./data/RObjects/degree_corpus.RData"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Examining which universities are represented </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(degree_corpus<span class="sc">$</span>doc_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Hello World"</code></pre>
+<pre><code>[1] "Western"   "Waterloo"  "Toronto"   "SFU"       "Manitoba"  "Laurier"  
+[7] "Concordia" "Berkeley"  "UBCO"     </code></pre>
 </div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: NLP</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">DataframeSource</span>(degree_corpus)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">Corpus</span>(ds)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(corpus[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;&lt;SimpleCorpus&gt;&gt;
+Metadata:  corpus specific: 1, document level (indexed): 0
+Content:  documents: 1
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   Western 
+Lists, stacks, queues, priority queues, trees, graphs, and their associated algorithms; file structures; sorting, searching, and hashing techniques; time and space complexity. An introduction to software tools and systems programming. Topics include: understanding how programs execute (compilation, linking and loading); an introduction to a complex operating system (UNIX); scripting languages; the C programming language; system calls; memory management; libraries; multi-component program organization and builds; version control; debuggers and profilers. A team project course that provides practical experience in the software engineering field. Introduction to the structure and unique characteristics of large software systems, and concepts and techniques in the design, management and implementation of large software systems. This course presents an introduction to the mathematical foundations of computer science, with an emphasis on mathematical reasoning, combinatorial analysis, discrete structures, applications and modeling, and algorithmic thinking. Topics include sets, functions, relations, algorithms, number theory, matrices, mathematical reasoning, counting, graphs and trees. A study of relational databases. Theoretical concepts will be covered, including relational algebra and relational calculus. Commercially available database systems will be used to demonstrate concepts such as Structured-Query-Language (SQL), writing code to connect and query a database, query optimization, Atomicity-Consistency-Isolation-Durability (ACID) concepts, and database design. Upper and lower time and space bounds; levels of intractability; graph algorithms; greedy algorithms; dynamic algorithms; exhaustive search techniques; parallel algorithms. Covers three basic concepts of data science together with the corresponding techniques: Sampling to estimate properties of a population (Bootstrap), random assignment and experiments to make causal inferences (randomization test), and model selection to enable good predictions (cross-validation). Emphasizes practical data handling and programming skills in Python. Basic principles of machine learning (estimation, optimization, prediction, generalization, bias-variance trade-off, regularization) in the context of supervised (linear models, decision trees, deep neuronal networks) and unsupervised (clustering and dimensionality reduction) statistical learning techniques. The course emphasizes the ability to apply techniques to real data sets and critically evaluate their performance. Logic, sets and functions, algorithms, mathematical reasoning, counting, relations, graphs, trees, Boolean Algebra, computation, modeling. This course provides an introduction to logical reasoning and proofs. Topics include sets, counting (permutations and combinations), mathematical induction, relations and functions, partial order relations, equivalence relations, binary operations, elementary group theory and applications to error-correcting codes. Probability axioms, conditional probability, Bayes' theorem. Random variables motivated by real data and examples. Parametric univariate models as data reduction and description strategies. Multivariate distributions, expectation and variance. Likelihood function will be defined and exploited as a means of estimating parameters in certain simple situations. An introduction to the theory of statistics with strong links to data as well as its probabilistic underpinnings. Topics covered include estimation and hypothesis testing, sampling distributions, linear regression, experimental design, law of large numbers and central limit theorem. An introduction to programming using a high level language (currently R). A case study approach to how data are collected in science, social science and medicine, including the methods of designed experiments, sample surveys, observational studies and administrative records. Simple and multiple linear regression models and their use to model data using computing including model specification and assumptions, inference and estimation, use of indicator variables, regression diagnostics, model building and selection. Introduction to forecasting and time series. Estimation and tests for generalized linear models, including residual analysis and the use of statistical packages. Logistic regression, log-linear models. Additional topics may include generalized estimating equations, quasi-likelihood and generalized additive models. </code></pre>
+</div>
+</div>
+<p>As shown the first element of the corpus is from Western University and contains all course description terms from a given pathway through their Data Science calendar.</p>
+</section>
+<section id="complexity-reduction" class="level3">
+<h3 class="anchored" data-anchor-id="complexity-reduction">Complexity Reduction</h3>
+<p>Raw text data lends itself to difficult analysis. NLP posses several best practices for cleaning text:</p>
+<ul>
+<li>Punctation/Number Removal: deleting any non alphabetic characters.</li>
+<li>Lowercasing: sending all words to lowercase.</li>
+<li>Stopword Removal: stopwords are words used often in sentences that give little to no information, i.e., atricles such as the, a, etc.</li>
+<li>Stemming: truncating the ends of words so that they share a common base, i.e., fishing and fishes would be transformed ot fish.</li>
+<li>Tokenizing: dividing a document into a set of individual words</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove punctuation</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(removePunctuation))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Send everything to lower case</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(tolower))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove stopwords</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(removeWords), </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>          <span class="fu">stopwords</span>(<span class="st">"english"</span>))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove whitespace</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, stripWhitespace)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove numbers</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(removeNumbers))</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove custom stop words</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="cf">function</span>(x) {<span class="fu">removeWords</span>(x,<span class="fu">c</span>(<span class="st">"data"</span>,<span class="st">"will"</span>,<span class="st">"students"</span>,<span class="st">"fall"</span>,<span class="st">"spring"</span>,<span class="st">"important"</span>,<span class="st">"one"</span>,<span class="st">"considered"</span>,<span class="st">"stacks"</span>,<span class="st">"offers"</span>,<span class="st">"types"</span>,<span class="st">"may"</span>,<span class="st">"held"</span>,<span class="st">"former"</span>,<span class="st">"honours"</span>,<span class="st">"faculty"</span>,<span class="st">"related"</span>,<span class="st">"enter"</span>,<span class="st">"review"</span>,<span class="st">"enrolment"</span>,<span class="st">"exercises"</span>,<span class="st">"summer"</span>,<span class="st">"need"</span>,<span class="st">"offered"</span>))})</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Stemming</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, stemDocument)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(corpus[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;&lt;SimpleCorpus&gt;&gt;
+Metadata:  corpus specific: 1, document level (indexed): 0
+Content:  documents: 1
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         Western 
+list queue prioriti queue tree graph associ algorithm file structur sort search hash techniqu time space complex introduct softwar tool system program topic includ understand program execut compil link load introduct complex oper system unix script languag c program languag system call memori manag librari multicompon program organ build version control debugg profil team project cours provid practic experi softwar engin field introduct structur uniqu characterist larg softwar system concept techniqu design manag implement larg softwar system cours present introduct mathemat foundat comput scienc emphasi mathemat reason combinatori analysi discret structur applic model algorithm think topic includ set function relat algorithm number theori matric mathemat reason count graph tree studi relat databas theoret concept cover includ relat algebra relat calculus commerci avail databas system use demonstr concept structuredquerylanguag sql write code connect queri databas queri optim atomicityconsistencyisolationdur acid concept databas design upper lower time space bound level intract graph algorithm greedi algorithm dynam algorithm exhaust search techniqu parallel algorithm cover three basic concept scienc togeth correspond techniqu sampl estim properti popul bootstrap random assign experi make causal infer random test model select enabl good predict crossvalid emphas practic handl program skill python basic principl machin learn estim optim predict general biasvari tradeoff regular context supervis linear model decis tree deep neuron network unsupervis cluster dimension reduct statist learn techniqu cours emphas abil appli techniqu real set critic evalu perform logic set function algorithm mathemat reason count relat graph tree boolean algebra comput model cours provid introduct logic reason proof topic includ set count permut combin mathemat induct relat function partial order relat equival relat binari oper elementari group theori applic errorcorrect code probabl axiom condit probabl bay theorem random variabl motiv real exampl parametr univari model reduct descript strategi multivari distribut expect varianc likelihood function defin exploit mean estim paramet certain simpl situat introduct theori statist strong link well probabilist underpin topic cover includ estim hypothesi test sampl distribut linear regress experiment design law larg number central limit theorem introduct program use high level languag current r case studi approach collect scienc social scienc medicin includ method design experi sampl survey observ studi administr record simpl multipl linear regress model use model use comput includ model specif assumpt infer estim use indic variabl regress diagnost model build select introduct forecast time seri estim test general linear model includ residu analysi use statist packag logist regress loglinear model addit topic includ general estim equat quasilikelihood general addit model </code></pre>
+</div>
+</div>
+<p>Now we may construct our DTM,</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create DTM object</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> <span class="fu">DocumentTermMatrix</span>(corpus)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(dtm[,<span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;&lt;DocumentTermMatrix (documents: 9, terms: 9)&gt;&gt;
+Non-/sparse entries: 57/24
+Sparsity           : 30%
+Maximal term length: 9
+Weighting          : term frequency (tf)
+Sample             :
+           Terms
+Docs        abil acid addit administr algebra algorithm analysi appli applic
+  Berkeley     1    0     0         0       2         2       3     1      3
+  Concordia    0    0     0         0       2         5       7     1      8
+  Laurier      2    0     2         0       1        13      14     2      7
+  Manitoba     0    0     0         0       1         4      11     1      4
+  SFU          1    0     0         1       0         7      16     2      9
+  Toronto      0    0     2         0       1        10       9     3      9
+  UBCO         0    0     2         0       1         3       7     4     10
+  Waterloo     1    0     1         2       0        15       5     2      9
+  Western      1    1     2         1       2         8       2     1      2</code></pre>
+</div>
+</div>
+</section>
+<section id="tf-idf" class="level3">
+<h3 class="anchored" data-anchor-id="tf-idf">TF-IDf</h3>
+<p>If one wishes to further reduce complexity there exist various heuristics for term inclusion. One such heuristic is <em>term frequency inverse document frequency</em> (TF-IDF). The intuition for TF-IDF is that extremely frequent words hold language together but do not provide great insight of topic or context. Meanwhile rare words contain a plethora of information but lack the frequency needed to be used in generalizations. Therefore words somewhere in the middle of these exetrems ought to be included (text as data citation).</p>
+<p>The quantity itself is the multiplication of the <em>term frequency</em> (TF) and <em>inverse document drequency</em> (IDF). TF is simply the number of times the term <span class="math inline">\(j\)</span> appears in a given document. IDF is defined as</p>
+<p><span class="math display">\[idf(term)=ln\left(\frac{{\text{\# of doucments}}}{{\text{\# documents containing term j}}}\right)\]</span> IDF is a penalty term that adjusts term frequency based on the term’s rarity (text mining in R citation).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tfidf_dtm <span class="ot">&lt;-</span> <span class="fu">weightTfIdf</span>(dtm)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(tfidf_dtm[,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;&lt;DocumentTermMatrix (documents: 9, terms: 5)&gt;&gt;
+Non-/sparse entries: 21/24
+Sparsity           : 53%
+Maximal term length: 9
+Weighting          : term frequency - inverse document frequency (normalized) (tf-idf)
+Sample             :
+           Terms
+Docs                abil        acid        addit   administr      algebra
+  Berkeley  0.0021687900 0.000000000 0.0000000000 0.000000000 0.0018545784
+  Concordia 0.0000000000 0.000000000 0.0000000000 0.000000000 0.0012065560
+  Laurier   0.0014180550 0.000000000 0.0014180550 0.000000000 0.0003031522
+  Manitoba  0.0000000000 0.000000000 0.0000000000 0.000000000 0.0004306058
+  SFU       0.0008321854 0.000000000 0.0000000000 0.001555410 0.0000000000
+  Toronto   0.0000000000 0.000000000 0.0019250781 0.000000000 0.0004115438
+  UBCO      0.0000000000 0.000000000 0.0026458562 0.000000000 0.0005656319
+  Waterloo  0.0008609106 0.000000000 0.0008609106 0.003218198 0.0000000000
+  Western   0.0020938195 0.007826975 0.0041876390 0.003913488 0.0017904695</code></pre>
+</div>
+</div>
+<p>Now our DTM contains TF-IDF scores as the entries as opposed to just TF. We can now filter away terms below a certain threshold of TF-IDF. A common approach is to filter terms away below the median.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tfidf_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(tfidf_dtm)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(tfidf_mat[tfidf_mat <span class="sc">&gt;</span> <span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.00220297</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tfidf_dtm_r <span class="ot">&lt;-</span> tfidf_dtm[,tfidf_dtm<span class="sc">$</span>v <span class="sc">&gt;</span> <span class="fl">0.0022</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions before reduction</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tfidf_dtm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]    9 1448</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions after reduction</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tfidf_dtm_r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]   9 702</code></pre>
+</div>
+</div>
+<p>With this our dimensionality has sufficiently reduced.</p>
+</section>
+</section>
+<section id="exploring-degree-pathways" class="level2">
+<h2 class="anchored" data-anchor-id="exploring-degree-pathways">Exploring Degree Pathways</h2>
+<section id="topic-number-discovery" class="level3">
+<h3 class="anchored" data-anchor-id="topic-number-discovery">Topic Number Discovery</h3>
+<p>LDA, like many unsupervised learning methods, is extremely dependent on its parameters. One such parameter that requires meticulous tuning is the number of topics. In the literature there exist many metrics for discovering the optimal number of topics with several being readily available in R.</p>
+<section id="coherence" class="level4">
+<h4 class="anchored" data-anchor-id="coherence">Coherence</h4>
+</section>
+</section>
+<section id="finding-the-number-of-topics" class="level3">
+<h3 class="anchored" data-anchor-id="finding-the-number-of-topics">Finding the Number of Topics</h3>
+</section>
+</section>
+<section id="exploring-courses" class="level2">
+<h2 class="anchored" data-anchor-id="exploring-courses">Exploring Courses</h2>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>Need a reference for LDA paper, text as data, text mining with R</p>
+<p>https://knowledger.rbind.io/post/topic-modeling-using-r/</p>
+<p>https://datamathstat.wordpress.com/2019/10/25/text-preprocessing-for-nlp-and-machine-learning-using-r/</p>
+<p>https://ldavis.cpsievert.me/reviews/reviews.html</p>
+<p>https://www.r-bloggers.com/2015/05/a-link-between-topicmodels-lda-and-ldavis/</p>
 </section>
 
 </main>
