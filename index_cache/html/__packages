@@ -3,3 +3,10 @@ tm
 topicmodels
 ggplot2
 ldatuning
+LDAvis
+dplyr
+stringi
+tidytext
+tidyr
+RColorBrewer
+wordcloud

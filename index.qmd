@@ -6,34 +6,23 @@ title: "Curricula-Topic-Modeling"
 
 ### Terminology
 
-Before beginning there are three important preliminary definitions one
-will need in any text analysis:
+Before beginning there are three important preliminary definitions one will need in any text analysis:
 
--   Document: a distinct text object that one wishes to analyze. This
-    could be a paper, a paragraph, etc.
+-   Document: a distinct text object that one wishes to analyze. This could be a paper, a paragraph, etc.
 -   Term: an individual word in a given document.
 -   Corpus: The set of all documents.
 
 ### Topic Models
 
-Topic Modeling is a statistical model that attempts to cluster the words
-found in a document into various "topics". The hope is that these topics
-would capture some underlying subject contained within the text. It is
-important to note that Topic Models are fuzzy in the sense that
-documents are assumed to be comprised of multiple topics with varying
-degrees of membership to each.
+Topic Modeling is a statistical model that attempts to cluster the words found in a document into various "topics". The hope is that these topics would capture some underlying subject contained within the text. It is important to note that Topic Models are fuzzy in the sense that documents are assumed to be comprised of multiple topics with varying degrees of membership to each.
 
 ### Latent Dirichlet Allocation
 
-Perhaps the most famous topic model is *Latent Dirichlet Allocation*
-(LDA) (citation to LDA paper). It is a three-level hierarchical Bayesian
-model that defines a collection of documents as a random mixture over
-some underlying topic set where each topic is itself a distribution over
-our vocabulary.
+*TODO need to add an explanation of teh phi and theta matrices and explain how people also call them beta and gamma*
 
-LDA works by assuming a data generating process (DGP) for our documents
-and then employs inference to discover the most likely parameters
-(reference to text as data book).
+Perhaps the most famous topic model is *Latent Dirichlet Allocation* (LDA) (citation to LDA paper). It is a three-level hierarchical Bayesian model that defines a collection of documents as a random mixture over some underlying topic set where each topic is itself a distribution over our vocabulary.
+
+LDA works by assuming a data generating process (DGP) for our documents and then employs inference to discover the most likely parameters (reference to text as data book).
 
 Blei, Ng, and Jordan define the following DGP:
 
@@ -41,50 +30,54 @@ Blei, Ng, and Jordan define the following DGP:
 2.  Choose $\theta \sim$ Dir($\alpha$)
 3.  For each of the $N$ words $w_n$:
     1.  Choose a topic $z_n\sim$Multinomial($\theta$)
-    2.  Choose a word $w_n$ from $p(w_n|z_n,\beta)$, a multinomial
-        probability conditioned on the topic $z_n$
+    2.  Choose a word $w_n$ from $p(w_n|z_n,\beta)$, a multinomial probability conditioned on the topic $z_n$
 
-For the following analysis we estimate the parameters using the
-*collapsed Gibbs sampling method*, though it is important to note there
-are others that yield varied results. To further complicate things, when
-fitting LDA in R one must predefine the number of topics for the model.
-Finding a good estimate for the number of topics is paramount and many
-methods are explored.
+For the following analysis we estimate the parameters using the *collapsed Gibbs sampling method*, though it is important to note there are others that yield varied results. To further complicate things, when fitting LDA in R one must predefine the number of topics for the model. Finding a good estimate for the number of topics is paramount and many methods are explored.
 
 ## Feature Extraction and Preprocessing
 
 ### Document-Term Matrices
 
-There are many methods of feature extraction from text, we opt for the
-*bag of words* model. To construct this model simply define a common set
-of words shared between documents and store a count of word appearances
-for each document. Commonly this is stored as a *Document-Term Matrix*
-(DTM), for example, given the documents:
+There are many methods of feature extraction from text, we opt for the *bag of words* model. To construct this model simply define a common set of words shared between documents and store a count of word appearances for each document. Commonly this is stored as a *Document-Term Matrix* (DTM), for example, given the documents:
 
-::: {#tbl-panel layout-ncol=2} \| Document
-1 \| \|------\| \| "I am happy" \|
+::: {#tbl-panel layout-ncol="2"}
+| Document 1   |
+|--------------|
+| "I am happy" |
 
 | Document 2 |
 |------------|
 | "I am sad" |
 
-Corpus :::
+Corpus
+:::
 
 the corresponding DTM would be
 
 |           | I   |  am | happy | sad |
-|-----------|:----|----:|:-----:|:-----:|
-| **Doc 1** | 1   |   1 |   1   |   0   |
-| **Doc 2** | 1   |   1 |   0   |   1   |
+|-----------|:----|----:|:-----:|:---:|
+| **Doc 1** | 1   |   1 |   1   |  0  |
+| **Doc 2** | 1   |   1 |   0   |  1  |
 
-In R we can us the tm package to create our Corpus and DTM objects. For
-these examples scrapped Data Science course information, from various
-universities, will be preprocessed.
+In R we can us the tm package to create our Corpus and DTM objects. For these examples scrapped Data Science course information, from various universities, will be preprocessed.
 
-First this data will be examined from a degree pathway perspective with
-the documents being concatenated course descriptions for entire
-curricula. These curricula are constructed for each university by
-sampling courses from each university's Data Science course calendar.
+First this data will be examined from a degree pathway perspective with the documents being concatenated course descriptions for entire curricula. These curricula are constructed for each university by sampling courses from each university's Data Science course calendar.
+
+```{r Libraries}
+# Load Libraries
+library(tm)
+library(topicmodels)
+library(ggplot2)
+library(ldatuning)
+library(LDAvis)
+library(dplyr)
+library(stringi)
+library(tidytext)
+library(tidyr)
+library(wordcloud)
+library(graphics)
+```
+
 
 ```{r Load in Data}
 # Loading in data
@@ -95,27 +88,21 @@ print(degree_corpus$doc_id)
 ```
 
 ```{r Constructing Corpus}
-library(tm)
 ds <- DataframeSource(degree_corpus)
 corpus <- Corpus(ds)
 inspect(corpus[1])
 ```
 
-As shown the first element of the corpus is from Western University and
-contains all course description terms from a given pathway through their
-Data Science calendar.
+As shown the first element of the corpus is from Western University and contains all course description terms from a given pathway through their Data Science calendar.
 
 ### Complexity Reduction
 
-Raw text data lends itself to difficult analysis. NLP posses several
-best practices for cleaning text:
+Raw text data lends itself to difficult analysis. NLP posses several best practices for cleaning text:
 
 -   Punctation/Number Removal: deleting any non alphabetic characters.
 -   Lowercasing: sending all words to lowercase.
--   Stopword Removal: stopwords are words used often in sentences that
-    give little to no information, i.e., atricles such as the, a, etc.
--   Stemming: truncating the ends of words so that they share a common
-    base, i.e., fishing and fishes would be transformed ot fish.
+-   Stopword Removal: stopwords are words used often in sentences that give little to no information, i.e., atricles such as the, a, etc.
+-   Stemming: truncating the ends of words so that they share a common base, i.e., fishing and fishes would be transformed ot fish.
 -   Tokenizing: dividing a document into a set of individual words
 
 ```{r Text Preprocessing}
@@ -148,31 +135,18 @@ inspect(dtm[,1:9])
 
 ### TF-IDf
 
-If one wishes to further reduce complexity there exist various
-heuristics for term inclusion. One such heuristic is *term frequency
-inverse document frequency* (TF-IDF). The intuition for TF-IDF is that
-extremely frequent words hold language together but do not provide great
-insight of topic or context. Meanwhile rare words contain a plethora of
-information but lack the frequency needed to be used in generalizations.
-Therefore words somewhere in the middle of these extremes ought to be
-included (text as data citation).
+If one wishes to further reduce complexity there exist various heuristics for term inclusion. One such heuristic is *term frequency inverse document frequency* (TF-IDF). The intuition for TF-IDF is that extremely frequent words hold language together but do not provide great insight of topic or context. Meanwhile rare words contain a plethora of information but lack the frequency needed to be used in generalizations. Therefore words somewhere in the middle of these extremes ought to be included (text as data citation).
 
-The quantity itself is the multiplication of the *term frequency* (TF)
-and *inverse document drequency* (IDF). TF is simply the number of times
-the term $j$ appears in a given document. IDF is defined as
+The quantity itself is the multiplication of the *term frequency* (TF) and *inverse document drequency* (IDF). TF is simply the number of times the term $j$ appears in a given document. IDF is defined as
 
-$$idf(term)=ln\left(\frac{{\text{\# of doucments}}}{{\text{\# documents containing term j}}}\right)$$
-IDF is a penalty term that adjusts term frequency based on the term's
-rarity (text mining in R citation).
+$$idf(term)=ln\left(\frac{{\text{\# of doucments}}}{{\text{\# documents containing term j}}}\right)$$ IDF is a penalty term that adjusts term frequency based on the term's rarity (text mining in R citation).
 
 ```{r TF-IDF weighting}
 tfidf_dtm <- weightTfIdf(dtm)
 inspect(tfidf_dtm[,1:5])
 ```
 
-Now our DTM contains TF-IDF scores as the entries as opposed to just TF.
-We can now filter away terms below a certain threshold of TF-IDF. A
-common approach is to filter terms away below the median.
+Now our DTM contains TF-IDF scores as the entries as opposed to just TF. We can now filter away terms below a certain threshold of TF-IDF. A common approach is to filter terms away below the median.
 
 ```{r TF-IDF Median Calc}
 tfidf_mat <- as.matrix(tfidf_dtm)
@@ -191,10 +165,7 @@ dim(tfidf_dtm)
 dim(tfidf_dtm_r)
 ```
 
-With this our dimensionality has sufficiently reduced. It is important
-to note when we fit a LDA model the topicmodels package in R requires us
-to have term frequencies as our DTM entries so we must convert back to a
-TF weighting.
+With this our dimensionality has sufficiently reduced. It is important to note when we fit a LDA model the topicmodels package in R requires us to have term frequencies as our DTM entries so we must convert back to a TF weighting.
 
 ```{r Convert back to TF weighting}
 # Get our list of tfidf terms       
@@ -212,28 +183,21 @@ sum(dtm$dimnames$Terms == terms) == 702
 
 ### Topic Number Discovery
 
-LDA, like many unsupervised learning methods, is extremely dependent on
-its parameters. One such parameter that requires meticulous tuning is
-the number of topics. In the literature there exist many metrics for
-discovering the optimal number of topics with several being readily
-available in R.
+LDA, like many unsupervised learning methods, is extremely dependent on its parameters. One such parameter that requires meticulous tuning is the number of topics. In the literature there exist many metrics for discovering the optimal number of topics with several being readily available in R.
 
 #### Perplexity
 
-Perplexity is a measure of a model's ability to generalize to unseen
-data. It is tested on a held-out set and is defined by Blei, Ng, and
-Jordan as
+Perplexity is a measure of a model's ability to generalize to unseen data. It is tested on a held-out set and is defined by Blei, Ng, and Jordan as
 
-$$perplexity(\mathcal{D_{\text{text}}})=\text{exp}\left\{-\frac{\sum^M_{d=1}\text{log}p(\bf{w}_d)}{\sum^m_{d=1}N_d}\right\}$$ -
-$\mathcal{D}$: the test corpus - log$p(\bf{w}_d)$: the log of - $N_d$:
-the number of words in document $d$
+$$perplexity(\mathcal{D_{\text{text}}})=\text{exp}\left\{-\frac{\sum^M_{d=1}\text{log}p(\bf{w}_d)}{\sum^m_{d=1}N_d}\right\}$$
 
-The lower our perplexity score the better. We can use 3-fold cross
-validation and plot our perplexities for various topic numbers.
+- $\mathcal{D}$: the test corpus 
+- log$p(\bf{w}_d)$: the log of 
+- $N_d$: the number of words in document $d$
+
+The lower our perplexity score the better. We can use 3-fold cross validation and plot our perplexities for various topic numbers.
 
 ```{r Perplexity 3-fold CV, cache=TRUE}
-library(topicmodels)
-library(ggplot2)
 set.seed(87460945)
 
 # Calculate folds
@@ -278,17 +242,13 @@ Looks like in terms of Perplexity 8 is our optimal number of topics.
 
 #### Coherence
 
-Do this when I have time
+**TO DO Do this when I have time**
 
 #### ldatuning
 
-The ldatuning package provides us with several metrics to evaluate the
-number topics all of which rely on find extrema. We seek to minimize
-Arun2010 and CaoJuan2009 and maximize Deveaud2014 and Griffiths2004.
+The ldatuning package provides us with several metrics to evaluate the number topics all of which rely on find extrema. We seek to minimize Arun2010 and CaoJuan2009 and maximize Deveaud2014 and Griffiths2004.
 
 ```{r ldatuning k 40,cache=TRUE}
-library(ldatuning)
-
 # Find number of topics
 result <- FindTopicsNumber(
   dtm,
@@ -299,16 +259,12 @@ result <- FindTopicsNumber(
   mc.cores = 2L,
 )
 # Plot metrics
-FindTopicsNumber_plot(result)
+suppressWarnings(FindTopicsNumber_plot(result))
 ```
 
-
-It seems no topic numbers over 21 are viable. Let us zoom in on the 2-21
-range.
+It seems no topic numbers over 21 are viable. Let us zoom in on the 2-21 range.
 
 ```{r ldatuning k 21,cache=TRUE}
-library(ldatuning)
-
 # Find number of topics
 result <- FindTopicsNumber(
   dtm,
@@ -319,27 +275,16 @@ result <- FindTopicsNumber(
   mc.cores = 2L,
 )
 # Plot metrics
-FindTopicsNumber_plot(result)
+suppressWarnings(FindTopicsNumber_plot(result))
 ```
 
-For our minima we see CaoJuan2009 suggests 6 and 9 while Arun2019
-promots 19. Examining our maxima we find Deveaud2014 is uninterpretable
-and Griffiths2004 recommends 10 and 20. This provides us with a good
-range of topic numbers to explore, $k = 6,8,9,10,19,20$.
+For our minima we see CaoJuan2009 suggests 6 and 9 while Arun2019 promots 19. Examining our maxima we find Deveaud2014 is uninterpretable and Griffiths2004 recommends 10 and 20. This provides us with a good range of topic numbers to explore, $k = 6,8,9,10,19,20$.
 
 #### Visualizing topics with LDAvis
 
-Rather than individually fit each model model for our topic numbers the
-R package LDAvis creates a fantastic interactable visualization of our
-LDA model. With this we can explore our topics, examine various metrics
-about our terms, and investigate topic overlap.
+Rather than individually fit each model model for our topic numbers the R package LDAvis creates a fantastic interactable visualization of our LDA model. With this we can explore our topics, examine various metrics about our terms, and investigate topic overlap.
 
 ```{r LDAvis}
-library(LDAvis)
-library(dplyr)
-library(topicmodels)
-library(stringi)
-
 # Fit largest model
 lda.out <- LDA(dtm, 20, method = "Gibbs")
 
@@ -370,22 +315,238 @@ json_lda <- LDAvis::createJSON(
 serVis(json_lda, out.dir = 'vis2', open.browser = FALSE)
 ```
 
-**TO DO** This embeds just fine in markdown need to figure out why this doesn't work.
+**TO DO his embeds just fine in markdown need to figure out why this doesn't work** 
+
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>LDAvis</title>
-  <script src="vis2/d3.v3.js"></script>
-  <script src="vis2/ldavis.js"></script>
-  <link rel="stylesheet" type="text/css" href="vis2/lda.css">
+  <script src="docs/vis2/d3.v3.js"></script>
+  <script src="docs/vis2/ldavis.js"></script>
+  <link rel="stylesheet" type="text/css" href="docs/vis2/lda.css">
 </head>
 
 <body>
   <div id = "lda"></div>
   <script>
-    var vis = new LDAvis("#lda", "vis2/lda.json");
+    var vis = new LDAvis("#lda", "docs/vis2/lda.json");
   </script>
 </body>
+
+
+
+LDAvis tries to answer 3 questions: - How prevalent is each topic? - How do the topics relate to each other? - How do the topics relate to each other?
+
+To understand how it does so we fist need to define several quantites: **TO DO make these explanations better**
+
+Relevance - Relevance is used to rank terms within topics. It ranks terms based on their usefulness for interpreting topics.
+
+Salience - To understand Saliency first understand that distinctiveness how informative the specific term w is for determining the generating topic, versus a randomly-selected term. Multiplying ths by the probaiblity of a word gives Saliency which is also apprently a useful measure in determining topics.
+
+Lift - Lift is the ratio of a term's probability within a topic to its marginal probability across the corpus. This generally decreases the rankings of globally frequent terms.
+
+-   Topic circles: there will be K circles where each one represents a topic. Their areas are proportional to the proportions of topics across the $N$ total tokens in the corpus. The centers of the circles are determined by computing the distances between topics which are then projected onto a 2D plane. The larger a circle is, the more prevalent it is. Circles are for answering the questions 2 and 3.
+
+-   Red Bars: the estimated number of times a given term was generated by a given topic. When you select a circle (topic) the red bars for the most relevant terms will be highlighted. These bars help answer question 1.
+
+-   Blue Bars: each bar represents the frequency of each term in the corpus. When no topic is selected the blue bars for the most salient terms in the corpus. When a topic is selected the blue bars are the frequency of the most relevant terms. These bars help answer question 1.
+
+-   Topic-Term Circles: circles whose areas are proportional to the frequencies with which a given term is estimated to have been generated by the topics. When you highlight a term the circles' areas change accordingly. Selecting a term revels the conditional distribution over topics.
+
+If $\lambda=1$ terms are ranked in decreasing order of their topic-specific probability. $\lambda=0$ ranks terms solely by their lift. The optimal $\lambda$ is $\lambda=0.6$.
+
+### Inspecting $\beta$
+
+Given our optimal model we may now move onto exploring what words comprise each of the topics. To do so we first plot the terms with the highest $\beta$ values and then move onto wordclouds. Recall $\beta$ provides us with the per-topic-per-word probabilities. These are the probability a term was created by a topic.
+
+```{r Graph Beta University Level}
+#| fig-width: 10
+#| fig-height: 10
+uni_topics <- tidy(lda.out,matrix="beta")
+
+top_terms <- uni_topics %>%
+ group_by(topic) %>%
+ top_n(9, beta) %>%
+ ungroup() %>%
+ arrange(topic, -beta) %>%
+  mutate(term = reorder(term, beta))
+
+top_terms %>%
+ ggplot(aes(term, beta, fill = factor(topic))) +
+ geom_col(show.legend = FALSE) +
+ facet_wrap(~ topic, scales = "free") +
+ coord_flip()
+```
+
+Examining word clouds may also prove fruitful. **TO DO don't know if I like word clouds get opinoin**
+
+```{r wordcloud beta topics in university}
+
+set.seed(87460945)
+
+top_terms <- uni_topics %>%
+ group_by(topic) %>%
+ top_n(20, beta) %>%
+ ungroup() %>%
+ arrange(topic, -beta) %>%
+  mutate(term = reorder(term, beta))
+
+# for (i in 1:20) {
+# df <- subset(as.data.frame(top_terms),topic==i)  
+# wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred"))
+# title(paste("Topic ",i), font.main = 1)
+# }
+```
+::: {.panel-tabset}
+
+# Topic 1
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==1)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred"))) 
+
+```
+
+# Topic 2
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==2)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 3
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==3)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 4
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==4)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 5
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==5)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 6
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==6)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 7
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==7)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 8
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==8)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+
+# Topic 9
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==9)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 10
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==10)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+
+# Topic 11
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==11)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred"))) 
+
+```
+
+# Topic 12
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==12)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 13
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==13)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 14
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==14)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 15
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==15)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 16
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==16)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 17
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==17)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 18
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==18)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+
+# Topic 19
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==19)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+# Topic 20
+```{r, echo=FALSE}
+df <- subset(as.data.frame(top_terms),topic==20)
+suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred")))
+```
+
+:::
+
+### Inspecting $\gamma$
+
+Another interesting question to explore is which topics do universities prioritize? Is one university's Data Science program more heavily biased towards Math? How about Statistics? Recall the $\gamma$ matrix provides us with the per-topic-per-word probabilities. That is, it provides us with a percentage break down of which topics generated each document.
+
+```{r Graph Gamma University Level}
+#| fig-width: 10
+#| fig-height: 10
+
+uni_topics <- tidy(lda.out,matrix="gamma")
+
+top_terms <- uni_topics %>%
+ group_by(topic) %>%
+ arrange(topic, gamma)
+
+top_terms %>%
+ mutate(topic = reorder(topic, gamma)) %>%
+ ggplot(aes(topic, gamma, fill = factor(document))) +
+ geom_col(show.legend = FALSE) +
+ facet_wrap(~ document, scales = "free") +
+ coord_flip()
+```
 
 ## Exploring Courses
 
