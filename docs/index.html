@@ -110,20 +110,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#introduction-to-topic-modeling-and-lda" id="toc-introduction-to-topic-modeling-and-lda" class="nav-link active" data-scroll-target="#introduction-to-topic-modeling-and-lda">Introduction to Topic Modeling and LDA</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#terminology" id="toc-terminology" class="nav-link" data-scroll-target="#terminology">Terminology</a></li>
   <li><a href="#topic-models" id="toc-topic-models" class="nav-link" data-scroll-target="#topic-models">Topic Models</a></li>
   <li><a href="#latent-dirichlet-allocation" id="toc-latent-dirichlet-allocation" class="nav-link" data-scroll-target="#latent-dirichlet-allocation">Latent Dirichlet Allocation</a></li>
   </ul></li>
   <li><a href="#feature-extraction-and-preprocessing" id="toc-feature-extraction-and-preprocessing" class="nav-link" data-scroll-target="#feature-extraction-and-preprocessing">Feature Extraction and Preprocessing</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#document-term-matrices" id="toc-document-term-matrices" class="nav-link" data-scroll-target="#document-term-matrices">Document-Term Matrices</a></li>
   <li><a href="#complexity-reduction" id="toc-complexity-reduction" class="nav-link" data-scroll-target="#complexity-reduction">Complexity Reduction</a></li>
   <li><a href="#tf-idf" id="toc-tf-idf" class="nav-link" data-scroll-target="#tf-idf">TF-IDf</a></li>
   </ul></li>
   <li><a href="#exploring-degree-pathways" id="toc-exploring-degree-pathways" class="nav-link" data-scroll-target="#exploring-degree-pathways">Exploring Degree Pathways</a>
+  <ul>
+  <li><a href="#topic-number-discovery" id="toc-topic-number-discovery" class="nav-link" data-scroll-target="#topic-number-discovery">Topic Number Discovery</a>
   <ul class="collapse">
-  <li><a href="#topic-number-discovery" id="toc-topic-number-discovery" class="nav-link" data-scroll-target="#topic-number-discovery">Topic Number Discovery</a></li>
+  <li><a href="#perplexity" id="toc-perplexity" class="nav-link" data-scroll-target="#perplexity">Perplexity</a></li>
+  <li><a href="#coherence" id="toc-coherence" class="nav-link" data-scroll-target="#coherence">Coherence</a></li>
+  <li><a href="#ldatuning" id="toc-ldatuning" class="nav-link" data-scroll-target="#ldatuning">ldatuning</a></li>
+  <li><a href="#visualizing-topics-with-ldavis" id="toc-visualizing-topics-with-ldavis" class="nav-link" data-scroll-target="#visualizing-topics-with-ldavis">Visualizing topics with LDAvis</a></li>
+  </ul></li>
   <li><a href="#inspecting-beta" id="toc-inspecting-beta" class="nav-link" data-scroll-target="#inspecting-beta">Inspecting <span class="math inline">\(\beta\)</span></a></li>
   <li><a href="#inspecting-gamma" id="toc-inspecting-gamma" class="nav-link" data-scroll-target="#inspecting-gamma">Inspecting <span class="math inline">\(\gamma\)</span></a></li>
   </ul></li>
@@ -167,7 +173,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="latent-dirichlet-allocation" class="level3">
 <h3 class="anchored" data-anchor-id="latent-dirichlet-allocation">Latent Dirichlet Allocation</h3>
-<p><em>TODO need to add an explanation of teh phi and theta matrices and explain how people also call them beta and gamma</em></p>
+<p><strong>TODO need to add an explanation of teh phi and theta matrices and explain how people also call them beta and gamma</strong></p>
 <p>Perhaps the most famous topic model is <em>Latent Dirichlet Allocation</em> (LDA) (citation to LDA paper). It is a three-level hierarchical Bayesian model that defines a collection of documents as a random mixture over some underlying topic set where each topic is itself a distribution over our vocabulary.</p>
 <p>LDA works by assuming a data generating process (DGP) for our documents and then employs inference to discover the most likely parameters (reference to text as data book).</p>
 <p>Blei, Ng, and Jordan define the following DGP:</p>

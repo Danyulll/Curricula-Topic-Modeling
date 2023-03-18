@@ -18,7 +18,7 @@ Topic Modeling is a statistical model that attempts to cluster the words found i
 
 ### Latent Dirichlet Allocation
 
-*TODO need to add an explanation of teh phi and theta matrices and explain how people also call them beta and gamma*
+**TODO need to add an explanation of teh phi and theta matrices and explain how people also call them beta and gamma**
 
 Perhaps the most famous topic model is *Latent Dirichlet Allocation* (LDA) (citation to LDA paper). It is a three-level hierarchical Bayesian model that defines a collection of documents as a random mixture over some underlying topic set where each topic is itself a distribution over our vocabulary.
 
