@@ -124,7 +124,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#exploring-degree-pathways" id="toc-exploring-degree-pathways" class="nav-link" data-scroll-target="#exploring-degree-pathways">Exploring Degree Pathways</a>
   <ul class="collapse">
   <li><a href="#topic-number-discovery" id="toc-topic-number-discovery" class="nav-link" data-scroll-target="#topic-number-discovery">Topic Number Discovery</a></li>
-  <li><a href="#finding-the-number-of-topics" id="toc-finding-the-number-of-topics" class="nav-link" data-scroll-target="#finding-the-number-of-topics">Finding the Number of Topics</a></li>
   </ul></li>
   <li><a href="#exploring-courses" id="toc-exploring-courses" class="nav-link" data-scroll-target="#exploring-courses">Exploring Courses</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
@@ -187,41 +186,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="document-term-matrices" class="level3">
 <h3 class="anchored" data-anchor-id="document-term-matrices">Document-Term Matrices</h3>
 <p>There are many methods of feature extraction from text, we opt for the <em>bag of words</em> model. To construct this model simply define a common set of words shared between documents and store a count of word appearances for each document. Commonly this is stored as a <em>Document-Term Matrix</em> (DTM), for example, given the documents:</p>
-<div id="tbl-panel" class="tbl-parent quarto-layout-panel anchored">
-<div class="panel-caption table-caption">
-<p>Corpus</p>
-</div>
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p>::: {#tbl-panel layout-ncol=2} | Document 1 | |——| | “I am happy” |</p>
 <table class="table">
 <thead>
 <tr class="header">
-<th style="text-align: left;">Document 1</th>
+<th>Document 2</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">“I am happy”</td>
+<td>“I am sad”</td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<table class="table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Document 2</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">“I am sad”</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
+<p>Corpus :::</p>
 <p>the corresponding DTM would be</p>
 <table class="table">
 <thead>
@@ -230,6 +208,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <th style="text-align: left;">I</th>
 <th style="text-align: right;">am</th>
 <th style="text-align: center;">happy</th>
+<th style="text-align: center;">sad</th>
 </tr>
 </thead>
 <tbody>
@@ -238,12 +217,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: left;">1</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
 </tr>
 <tr class="even">
 <td><strong>Doc 2</strong></td>
 <td style="text-align: left;">1</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
 </tr>
 </tbody>
 </table>
@@ -344,7 +325,7 @@ Docs        abil acid addit administr algebra algorithm analysi appli applic
 </section>
 <section id="tf-idf" class="level3">
 <h3 class="anchored" data-anchor-id="tf-idf">TF-IDf</h3>
-<p>If one wishes to further reduce complexity there exist various heuristics for term inclusion. One such heuristic is <em>term frequency inverse document frequency</em> (TF-IDF). The intuition for TF-IDF is that extremely frequent words hold language together but do not provide great insight of topic or context. Meanwhile rare words contain a plethora of information but lack the frequency needed to be used in generalizations. Therefore words somewhere in the middle of these exetrems ought to be included (text as data citation).</p>
+<p>If one wishes to further reduce complexity there exist various heuristics for term inclusion. One such heuristic is <em>term frequency inverse document frequency</em> (TF-IDF). The intuition for TF-IDF is that extremely frequent words hold language together but do not provide great insight of topic or context. Meanwhile rare words contain a plethora of information but lack the frequency needed to be used in generalizations. Therefore words somewhere in the middle of these extremes ought to be included (text as data citation).</p>
 <p>The quantity itself is the multiplication of the <em>term frequency</em> (TF) and <em>inverse document drequency</em> (IDF). TF is simply the number of times the term <span class="math inline">\(j\)</span> appears in a given document. IDF is defined as</p>
 <p><span class="math display">\[idf(term)=ln\left(\frac{{\text{\# of doucments}}}{{\text{\# documents containing term j}}}\right)\]</span> IDF is a penalty term that adjusts term frequency based on the term’s rarity (text mining in R citation).</p>
 <div class="cell">
@@ -393,7 +374,20 @@ Docs                abil        acid        addit   administr      algebra
 <pre><code>[1]   9 702</code></pre>
 </div>
 </div>
-<p>With this our dimensionality has sufficiently reduced.</p>
+<p>With this our dimensionality has sufficiently reduced. It is important to note when we fit a LDA model the topicmodels package in R requires us to have term frequencies as our DTM entries so we must convert back to a TF weighting.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get our list of tfidf terms       </span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>terms <span class="ot">&lt;-</span> tfidf_dtm_r<span class="sc">$</span>dimnames<span class="sc">$</span>Terms</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter our original dtm</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> dtm[,<span class="fu">which</span>(dtm<span class="sc">$</span>dimnames<span class="sc">$</span>Terms <span class="sc">%in%</span> terms)]</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check to make sure we filtered the correct terms</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(dtm<span class="sc">$</span>dimnames<span class="sc">$</span>Terms <span class="sc">==</span> terms) <span class="sc">==</span> <span class="dv">702</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
 </section>
 </section>
 <section id="exploring-degree-pathways" class="level2">
@@ -401,15 +395,195 @@ Docs                abil        acid        addit   administr      algebra
 <section id="topic-number-discovery" class="level3">
 <h3 class="anchored" data-anchor-id="topic-number-discovery">Topic Number Discovery</h3>
 <p>LDA, like many unsupervised learning methods, is extremely dependent on its parameters. One such parameter that requires meticulous tuning is the number of topics. In the literature there exist many metrics for discovering the optimal number of topics with several being readily available in R.</p>
+<section id="perplexity" class="level4">
+<h4 class="anchored" data-anchor-id="perplexity">Perplexity</h4>
+<p>Perplexity is a measure of a model’s ability to generalize to unseen data. It is tested on a held-out set and is defined by Blei, Ng, and Jordan as</p>
+<p><span class="math display">\[perplexity(\mathcal{D_{\text{text}}})=\text{exp}\left\{-\frac{\sum^M_{d=1}\text{log}p(\bf{w}_d)}{\sum^m_{d=1}N_d}\right\}\]</span> - <span class="math inline">\(\mathcal{D}\)</span>: the test corpus - log<span class="math inline">\(p(\bf{w}_d)\)</span>: the log of - <span class="math inline">\(N_d\)</span>: the number of words in document <span class="math inline">\(d\)</span></p>
+<p>The lower our perplexity score the better. We can use 3-fold cross validation and plot our perplexities for various topic numbers.</p>
+<div class="cell" data-hash="index_cache/html/Perplexity 3-fold CV_c728330f94fd26184b372cccc84ad296">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(topicmodels)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">87460945</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate folds</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>idxs <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">seq_len</span>(<span class="dv">9</span>))</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>folds <span class="ot">&lt;-</span> <span class="fu">split</span>(idxs, <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">each =</span> <span class="dv">3</span>, <span class="at">length.out =</span> <span class="dv">9</span>))</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Define number of topics</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>topics <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">2</span>, <span class="dv">50</span>, <span class="dv">1</span>)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data frame for storing results</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform cross validation</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (k <span class="cf">in</span> topics) {</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  scores <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>) {</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>    test_idx <span class="ot">&lt;-</span> folds[[i]]</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>    train_idx <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">unlist</span>(folds, <span class="at">use.names =</span> <span class="cn">FALSE</span>), test_idx)</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>    test <span class="ot">&lt;-</span> dtm[test_idx, ]</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    train <span class="ot">&lt;-</span> dtm[train_idx, ]</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>    LDA.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, k, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">perplexity</span>(LDA.out, <span class="at">newdata =</span> test)</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>    scores <span class="ot">&lt;-</span> <span class="fu">c</span>(scores, p)</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">"K"</span> <span class="ot">=</span> k, <span class="st">"Perplexity"</span> <span class="ot">=</span> <span class="fu">mean</span>(scores))</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>  results <span class="ot">&lt;-</span> <span class="fu">rbind</span>(results, temp)</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Perplexity vs. K</span></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x=</span>K, <span class="at">y=</span>Perplexity)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Perplexity vs. Number of Topics K"</span>)<span class="sc">+</span></span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/Perplexity%203-fold%20CV-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieving K for minimum Perplexity</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>results[<span class="fu">which.min</span>(results<span class="sc">$</span>Perplexity),<span class="st">"K"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8</code></pre>
+</div>
+</div>
+<p>Looks like in terms of Perplexity 8 is our optimal number of topics.</p>
+</section>
 <section id="coherence" class="level4">
 <h4 class="anchored" data-anchor-id="coherence">Coherence</h4>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(topicmodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Do this when I have time</p>
+</section>
+<section id="ldatuning" class="level4">
+<h4 class="anchored" data-anchor-id="ldatuning">ldatuning</h4>
+<p>The ldatuning package provides us with several metrics to evaluate the number topics all of which rely on find extrema. We seek to minimize Arun2010 and CaoJuan2009 and maximize Deveaud2014 and Griffiths2004.</p>
+<div class="cell" data-hash="index_cache/html/ldatuning k 40_a98f74e87cbad003f25818c120d284bf">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ldatuning)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Find number of topics</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">FindTopicsNumber</span>(</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  dtm,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">topics =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">2</span>, <span class="at">to =</span> <span class="dv">40</span>, <span class="at">by =</span> <span class="dv">1</span>),</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"Griffiths2004"</span>, <span class="st">"CaoJuan2009"</span>, <span class="st">"Arun2010"</span>, <span class="st">"Deveaud2014"</span>),</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"Gibbs"</span>,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">77</span>),</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">mc.cores =</span> 2L,</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot metrics</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="fu">FindTopicsNumber_plot</span>(result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `&lt;scale&gt;` argument of `guides()` cannot be `FALSE`. Use "none" instead as
+of ggplot2 3.3.4.
+ℹ The deprecated feature was likely used in the ldatuning package.
+  Please report the issue at &lt;https://github.com/nikita-moor/ldatuning/issues&gt;.</code></pre>
 </div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/ldatuning%20k%2040-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>It seems no topic numbers over 21 are viable. Let us zoom in on the 2-21 range.</p>
+<div class="cell" data-hash="index_cache/html/ldatuning k 21_e8963509e8e15d36d1f6f05619385cce">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ldatuning)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Find number of topics</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">FindTopicsNumber</span>(</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  dtm,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">topics =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">2</span>, <span class="at">to =</span> <span class="dv">21</span>, <span class="at">by =</span> <span class="dv">1</span>),</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"Griffiths2004"</span>, <span class="st">"CaoJuan2009"</span>, <span class="st">"Arun2010"</span>, <span class="st">"Deveaud2014"</span>),</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"Gibbs"</span>,</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">77</span>),</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">mc.cores =</span> 2L,</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot metrics</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="fu">FindTopicsNumber_plot</span>(result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `&lt;scale&gt;` argument of `guides()` cannot be `FALSE`. Use "none" instead as
+of ggplot2 3.3.4.
+ℹ The deprecated feature was likely used in the ldatuning package.
+  Please report the issue at &lt;https://github.com/nikita-moor/ldatuning/issues&gt;.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/ldatuning%20k%2021-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>For our minima we see CaoJuan2009 suggests 6 and 9 while Arun2019 promots 19. Examining our maxima we find Deveaud2014 is uninterpretable and Griffiths2004 recommends 10 and 20. This provides us with a good range of topic numbers to explore, <span class="math inline">\(k = 6,8,9,10,19,20\)</span>.</p>
 </section>
+<section id="visualizing-topics-with-ldavis" class="level4">
+<h4 class="anchored" data-anchor-id="visualizing-topics-with-ldavis">Visualizing topics with LDAvis</h4>
+<p>Rather than individually fit each model model for our topic numbers the R package LDAvis creates a fantastic interactable visualization of our LDA model. With this we can explore our topics, examine various metrics about our terms, and investigate topic overlap.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(LDAvis)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(topicmodels)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringi)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">20</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm)</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a><span class="fu">serVis</span>(json_lda, <span class="at">out.dir =</span> <span class="st">'vis2'</span>, <span class="at">open.browser =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in dir.create(out.dir): 'vis2' already exists</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required namespace: servr</code></pre>
+</div>
+</div>
+<p><strong>TO DO</strong> This embeds just fine in markdown need to figure out why this doesn’t work.</p>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+LDAvis
+</title>
+<script src="vis2/d3.v3.js"></script>
+<script src="vis2/ldavis.js"></script>
+<link rel="stylesheet" type="text/css" href="vis2/lda.css">
+
+
+<div id="lda">
+
+</div>
+<script>
+    var vis = new LDAvis("#lda", "vis2/lda.json");
+  </script>
+
 </section>
-<section id="finding-the-number-of-topics" class="level3">
-<h3 class="anchored" data-anchor-id="finding-the-number-of-topics">Finding the Number of Topics</h3>
 </section>
 </section>
 <section id="exploring-courses" class="level2">

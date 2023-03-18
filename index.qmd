@@ -1,77 +1,90 @@
 ---
 title: "Curricula-Topic-Modeling"
-
-toc: true
-toc-depth: 3
 ---
 
 ## Introduction to Topic Modeling and LDA
 
 ### Terminology
 
-Before beginning there are three important preliminary definitions one will need in any text analysis:
+Before beginning there are three important preliminary definitions one
+will need in any text analysis:
 
-- Document: a distinct text object that one wishes to analyze. This could be a paper, a paragraph, etc.
-- Term: an individual word in a given document.
-- Corpus: The set of all documents.
+-   Document: a distinct text object that one wishes to analyze. This
+    could be a paper, a paragraph, etc.
+-   Term: an individual word in a given document.
+-   Corpus: The set of all documents.
 
 ### Topic Models
 
-Topic Modeling is a statistical model that attempts to cluster the words found in a document into various "topics". The hope is that these topics would capture some underlying subject contained within the text. It is important to note that Topic Models are fuzzy in the sense that documents are assumed to be comprised of multiple topics with varying degrees of membership to each. 
+Topic Modeling is a statistical model that attempts to cluster the words
+found in a document into various "topics". The hope is that these topics
+would capture some underlying subject contained within the text. It is
+important to note that Topic Models are fuzzy in the sense that
+documents are assumed to be comprised of multiple topics with varying
+degrees of membership to each.
 
 ### Latent Dirichlet Allocation
 
-Perhaps the most famous topic model is *Latent Dirichlet Allocation* (LDA) (citation to LDA paper). It is a three-level hierarchical Bayesian model that defines a collection of documents as a random mixture over some underlying topic set where each topic is itself a distribution over our vocabulary.
+Perhaps the most famous topic model is *Latent Dirichlet Allocation*
+(LDA) (citation to LDA paper). It is a three-level hierarchical Bayesian
+model that defines a collection of documents as a random mixture over
+some underlying topic set where each topic is itself a distribution over
+our vocabulary.
 
-LDA works by assuming a data generating process (DGP) for our documents and then employs inference to discover the most likely parameters (reference to text as data book).
+LDA works by assuming a data generating process (DGP) for our documents
+and then employs inference to discover the most likely parameters
+(reference to text as data book).
 
 Blei, Ng, and Jordan define the following DGP:
 
-1. Choose $N \sim$ Poisson($\xi$)
-2. Choose $\theta \sim$ Dir($\alpha$)
-3. For each of the $N$ words $w_n$:
-    1. Choose a topic $z_n\sim$Multinomial($\theta$)
-    2. Choose a word $w_n$ from $p(w_n|z_n,\beta)$, a multinomial probability conditioned on the topic $z_n$
-  
-For the following analysis we estimate the parameters using the *collapsed Gibbs sampling method*, though it is important to note there are others that yield varied results. To further complicate things, when fitting LDA in R one must predefine the number of topics for the model. Finding a good estimate for the number of topics is paramount and many methods are explored.
+1.  Choose $N \sim$ Poisson($\xi$)
+2.  Choose $\theta \sim$ Dir($\alpha$)
+3.  For each of the $N$ words $w_n$:
+    1.  Choose a topic $z_n\sim$Multinomial($\theta$)
+    2.  Choose a word $w_n$ from $p(w_n|z_n,\beta)$, a multinomial
+        probability conditioned on the topic $z_n$
+
+For the following analysis we estimate the parameters using the
+*collapsed Gibbs sampling method*, though it is important to note there
+are others that yield varied results. To further complicate things, when
+fitting LDA in R one must predefine the number of topics for the model.
+Finding a good estimate for the number of topics is paramount and many
+methods are explored.
 
 ## Feature Extraction and Preprocessing
 
 ### Document-Term Matrices
 
-There are many methods of feature extraction from text, we opt for the *bag of words* model. To construct this model simply define a common set of words shared between documents and store a count of word appearances for each document. Commonly this is stored as a *Document-Term Matrix* (DTM), for example, given the documents:
+There are many methods of feature extraction from text, we opt for the
+*bag of words* model. To construct this model simply define a common set
+of words shared between documents and store a count of word appearances
+for each document. Commonly this is stored as a *Document-Term Matrix*
+(DTM), for example, given the documents:
 
-::: {#tbl-panel layout-ncol=2}
-| Document 1 |
-|------|
-| "I am happy"    |
+::: {#tbl-panel layout-ncol=2} \| Document
+1 \| \|------\| \| "I am happy" \|
 
+| Document 2 |
+|------------|
+| "I am sad" |
 
-
-
-| Document 2 | 
-|------|
-| "I am sad"   | 
-
-
-
-
-Corpus
-:::
-
+Corpus :::
 
 the corresponding DTM would be
 
-||I | am | happy | sad |
-|---------|:-----|------:|:------:|
-| **Doc 1** |1      | 1   |    1 |   0   |
-| **Doc 2**  | 1   | 1  |   0 |  1   |
+|           | I   |  am | happy | sad |
+|-----------|:----|----:|:-----:|:-----:|
+| **Doc 1** | 1   |   1 |   1   |   0   |
+| **Doc 2** | 1   |   1 |   0   |   1   |
 
+In R we can us the tm package to create our Corpus and DTM objects. For
+these examples scrapped Data Science course information, from various
+universities, will be preprocessed.
 
-
-In R we can us the tm package to create our Corpus and DTM objects. For these examples scrapped Data Science course information, from various universities, will be preprocessed. 
-
-First this data will be examined from a degree pathway perspective with the documents being concatenated course descriptions for entire curricula. These curricula are constructed for each university by sampling courses from each university's Data Science course calendar.
+First this data will be examined from a degree pathway perspective with
+the documents being concatenated course descriptions for entire
+curricula. These curricula are constructed for each university by
+sampling courses from each university's Data Science course calendar.
 
 ```{r Load in Data}
 # Loading in data
@@ -87,17 +100,23 @@ ds <- DataframeSource(degree_corpus)
 corpus <- Corpus(ds)
 inspect(corpus[1])
 ```
-As shown the first element of the corpus is from Western University and contains all course description terms from a given pathway through their Data Science calendar. 
+
+As shown the first element of the corpus is from Western University and
+contains all course description terms from a given pathway through their
+Data Science calendar.
 
 ### Complexity Reduction
 
-Raw text data lends itself to difficult analysis. NLP posses several best practices for cleaning text:
+Raw text data lends itself to difficult analysis. NLP posses several
+best practices for cleaning text:
 
-- Punctation/Number Removal: deleting any non alphabetic characters.
-- Lowercasing: sending all words to lowercase.
-- Stopword Removal: stopwords are words used often in sentences that give little to no information, i.e., atricles such as the, a, etc.
-- Stemming: truncating the ends of words so that they share a common base, i.e., fishing and fishes would be transformed ot fish.
-- Tokenizing: dividing a document into a set of individual words
+-   Punctation/Number Removal: deleting any non alphabetic characters.
+-   Lowercasing: sending all words to lowercase.
+-   Stopword Removal: stopwords are words used often in sentences that
+    give little to no information, i.e., atricles such as the, a, etc.
+-   Stemming: truncating the ends of words so that they share a common
+    base, i.e., fishing and fishes would be transformed ot fish.
+-   Tokenizing: dividing a document into a set of individual words
 
 ```{r Text Preprocessing}
 # Remove punctuation
@@ -118,7 +137,9 @@ corpus <- tm_map(corpus, stemDocument)
 
 inspect(corpus[1])
 ```
+
 Now we may construct our DTM,
+
 ```{r DTM Construction}
 # Create DTM object
 dtm <- DocumentTermMatrix(corpus)
@@ -127,23 +148,37 @@ inspect(dtm[,1:9])
 
 ### TF-IDf
 
-If one wishes to further reduce complexity there exist various heuristics for term inclusion. One such heuristic is *term frequency inverse document frequency* (TF-IDF). The intuition for TF-IDF is that extremely frequent words hold language together but do not provide great insight of topic or context. Meanwhile rare words contain a plethora of information but lack the frequency needed to be used in generalizations. Therefore words somewhere in the middle of these exetrems ought to be included (text as data citation).
+If one wishes to further reduce complexity there exist various
+heuristics for term inclusion. One such heuristic is *term frequency
+inverse document frequency* (TF-IDF). The intuition for TF-IDF is that
+extremely frequent words hold language together but do not provide great
+insight of topic or context. Meanwhile rare words contain a plethora of
+information but lack the frequency needed to be used in generalizations.
+Therefore words somewhere in the middle of these extremes ought to be
+included (text as data citation).
 
-The quantity itself is the multiplication of the *term frequency* (TF) and *inverse document drequency* (IDF). TF is simply the number of times the term $j$ appears in a given document. IDF is defined as
+The quantity itself is the multiplication of the *term frequency* (TF)
+and *inverse document drequency* (IDF). TF is simply the number of times
+the term $j$ appears in a given document. IDF is defined as
 
 $$idf(term)=ln\left(\frac{{\text{\# of doucments}}}{{\text{\# documents containing term j}}}\right)$$
-IDF is a penalty term that adjusts term frequency based on the term's rarity (text mining in R citation).
+IDF is a penalty term that adjusts term frequency based on the term's
+rarity (text mining in R citation).
 
 ```{r TF-IDF weighting}
 tfidf_dtm <- weightTfIdf(dtm)
 inspect(tfidf_dtm[,1:5])
 ```
-Now our DTM contains TF-IDF scores as the entries as opposed to just TF. We can now filter away terms below a certain threshold of TF-IDF. A common approach is to filter terms away below the median.
+
+Now our DTM contains TF-IDF scores as the entries as opposed to just TF.
+We can now filter away terms below a certain threshold of TF-IDF. A
+common approach is to filter terms away below the median.
 
 ```{r TF-IDF Median Calc}
 tfidf_mat <- as.matrix(tfidf_dtm)
 median(tfidf_mat[tfidf_mat > 0])
 ```
+
 ```{r Filter TF-IDF below median}
 tfidf_dtm_r <- tfidf_dtm[,tfidf_dtm$v > 0.0022]
 ```
@@ -155,23 +190,202 @@ dim(tfidf_dtm)
 # Dimensions after reduction
 dim(tfidf_dtm_r)
 ```
-With this our dimensionality has sufficiently reduced.
+
+With this our dimensionality has sufficiently reduced. It is important
+to note when we fit a LDA model the topicmodels package in R requires us
+to have term frequencies as our DTM entries so we must convert back to a
+TF weighting.
+
+```{r Convert back to TF weighting}
+# Get our list of tfidf terms       
+terms <- tfidf_dtm_r$dimnames$Terms
+
+# Filter our original dtm
+dtm <- dtm[,which(dtm$dimnames$Terms %in% terms)]
+
+# Check to make sure we filtered the correct terms
+sum(dtm$dimnames$Terms == terms) == 702
+
+```
 
 ## Exploring Degree Pathways
 
 ### Topic Number Discovery
-LDA, like many unsupervised learning methods, is extremely dependent on its parameters. One such parameter that requires meticulous tuning is the number of topics. In the literature there exist many metrics for discovering the optimal number of topics with several being readily available in R.
+
+LDA, like many unsupervised learning methods, is extremely dependent on
+its parameters. One such parameter that requires meticulous tuning is
+the number of topics. In the literature there exist many metrics for
+discovering the optimal number of topics with several being readily
+available in R.
+
+#### Perplexity
+
+Perplexity is a measure of a model's ability to generalize to unseen
+data. It is tested on a held-out set and is defined by Blei, Ng, and
+Jordan as
+
+$$perplexity(\mathcal{D_{\text{text}}})=\text{exp}\left\{-\frac{\sum^M_{d=1}\text{log}p(\bf{w}_d)}{\sum^m_{d=1}N_d}\right\}$$ -
+$\mathcal{D}$: the test corpus - log$p(\bf{w}_d)$: the log of - $N_d$:
+the number of words in document $d$
+
+The lower our perplexity score the better. We can use 3-fold cross
+validation and plot our perplexities for various topic numbers.
+
+```{r Perplexity 3-fold CV, cache=TRUE}
+library(topicmodels)
+library(ggplot2)
+set.seed(87460945)
+
+# Calculate folds
+idxs <- sample(seq_len(9))
+folds <- split(idxs, rep(1:3, each = 3, length.out = 9))
+
+# Define number of topics
+topics <- seq(2, 50, 1)
+
+# Create data frame for storing results
+results <- data.frame()
+
+# Perform cross validation
+for (k in topics) {
+  scores <- c()
+  for (i in 1:3) {
+    test_idx <- folds[[i]]
+    train_idx <- setdiff(unlist(folds, use.names = FALSE), test_idx)
+
+    test <- dtm[test_idx, ]
+    train <- dtm[train_idx, ]
+
+    LDA.out <- LDA(dtm, k, method = "Gibbs")
+    p <- perplexity(LDA.out, newdata = test)
+    scores <- c(scores, p)
+  }
+  temp <- data.frame("K" = k, "Perplexity" = mean(scores))
+  results <- rbind(results, temp)
+}
+
+# Plot Perplexity vs. K
+ggplot(results, aes(x=K, y=Perplexity)) + geom_line() + ggtitle("Perplexity vs. Number of Topics K")+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r min Perplexity}
+# Retrieving K for minimum Perplexity
+results[which.min(results$Perplexity),"K"]
+```
+
+Looks like in terms of Perplexity 8 is our optimal number of topics.
 
 #### Coherence
-```{r}
-library(topicmodels)
+
+Do this when I have time
+
+#### ldatuning
+
+The ldatuning package provides us with several metrics to evaluate the
+number topics all of which rely on find extrema. We seek to minimize
+Arun2010 and CaoJuan2009 and maximize Deveaud2014 and Griffiths2004.
+
+```{r ldatuning k 40,cache=TRUE}
+library(ldatuning)
+
+# Find number of topics
+result <- FindTopicsNumber(
+  dtm,
+  topics = seq(from = 2, to = 40, by = 1),
+  metrics = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
+  method = "Gibbs",
+  control = list(seed = 77),
+  mc.cores = 2L,
+)
+# Plot metrics
+FindTopicsNumber_plot(result)
 ```
 
 
+It seems no topic numbers over 21 are viable. Let us zoom in on the 2-21
+range.
 
+```{r ldatuning k 21,cache=TRUE}
+library(ldatuning)
 
-### Finding the Number of Topics
+# Find number of topics
+result <- FindTopicsNumber(
+  dtm,
+  topics = seq(from = 2, to = 21, by = 1),
+  metrics = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
+  method = "Gibbs",
+  control = list(seed = 77),
+  mc.cores = 2L,
+)
+# Plot metrics
+FindTopicsNumber_plot(result)
+```
 
+For our minima we see CaoJuan2009 suggests 6 and 9 while Arun2019
+promots 19. Examining our maxima we find Deveaud2014 is uninterpretable
+and Griffiths2004 recommends 10 and 20. This provides us with a good
+range of topic numbers to explore, $k = 6,8,9,10,19,20$.
+
+#### Visualizing topics with LDAvis
+
+Rather than individually fit each model model for our topic numbers the
+R package LDAvis creates a fantastic interactable visualization of our
+LDA model. With this we can explore our topics, examine various metrics
+about our terms, and investigate topic overlap.
+
+```{r LDAvis}
+library(LDAvis)
+library(dplyr)
+library(topicmodels)
+library(stringi)
+
+# Fit largest model
+lda.out <- LDA(dtm, 20, method = "Gibbs")
+
+# Find required quantities
+phi <- posterior(lda.out)$terms %>% as.matrix
+theta <- posterior(lda.out)$topics %>% as.matrix
+vocab <- colnames(phi)
+doc_length <- vector()
+for (i in 1:length(corpus)) {
+  temp <- paste(corpus[[i]]$content, collapse = ' ')
+  doc_length <-
+    c(doc_length, stri_count(temp, regex = '\\S+'))
+}
+temp_frequency <- as.matrix(dtm)
+freq_matrix <- data.frame(ST = colnames(temp_frequency),
+                          Freq = colSums(temp_frequency))
+
+# Convert to json
+json_lda <- LDAvis::createJSON(
+  phi = phi,
+  theta = theta,
+  vocab = vocab,
+  doc.length = doc_length,
+  term.frequency = freq_matrix$Freq
+)
+
+# Open server for visualization
+serVis(json_lda, out.dir = 'vis2', open.browser = FALSE)
+```
+
+**TO DO** This embeds just fine in markdown need to figure out why this doesn't work.
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>LDAvis</title>
+  <script src="vis2/d3.v3.js"></script>
+  <script src="vis2/ldavis.js"></script>
+  <link rel="stylesheet" type="text/css" href="vis2/lda.css">
+</head>
+
+<body>
+  <div id = "lda"></div>
+  <script>
+    var vis = new LDAvis("#lda", "vis2/lda.json");
+  </script>
+</body>
 
 ## Exploring Courses
 
@@ -186,4 +400,3 @@ https://datamathstat.wordpress.com/2019/10/25/text-preprocessing-for-nlp-and-mac
 https://ldavis.cpsievert.me/reviews/reviews.html
 
 https://www.r-bloggers.com/2015/05/a-link-between-topicmodels-lda-and-ldavis/
-
