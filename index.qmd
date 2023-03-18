@@ -548,8 +548,6 @@ top_terms %>%
  coord_flip()
 ```
 
-## Exploring Courses
-
 ## References
 
 Need a reference for LDA paper, text as data, text mining with R
