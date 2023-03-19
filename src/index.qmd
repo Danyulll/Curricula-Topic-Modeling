@@ -312,26 +312,25 @@ json_lda <- LDAvis::createJSON(
 )
 
 # Open server for visualization
-serVis(json_lda, out.dir = 'vis2', open.browser = FALSE)
+serVis(json_lda, out.dir = "../LDAvis", open.browser = FALSE)
 ```
-
-**TO DO his embeds just fine in markdown need to figure out why this doesn't work** 
-
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>LDAvis</title>
-  <script src="vis2/d3.v3.js"></script>
-  <script src="vis2/ldavis.js"></script>
-  <link rel="stylesheet" type="text/css" href="vis2/lda.css">
+  <script src="./LDAvis/d3.v3.js"></script>
+  <script src="./LDAvis/ldavis.js"></script>
+  <link rel="stylesheet" type="text/css" href="./LDAvis/lda.css">
 </head>
 
 <body>
   <div id = "lda"></div>
   <script>
-    var vis = new LDAvis("#lda", "vis2/lda.json");
+    var vis = new LDAvis("#lda", "./LDAvis/lda.json");
   </script>
 </body>
+
+
 
 
 

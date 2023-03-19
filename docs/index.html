@@ -101,42 +101,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </head>
 
-<body>
+<body class="fullcontent">
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-  <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#introduction-to-topic-modeling-and-lda" id="toc-introduction-to-topic-modeling-and-lda" class="nav-link active" data-scroll-target="#introduction-to-topic-modeling-and-lda">Introduction to Topic Modeling and LDA</a>
-  <ul>
-  <li><a href="#terminology" id="toc-terminology" class="nav-link" data-scroll-target="#terminology">Terminology</a></li>
-  <li><a href="#topic-models" id="toc-topic-models" class="nav-link" data-scroll-target="#topic-models">Topic Models</a></li>
-  <li><a href="#latent-dirichlet-allocation" id="toc-latent-dirichlet-allocation" class="nav-link" data-scroll-target="#latent-dirichlet-allocation">Latent Dirichlet Allocation</a></li>
-  </ul></li>
-  <li><a href="#feature-extraction-and-preprocessing" id="toc-feature-extraction-and-preprocessing" class="nav-link" data-scroll-target="#feature-extraction-and-preprocessing">Feature Extraction and Preprocessing</a>
-  <ul>
-  <li><a href="#document-term-matrices" id="toc-document-term-matrices" class="nav-link" data-scroll-target="#document-term-matrices">Document-Term Matrices</a></li>
-  <li><a href="#complexity-reduction" id="toc-complexity-reduction" class="nav-link" data-scroll-target="#complexity-reduction">Complexity Reduction</a></li>
-  <li><a href="#tf-idf" id="toc-tf-idf" class="nav-link" data-scroll-target="#tf-idf">TF-IDf</a></li>
-  </ul></li>
-  <li><a href="#exploring-degree-pathways" id="toc-exploring-degree-pathways" class="nav-link" data-scroll-target="#exploring-degree-pathways">Exploring Degree Pathways</a>
-  <ul>
-  <li><a href="#topic-number-discovery" id="toc-topic-number-discovery" class="nav-link" data-scroll-target="#topic-number-discovery">Topic Number Discovery</a>
-  <ul class="collapse">
-  <li><a href="#perplexity" id="toc-perplexity" class="nav-link" data-scroll-target="#perplexity">Perplexity</a></li>
-  <li><a href="#coherence" id="toc-coherence" class="nav-link" data-scroll-target="#coherence">Coherence</a></li>
-  <li><a href="#ldatuning" id="toc-ldatuning" class="nav-link" data-scroll-target="#ldatuning">ldatuning</a></li>
-  <li><a href="#visualizing-topics-with-ldavis" id="toc-visualizing-topics-with-ldavis" class="nav-link" data-scroll-target="#visualizing-topics-with-ldavis">Visualizing topics with LDAvis</a></li>
-  </ul></li>
-  <li><a href="#inspecting-beta" id="toc-inspecting-beta" class="nav-link" data-scroll-target="#inspecting-beta">Inspecting <span class="math inline">\(\beta\)</span></a></li>
-  <li><a href="#inspecting-gamma" id="toc-inspecting-gamma" class="nav-link" data-scroll-target="#inspecting-gamma">Inspecting <span class="math inline">\(\gamma\)</span></a></li>
-  </ul></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
-  </ul>
-</nav>
-</div>
+
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -565,7 +533,7 @@ Docs                abil        acid        addit   administr      algebra
 <section id="visualizing-topics-with-ldavis" class="level4">
 <h4 class="anchored" data-anchor-id="visualizing-topics-with-ldavis">Visualizing topics with LDAvis</h4>
 <p>Rather than individually fit each model model for our topic numbers the R package LDAvis creates a fantastic interactable visualization of our LDA model. With this we can explore our topics, examine various metrics about our terms, and investigate topic overlap.</p>
-<div class="cell" data-hash="index_cache/html/LDAvis_eadb20b52c09a6b4b0376c27cc9b5ad5">
+<div class="cell" data-hash="index_cache/html/LDAvis_5375f52dde38939abbf27c99ce2b713e">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">20</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -593,27 +561,26 @@ Docs                abil        acid        addit   administr      algebra
 <span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
-<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a><span class="fu">serVis</span>(json_lda, <span class="at">out.dir =</span> <span class="st">'vis2'</span>, <span class="at">open.browser =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a><span class="fu">serVis</span>(json_lda, <span class="at">out.dir =</span> <span class="st">"../LDAvis"</span>, <span class="at">open.browser =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Loading required namespace: servr</code></pre>
 </div>
 </div>
-<p><strong>TO DO his embeds just fine in markdown need to figure out why this doesn’t work</strong></p>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
 LDAvis
 </title>
-<script src="vis2/d3.v3.js"></script>
-<script src="vis2/ldavis.js"></script>
-<link rel="stylesheet" type="text/css" href="vis2/lda.css">
+<script src="./LDAvis/d3.v3.js"></script>
+<script src="./LDAvis/ldavis.js"></script>
+<link rel="stylesheet" type="text/css" href="./LDAvis/lda.css">
 
 
-<div id="lda">
+<div id="lda" style="justify-content: center; margin: 0 auto; text-align: center;">
 
 </div>
 <script>
-    var vis = new LDAvis("#lda", "vis2/lda.json");
+    var vis = new LDAvis("#lda", "./LDAvis/lda.json");
   </script>
 
 <p>LDAvis tries to answer 3 questions: - How prevalent is each topic? - How do the topics relate to each other? - How do the topics relate to each other?</p>
