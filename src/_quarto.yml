@@ -1,6 +1,12 @@
 project:
   title: "Curricula-Topic-Modeling"
   output-dir: ../docs
+format:
+  html:
+    toc: FALSE
+    //toc-depth: 4
+    //toc-location: body
+
 
 execute: 
   cache: true

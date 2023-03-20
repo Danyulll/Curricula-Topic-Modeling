@@ -18,13 +18,11 @@ Topic Modeling is a statistical model that attempts to cluster the words found i
 
 ### Latent Dirichlet Allocation
 
-**TODO need to add an explanation of teh phi and theta matrices and explain how people also call them beta and gamma**
+Perhaps the most famous topic model is *Latent Dirichlet Allocation* (LDA) (Blei et al., 2003). It is a three-level hierarchical Bayesian model that defines a collection of documents as a random mixture over some underlying topic set where each topic is itself a distribution over our vocabulary.
 
-Perhaps the most famous topic model is *Latent Dirichlet Allocation* (LDA) (citation to LDA paper). It is a three-level hierarchical Bayesian model that defines a collection of documents as a random mixture over some underlying topic set where each topic is itself a distribution over our vocabulary.
+LDA works by assuming a data generating process (DGP) for our documents and then employs inference to discover the most likely parameters (Grimmer et al., 2022).
 
-LDA works by assuming a data generating process (DGP) for our documents and then employs inference to discover the most likely parameters (reference to text as data book).
-
-Blei, Ng, and Jordan define the following DGP:
+Blei, Ng, and Jordan define the following DGP (2003):
 
 1.  Choose $N \sim$ Poisson($\xi$)
 2.  Choose $\theta \sim$ Dir($\alpha$)
@@ -33,6 +31,9 @@ Blei, Ng, and Jordan define the following DGP:
     2.  Choose a word $w_n$ from $p(w_n|z_n,\beta)$, a multinomial probability conditioned on the topic $z_n$
 
 For the following analysis we estimate the parameters using the *collapsed Gibbs sampling method*, though it is important to note there are others that yield varied results. To further complicate things, when fitting LDA in R one must predefine the number of topics for the model. Finding a good estimate for the number of topics is paramount and many methods are explored.
+
+Once a model is fitted, it is common to extract 2 matrices $\Phi$ and $\Theta$. These are also commonly referred to as $\beta$ and $\gamma$ respectively. Both are given by the priors of LDA. $\Phi$ represents the probability mass over the terms. $\Theta$ represents the probability mass function over the topics or the per-document-per-topic probabilities.
+
 
 ## Feature Extraction and Preprocessing
 
@@ -63,7 +64,7 @@ In R we can us the tm package to create our Corpus and DTM objects. For these ex
 
 First this data will be examined from a degree pathway perspective with the documents being concatenated course descriptions for entire curricula. These curricula are constructed for each university by sampling courses from each university's Data Science course calendar.
 
-```{r Libraries}
+```{r Libraries, echo=FALSE}
 # Load Libraries
 library(tm)
 library(topicmodels)
@@ -135,11 +136,13 @@ inspect(dtm[,1:9])
 
 ### TF-IDf
 
-If one wishes to further reduce complexity there exist various heuristics for term inclusion. One such heuristic is *term frequency inverse document frequency* (TF-IDF). The intuition for TF-IDF is that extremely frequent words hold language together but do not provide great insight of topic or context. Meanwhile rare words contain a plethora of information but lack the frequency needed to be used in generalizations. Therefore words somewhere in the middle of these extremes ought to be included (text as data citation).
+If one wishes to further reduce complexity there exist various heuristics for term inclusion. One such heuristic is *term frequency inverse document frequency* (TF-IDF). The intuition for TF-IDF is that extremely frequent words hold language together but do not provide great insight of topic or context. Meanwhile rare words contain a plethora of information but lack the frequency needed to be used in generalizations. Therefore words somewhere in the middle of these extremes ought to be included (Grimmer et al., 2022).
 
 The quantity itself is the multiplication of the *term frequency* (TF) and *inverse document drequency* (IDF). TF is simply the number of times the term $j$ appears in a given document. IDF is defined as
 
-$$idf(term)=ln\left(\frac{{\text{\# of doucments}}}{{\text{\# documents containing term j}}}\right)$$ IDF is a penalty term that adjusts term frequency based on the term's rarity (text mining in R citation).
+$$idf(term)=ln\left(\frac{{\text{\# of doucments}}}{{\text{\# documents containing term j}}}\right)$$
+
+IDF is a penalty term that adjusts term frequency based on the term's rarity (Silge & Robinson, 2017).
 
 ```{r TF-IDF weighting}
 tfidf_dtm <- weightTfIdf(dtm)
@@ -187,13 +190,13 @@ LDA, like many unsupervised learning methods, is extremely dependent on its para
 
 #### Perplexity
 
-Perplexity is a measure of a model's ability to generalize to unseen data. It is tested on a held-out set and is defined by Blei, Ng, and Jordan as
+Perplexity is a measure of a model's ability to generalize to unseen data. It is the log-likelihood of a a test set of data and is given by Pleplé:
 
-$$perplexity(\mathcal{D_{\text{text}}})=\text{exp}\left\{-\frac{\sum^M_{d=1}\text{log}p(\bf{w}_d)}{\sum^m_{d=1}N_d}\right\}$$
+$$\ell(w)=\text{log}p(w|\Phi,\alpha)=\sum_d \text{log} p(w_d|\Phi,\alpha)$$
 
-- $\mathcal{D}$: the test corpus 
-- log$p(\bf{w}_d)$: the log of 
-- $N_d$: the number of words in document $d$
+- $w_d$: the unseen document
+- $\Phi$: the matrix for the topics
+- $\alpha$: the hyperparameter for the topic distributions
 
 The lower our perplexity score the better. We can use 3-fold cross validation and plot our perplexities for various topic numbers.
 
@@ -282,11 +285,15 @@ For our minima we see CaoJuan2009 suggests 6 and 9 while Arun2019 promots 19. Ex
 
 #### Visualizing topics with LDAvis
 
-Rather than individually fit each model model for our topic numbers the R package LDAvis creates a fantastic interactable visualization of our LDA model. With this we can explore our topics, examine various metrics about our terms, and investigate topic overlap.
+Rather than individually fit each model model for our topic numbers the R package LDAvis creates a fantastic interactable visualization of our LDA model. LDAvis tries to answer 3 questions (Sievert & Shirley, 2014): 
 
-```{r LDAvis}
+- How prevalent is each topic? 
+- How do the topics relate to each other? 
+- How do the topics relate to each other?
+
+```{r LDAvis, cache=TRUE}
 # Fit largest model
-lda.out <- LDA(dtm, 20, method = "Gibbs")
+lda.out <- LDA(dtm, 19, method = "Gibbs")
 
 # Find required quantities
 phi <- posterior(lda.out)$terms %>% as.matrix
@@ -331,26 +338,40 @@ serVis(json_lda, out.dir = "../LDAvis", open.browser = FALSE)
 </body>
 
 
+To interpret this visualization we fist need to define several quantities:
 
+*Relevance* - Sievert and Shirley propose relevance  as a metric to rank terms based on their usefulness for interpreting topics (2014). They define it as follows:
 
+$$r(w,k|\lambda)=\lambda \text{log}(\phi_{kw}+(1-\lambda)\text{log}\left( \frac{\phi_{kw}}{p_w}\right)$$
 
-LDAvis tries to answer 3 questions: - How prevalent is each topic? - How do the topics relate to each other? - How do the topics relate to each other?
+- $\phi_{kw}$: the probability of term $w$ for topic $k$.
+- $p_w$: the marginal probability of term $w$ in the corpus.
+- $\lambda$: a weight parameter such that $0 \leq \lambda \leq 1$.
+- $\text{log}\left( \frac{\phi_{kw}}{p_w}\right)$: the lift of a term.
 
-To understand how it does so we fist need to define several quantities: **TO DO make these explanations better**
+A $\lambda$ of 1 orders terms based on their topic-specific probability whereas a $\lambda$ of 0 orders term based on their lift. Sievert and Shirley suggest $\lambda = 6$. The higher this metric the better.
 
-Relevance - Relevance is used to rank terms within topics. It ranks terms based on their usefulness for interpreting topics.
+*Lift* - As seen above Lift is the ratio of a term's probability in a given topic to its marginal probability. The metric downweights terms that are frequent throughout an entire corpus (Sievert & Shirley 2014).
 
-Salience - To understand Saliency first understand that distinctiveness how informative the specific term w is for determining the generating topic, versus a randomly-selected term. Multiplying this by the probability of a word gives Saliency which is also apparently a useful measure in determining topics.
+*Saliency* - Introuced by Chuang, Manning, and Heer, it is defined as follows (2012):
+$$\begin{align} saliency(w) &= P(W) \times distinctiveness(w) \\
+distinctiveness(w) &= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
+\end{align}$$
 
-Lift - Lift is the ratio of a term's probability within a topic to its marginal probability across the corpus. This generally decreases the rankings of globally frequent terms.
+- $P(T|w)$: the probability a word $w$ was genereted by a topic $T$
+- $P(T)$: the marginal probability of the topic, i.e., the probability a word was produced b topic $T$
 
-- Topic circles: there will be K circles where each one represents a topic. Their areas are proportional to the proportions of topics across the $N$ total tokens in the corpus. The centers of the circles are determined by computing the distances between topics which are then projected onto a 2D plane. The larger a circle is, the more prevalent it is. Circles are for answering the questions 2 and 3.
+The general idea is that distinctiveness is the Kullback-Leibler divergence between $P(T|w)$ and $P(T)$ and informs us how useful a $w$ is for determining a generating topic. Multiplying this by $P(w)$ yields saliency; a metric that ranks terms in their usefulness in identifying topics.
 
--   Red Bars: the estimated number of times a given term was generated by a given topic. When you select a circle (topic) the red bars for the most relevant terms will be highlighted. These bars help answer question 1.
+With these we can understand our visuals:
 
--   Blue Bars: each bar represents the frequency of each term in the corpus. When no topic is selected the blue bars for the most salient terms in the corpus. When a topic is selected the blue bars are the frequency of the most relevant terms. These bars help answer question 1.
+- Topic circles: circles are drawn equal to the number of topics. Their areas are proportional to the estimated number of words produced by that topic. The centers of the circles are determined by computing the distances between topics which are then projected onto a 2D plane. The larger a circle is, the more prevalent it is.
 
--   Topic-Term Circles: circles whose areas are proportional to the frequencies with which a given term is estimated to have been generated by the topics. When you highlight a term the circles' areas change accordingly. Selecting a term revels the conditional distribution over topics.
+-   Red Bars: the estimated number of times a term was created by a  topic. When you select a circle (topic) the red bars for the most relevant terms will be highlighted.
+
+-   Blue Bars: each bar represents the frequency of each term. When no topic is selected the blue bars for the most salient terms are displayed. When a topic is selected the blue bars are the frequency of the most relevant terms.
+
+-   Topic-Term Circles: When you highlight a term the circles' areas will change. These circles' areas are proportional to the number of times a topic generated that specific term.
 
 If $\lambda=1$ terms are ranked in decreasing order of their topic-specific probability. $\lambda=0$ ranks terms solely by their lift. The optimal $\lambda$ is $\lambda=0.6$.
 
@@ -377,7 +398,7 @@ top_terms %>%
  coord_flip()
 ```
 
-Examining word clouds may also prove fruitful. **TO DO don't know if I like word clouds get opinoin**
+Examining word clouds may also prove fruitful.
 
 ```{r wordcloud beta topics in university}
 
@@ -527,7 +548,7 @@ suppressWarnings(wordcloud(df$term, freq = df$beta,colors= c("indianred1","india
 
 ### Inspecting $\gamma$
 
-Another interesting question to explore is which topics do universities prioritize? Is one university's Data Science program more heavily biased towards Math? How about Statistics? Recall the $\gamma$ matrix provides us with the per-topic-per-word probabilities. That is, it provides us with a percentage break down of which topics generated each document.
+Another interesting question to explore is which topics do universities prioritize? Is one university's Data Science program more heavily biased towards Math? How about Statistics? Recall the $\gamma$ matrix provides us with the per-document-per-topic probabilities. That is, it provides us with a percentage break down of which topics generated each document.
 
 ```{r Graph Gamma University Level}
 #| fig-width: 10
@@ -549,12 +570,30 @@ top_terms %>%
 
 ## References
 
-Need a reference for LDA paper, text as data, text mining with R
+A topic model for movie reviews. (n.d.). Retrieved March 20, 2023, from  
+&nbsp;&nbsp;&nbsp;&nbsp;https://ldavis.cpsievert.me/reviews/reviews.html 
 
-https://knowledger.rbind.io/post/topic-modeling-using-r/
+Blei, D. M., Ng, A. Y., & Jordan, M. I. (2003). Latent dirichlet allocation. Journal of
+machine Learning 
+&nbsp;&nbsp;&nbsp;&nbsp;research, 3(Jan), 993-1022.
 
-https://datamathstat.wordpress.com/2019/10/25/text-preprocessing-for-nlp-and-machine-learning-using-r/
+Fernandes, E. (2019, November 2). Text preprocessing for NLP and Machine Learning Using R.
+DataMathStat. Retrieved March 20, 2023, from  &nbsp;&nbsp;&nbsp;&nbsp;https://datamathstat.wordpress.com/2019/10/25/text-preprocessing-for-nlp-and-machine-learning-using-r/ 
 
-https://ldavis.cpsievert.me/reviews/reviews.html
+Gandrud, C. (2015, May 8). A Link Between topicmodels LDA and LDAvis. R. Retrieved March 20, &nbsp;&nbsp;&nbsp;&nbsp;2023, from https://www.r-bloggers.com/2015/05/a-link-between-topicmodels-lda-and-ldavis/ 
 
-https://www.r-bloggers.com/2015/05/a-link-between-topicmodels-lda-and-ldavis/
+Grimmer, J., Roberts, M. E., &amp; Stewart, B. M. (2022). Text as data: A New Framework for Machine 
+&nbsp;&nbsp;&nbsp;&nbsp;Learning and the Social Sciences. Princeton University Press. 
+
+Meza, D. (2015, July 20). Topic modeling using R · Knowledger. knowledgeR. Retrieved March 20, &nbsp;&nbsp;&nbsp;&nbsp;2023,from https://knowledger.rbind.io/post/topic-modeling-using-r/ 
+
+Pleplé, Q. (n.d.). Perplexity To Evaluate Topic Models. qpleple. Retrieved March 20, 2023, from 
+&nbsp;&nbsp;&nbsp;&nbsp;http://qpleple.com/perplexity-to-evaluate-topic-models/ 
+
+Sievert, C., & Shirley, K. (2014, June). LDAvis: A method for visualizing and interpreting topics. In Proceedings of the workshop on interactive language learning, visualization, and interfaces (pp. 63-70).
+
+Silge, J., Robinson, D., & ProQuest (Firm). (2017). Text mining with R: A tidy approach (First ed.). &nbsp;&nbsp;&nbsp;&nbsp;O'Reilly Media.
+
+Tufts, C. (n.d.). The Little Book of LDA. Latest Posts – Mining the Details. Retrieved March 20, 2023, &nbsp;&nbsp;&nbsp;&nbsp;from https://miningthedetails.com/LDA_Inference_Book/lda-inference.html 
+
+
