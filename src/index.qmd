@@ -322,21 +322,19 @@ json_lda <- LDAvis::createJSON(
 serVis(json_lda, out.dir = "../LDAvis", open.browser = FALSE)
 ```
 
-<head>
+
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>LDAvis</title>
+  
   <script src="./LDAvis/d3.v3.js"></script>
   <script src="./LDAvis/ldavis.js"></script>
   <link rel="stylesheet" type="text/css" href="./LDAvis/lda.css">
-</head>
 
-<body>
+
+
   <div id = "lda"></div>
   <script>
     var vis = new LDAvis("#lda", "./LDAvis/lda.json");
   </script>
-</body>
-
 
 To interpret this visualization we fist need to define several quantities:
 
@@ -567,6 +565,165 @@ top_terms %>%
  facet_wrap(~ document, scales = "free") +
  coord_flip()
 ```
+
+## Inspecting Other Solutions
+
+From our 20 group visualization we see significant overlap on the left clusters. This suggests one of our fewer topic solutions may be more apt. Therefore we opt to visualize the 5, 8, and 10 group solutions. Furthermore, it seems in our word clouds stemming has made interpretability more difficult. Therefore we change our DTM to not include stemming; if similair rooted words appear we can always go back and combine them by hand.
+
+```{r Remaking DTM}
+# Loading in data
+load("../data/RObjects/degree_corpus.RData")
+
+# Construct corpus object
+ds <- DataframeSource(degree_corpus)
+corpus <- Corpus(ds)
+
+# Text preprocessing omitting stemming
+
+# Remove punctuation
+corpus <- tm_map(corpus, content_transformer(removePunctuation))
+# Send everything to lower case
+corpus <- tm_map(corpus, content_transformer(tolower))
+# Remove stopwords
+corpus <- tm_map(corpus, content_transformer(removeWords), 
+          stopwords("english"))
+# Remove whitespace
+corpus <- tm_map(corpus, stripWhitespace)
+# Remove numbers
+corpus <- tm_map(corpus, content_transformer(removeNumbers))
+# Remove custom stop words
+corpus <- tm_map(corpus, function(x) {removeWords(x,c("data","will","students","fall","spring","important","one","considered","stacks","offers","types","may","held","former","honours","faculty","related","enter","review","enrolment","exercises","summer","need","offered"))})
+
+# Create DTM
+dtm <- DocumentTermMatrix(corpus)
+inspect(dtm)
+```
+```{r Examing TF-IDF once more}
+# Find median TF-IDF
+tfidf_mat <- as.matrix(tfidf_dtm)
+median(tfidf_mat[tfidf_mat > 0])
+```
+
+```{r Filter based on TF-IDF once more}
+# Filter based on meadian TF-IDF
+tfidf_dtm_r <- tfidf_dtm[,tfidf_dtm$v > 0.0022]
+```
+
+```{r Revert to original weightings}
+# Get our list of tfidf terms       
+terms <- tfidf_dtm_r$dimnames$Terms
+
+# Filter our original dtm
+dtm <- dtm[,which(dtm$dimnames$Terms %in% terms)]
+
+inspect(dtm)
+```
+
+### 5 Group Solution
+
+```{r}
+# Fit largest model
+lda.out <- LDA(dtm, 5, method = "Gibbs")
+
+# Find required quantities
+phi <- posterior(lda.out)$terms %>% as.matrix
+theta <- posterior(lda.out)$topics %>% as.matrix
+vocab <- colnames(phi)
+doc_length <- vector()
+for (i in 1:length(corpus)) {
+  temp <- paste(corpus[[i]]$content, collapse = ' ')
+  doc_length <-
+    c(doc_length, stri_count(temp, regex = '\\S+'))
+}
+temp_frequency <- as.matrix(dtm)
+freq_matrix <- data.frame(ST = colnames(temp_frequency),
+                          Freq = colSums(temp_frequency))
+
+# Convert to json
+json_lda <- LDAvis::createJSON(
+  phi = phi,
+  theta = theta,
+  vocab = vocab,
+  doc.length = doc_length,
+  term.frequency = freq_matrix$Freq
+)
+
+# Open server for visualization
+serVis(json_lda, out.dir = "../LDAvis5", open.browser = FALSE)
+```
+
+View the 5 group solution [here](https://danyulll.github.io/LDAvis5Sol/).
+
+### 8 Group Solution
+
+```{r}
+# Fit largest model
+lda.out <- LDA(dtm, 8, method = "Gibbs")
+
+# Find required quantities
+phi <- posterior(lda.out)$terms %>% as.matrix
+theta <- posterior(lda.out)$topics %>% as.matrix
+vocab <- colnames(phi)
+doc_length <- vector()
+for (i in 1:length(corpus)) {
+  temp <- paste(corpus[[i]]$content, collapse = ' ')
+  doc_length <-
+    c(doc_length, stri_count(temp, regex = '\\S+'))
+}
+temp_frequency <- as.matrix(dtm)
+freq_matrix <- data.frame(ST = colnames(temp_frequency),
+                          Freq = colSums(temp_frequency))
+
+# Convert to json
+json_lda <- LDAvis::createJSON(
+  phi = phi,
+  theta = theta,
+  vocab = vocab,
+  doc.length = doc_length,
+  term.frequency = freq_matrix$Freq
+)
+
+# Open server for visualization
+serVis(json_lda, out.dir = "../LDAvis8", open.browser = FALSE)
+```
+
+View the 8 group solution [here](https://danyulll.github.io/LDAvis8Sol-/).
+
+### 10 Group Solution
+
+```{r}
+# Fit largest model
+lda.out <- LDA(dtm, 10, method = "Gibbs")
+
+# Find required quantities
+phi <- posterior(lda.out)$terms %>% as.matrix
+theta <- posterior(lda.out)$topics %>% as.matrix
+vocab <- colnames(phi)
+doc_length <- vector()
+for (i in 1:length(corpus)) {
+  temp <- paste(corpus[[i]]$content, collapse = ' ')
+  doc_length <-
+    c(doc_length, stri_count(temp, regex = '\\S+'))
+}
+temp_frequency <- as.matrix(dtm)
+freq_matrix <- data.frame(ST = colnames(temp_frequency),
+                          Freq = colSums(temp_frequency))
+
+# Convert to json
+json_lda <- LDAvis::createJSON(
+  phi = phi,
+  theta = theta,
+  vocab = vocab,
+  doc.length = doc_length,
+  term.frequency = freq_matrix$Freq
+)
+
+# Open server for visualization
+serVis(json_lda, out.dir = "../LDAvis10", open.browser = FALSE)
+```
+
+View the 10 group solution [here](https://danyulll.github.io/LDAvis10Sol/).
+
 
 ## References
 
