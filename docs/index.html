@@ -105,6 +105,58 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction-to-topic-modeling-and-lda" id="toc-introduction-to-topic-modeling-and-lda" class="nav-link active" data-scroll-target="#introduction-to-topic-modeling-and-lda">Introduction to Topic Modeling and LDA</a>
+  <ul>
+  <li><a href="#terminology" id="toc-terminology" class="nav-link" data-scroll-target="#terminology">Terminology</a></li>
+  <li><a href="#topic-models" id="toc-topic-models" class="nav-link" data-scroll-target="#topic-models">Topic Models</a></li>
+  <li><a href="#latent-dirichlet-allocation" id="toc-latent-dirichlet-allocation" class="nav-link" data-scroll-target="#latent-dirichlet-allocation">Latent Dirichlet Allocation</a></li>
+  </ul></li>
+  <li><a href="#feature-extraction-and-preprocessing" id="toc-feature-extraction-and-preprocessing" class="nav-link" data-scroll-target="#feature-extraction-and-preprocessing">Feature Extraction and Preprocessing</a>
+  <ul>
+  <li><a href="#document-term-matrices" id="toc-document-term-matrices" class="nav-link" data-scroll-target="#document-term-matrices">Document-Term Matrices</a></li>
+  <li><a href="#complexity-reduction" id="toc-complexity-reduction" class="nav-link" data-scroll-target="#complexity-reduction">Complexity Reduction</a></li>
+  <li><a href="#tf-idf" id="toc-tf-idf" class="nav-link" data-scroll-target="#tf-idf">TF-IDf</a></li>
+  </ul></li>
+  <li><a href="#exploring-degree-pathways" id="toc-exploring-degree-pathways" class="nav-link" data-scroll-target="#exploring-degree-pathways">Exploring Degree Pathways</a>
+  <ul>
+  <li><a href="#topic-number-discovery" id="toc-topic-number-discovery" class="nav-link" data-scroll-target="#topic-number-discovery">Topic Number Discovery</a>
+  <ul class="collapse">
+  <li><a href="#perplexity" id="toc-perplexity" class="nav-link" data-scroll-target="#perplexity">Perplexity</a></li>
+  <li><a href="#coherence" id="toc-coherence" class="nav-link" data-scroll-target="#coherence">Coherence</a></li>
+  <li><a href="#ldatuning" id="toc-ldatuning" class="nav-link" data-scroll-target="#ldatuning">ldatuning</a></li>
+  <li><a href="#visualizing-topics-with-ldavis" id="toc-visualizing-topics-with-ldavis" class="nav-link" data-scroll-target="#visualizing-topics-with-ldavis">Visualizing topics with LDAvis</a></li>
+  </ul></li>
+  <li><a href="#inspecting-beta" id="toc-inspecting-beta" class="nav-link" data-scroll-target="#inspecting-beta">Inspecting <span class="math inline">\(\beta\)</span></a></li>
+  <li><a href="#inspecting-gamma" id="toc-inspecting-gamma" class="nav-link" data-scroll-target="#inspecting-gamma">Inspecting <span class="math inline">\(\gamma\)</span></a></li>
+  </ul></li>
+  <li><a href="#inspecting-other-solutions" id="toc-inspecting-other-solutions" class="nav-link" data-scroll-target="#inspecting-other-solutions">Inspecting Other Solutions</a>
+  <ul>
+  <li><a href="#group-solution" id="toc-group-solution" class="nav-link" data-scroll-target="#group-solution">5 Group Solution</a></li>
+  <li><a href="#group-solution-1" id="toc-group-solution-1" class="nav-link" data-scroll-target="#group-solution-1">8 Group Solution</a></li>
+  <li><a href="#group-solution-2" id="toc-group-solution-2" class="nav-link" data-scroll-target="#group-solution-2">10 Group Solution</a></li>
+  </ul></li>
+  <li><a href="#work-in-progress" id="toc-work-in-progress" class="nav-link" data-scroll-target="#work-in-progress">Work in progress</a>
+  <ul>
+  <li><a href="#no-tf-idf" id="toc-no-tf-idf" class="nav-link" data-scroll-target="#no-tf-idf">No TF-IDF</a>
+  <ul class="collapse">
+  <li><a href="#group-solution-3" id="toc-group-solution-3" class="nav-link" data-scroll-target="#group-solution-3">5 Group Solution</a></li>
+  <li><a href="#group-solution-4" id="toc-group-solution-4" class="nav-link" data-scroll-target="#group-solution-4">8 Group Solution</a></li>
+  <li><a href="#group-solution-5" id="toc-group-solution-5" class="nav-link" data-scroll-target="#group-solution-5">10 Group Solution</a></li>
+  </ul></li>
+  <li><a href="#tf-idf-25th-percentile" id="toc-tf-idf-25th-percentile" class="nav-link" data-scroll-target="#tf-idf-25th-percentile">TF-IDF 25th Percentile</a>
+  <ul class="collapse">
+  <li><a href="#group-solution-6" id="toc-group-solution-6" class="nav-link" data-scroll-target="#group-solution-6">5 Group Solution</a></li>
+  <li><a href="#group-solution-7" id="toc-group-solution-7" class="nav-link" data-scroll-target="#group-solution-7">8 Group Solution</a></li>
+  <li><a href="#group-solution-8" id="toc-group-solution-8" class="nav-link" data-scroll-target="#group-solution-8">10 Group Solution</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
 </div>
 <main class="content" id="quarto-document-content">
 
@@ -124,43 +176,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   
 
 </header>
-<nav id="TOC" role="doc-toc">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#introduction-to-topic-modeling-and-lda" id="toc-introduction-to-topic-modeling-and-lda">Introduction to Topic Modeling and LDA</a>
-  <ul>
-  <li><a href="#terminology" id="toc-terminology">Terminology</a></li>
-  <li><a href="#topic-models" id="toc-topic-models">Topic Models</a></li>
-  <li><a href="#latent-dirichlet-allocation" id="toc-latent-dirichlet-allocation">Latent Dirichlet Allocation</a></li>
-  </ul></li>
-  <li><a href="#feature-extraction-and-preprocessing" id="toc-feature-extraction-and-preprocessing">Feature Extraction and Preprocessing</a>
-  <ul>
-  <li><a href="#document-term-matrices" id="toc-document-term-matrices">Document-Term Matrices</a></li>
-  <li><a href="#complexity-reduction" id="toc-complexity-reduction">Complexity Reduction</a></li>
-  <li><a href="#tf-idf" id="toc-tf-idf">TF-IDf</a></li>
-  </ul></li>
-  <li><a href="#exploring-degree-pathways" id="toc-exploring-degree-pathways">Exploring Degree Pathways</a>
-  <ul>
-  <li><a href="#topic-number-discovery" id="toc-topic-number-discovery">Topic Number Discovery</a>
-  <ul>
-  <li><a href="#perplexity" id="toc-perplexity">Perplexity</a></li>
-  <li><a href="#coherence" id="toc-coherence">Coherence</a></li>
-  <li><a href="#ldatuning" id="toc-ldatuning">ldatuning</a></li>
-  <li><a href="#visualizing-topics-with-ldavis" id="toc-visualizing-topics-with-ldavis">Visualizing topics with LDAvis</a></li>
-  </ul></li>
-  <li><a href="#inspecting-beta" id="toc-inspecting-beta">Inspecting <span class="math inline">\(\beta\)</span></a></li>
-  <li><a href="#inspecting-gamma" id="toc-inspecting-gamma">Inspecting <span class="math inline">\(\gamma\)</span></a></li>
-  </ul></li>
-  <li><a href="#inspecting-other-solutions" id="toc-inspecting-other-solutions">Inspecting Other Solutions</a>
-  <ul>
-  <li><a href="#group-solution" id="toc-group-solution">5 Group Solution</a></li>
-  <li><a href="#group-solution-1" id="toc-group-solution-1">8 Group Solution</a></li>
-  <li><a href="#group-solution-2" id="toc-group-solution-2">10 Group Solution</a></li>
-  </ul></li>
-  <li><a href="#references" id="toc-references">References</a></li>
-  </ul>
-</nav>
+
 <section id="introduction-to-topic-modeling-and-lda" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-topic-modeling-and-lda">Introduction to Topic Modeling and LDA</h2>
 <section id="terminology" class="level3">
@@ -264,7 +280,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </table>
 <p>In R we can us the tm package to create our Corpus and DTM objects. For these examples scrapped Data Science course information, from various universities, will be preprocessed.</p>
 <p>First this data will be examined from a degree pathway perspective with the documents being concatenated course descriptions for entire curricula. These curricula are constructed for each university by sampling courses from each university’s Data Science course calendar.</p>
-<div class="cell" data-hash="index_cache/html/Libraries_a954d2977b810f92c2ccf424f3983086">
+<div class="cell" data-hash="index_cache/html/Libraries_e47d760b0ad8c1733e6e22f87f83cc23">
 
 </div>
 <div class="cell" data-hash="index_cache/html/Load in Data_773c2eb0b35f66fb684949adeb618f4b">
@@ -362,7 +378,7 @@ Docs        abil acid addit administr algebra algorithm analysi appli applic
 <p>The quantity itself is the multiplication of the <em>term frequency</em> (TF) and <em>inverse document drequency</em> (IDF). TF is simply the number of times the term <span class="math inline">\(j\)</span> appears in a given document. IDF is defined as</p>
 <p><span class="math display">\[idf(term)=ln\left(\frac{{\text{\# of doucments}}}{{\text{\# documents containing term j}}}\right)\]</span></p>
 <p>IDF is a penalty term that adjusts term frequency based on the term’s rarity (Silge &amp; Robinson, 2017).</p>
-<div class="cell" data-hash="index_cache/html/TF-IDF weighting_cdfddb6b2563bd22ec3c7098dede166b">
+<div class="cell" data-hash="index_cache/html/TF-IDF weighting 1_bd6d7b48391fad85706cd742f2e655ee">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>tfidf_dtm <span class="ot">&lt;-</span> <span class="fu">weightTfIdf</span>(dtm)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(tfidf_dtm[,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -818,7 +834,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <section id="inspecting-other-solutions" class="level2">
 <h2 class="anchored" data-anchor-id="inspecting-other-solutions">Inspecting Other Solutions</h2>
 <p>From our 20 group visualization we see significant overlap on the left clusters. This suggests one of our fewer topic solutions may be more apt. Therefore we opt to visualize the 5, 8, and 10 group solutions. Furthermore, it seems in our word clouds stemming has made interpretability more difficult. Therefore we change our DTM to not include stemming; if similair rooted words appear we can always go back and combine them by hand.</p>
-<div class="cell" data-hash="index_cache/html/Remaking DTM_22374c0b1a326bdd91bd33c3cd3a8746">
+<div class="cell" data-hash="index_cache/html/Remaking DTM_eeda4814c126abf304a20d552dc29243">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading in data</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"../data/RObjects/degree_corpus.RData"</span>)</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -840,98 +856,131 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove numbers</span></span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(removeNumbers))</span>
 <span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove custom stop words</span></span>
-<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="cf">function</span>(x) {<span class="fu">removeWords</span>(x,<span class="fu">c</span>(<span class="st">"data"</span>,<span class="st">"will"</span>,<span class="st">"students"</span>,<span class="st">"fall"</span>,<span class="st">"spring"</span>,<span class="st">"important"</span>,<span class="st">"one"</span>,<span class="st">"considered"</span>,<span class="st">"stacks"</span>,<span class="st">"offers"</span>,<span class="st">"types"</span>,<span class="st">"may"</span>,<span class="st">"held"</span>,<span class="st">"former"</span>,<span class="st">"honours"</span>,<span class="st">"faculty"</span>,<span class="st">"related"</span>,<span class="st">"enter"</span>,<span class="st">"review"</span>,<span class="st">"enrolment"</span>,<span class="st">"exercises"</span>,<span class="st">"summer"</span>,<span class="st">"need"</span>,<span class="st">"offered"</span>))})</span>
-<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Create DTM</span></span>
-<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> <span class="fu">DocumentTermMatrix</span>(corpus)</span>
-<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(dtm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>remove_words <span class="ot">&lt;-</span></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">"include"</span>,<span class="st">"methods"</span>,<span class="st">"topics"</span>,<span class="st">"design"</span>,<span class="st">"functions"</span>,<span class="st">"emphasis"</span>,<span class="st">"language"</span>,<span class="st">"introduction"</span>,<span class="st">"languages"</span>,<span class="st">"performance"</span>,<span class="st">"experience"</span>,<span class="st">"course"</span>,<span class="st">"science"</span>,<span class="st">"techniques"</span>,<span class="st">"variables"</span>,<span class="st">"number"</span>,<span class="st">"department"</span>,<span class="st">"tools"</span>,<span class="st">"fundamental"</span>,<span class="st">"also"</span>,<span class="st">"major"</span>,<span class="st">"modern"</span>,<span class="st">"issues"</span>,<span class="st">"used"</span>,<span class="st">"methods"</span>,<span class="st">"using"</span>,<span class="st">"case"</span>,<span class="st">"architecture"</span>,<span class="st">"covered"</span>,<span class="st">"credit"</span>,<span class="st">"basic"</span>,<span class="st">"cosc"</span>,<span class="st">"granted"</span>,<span class="st">"use"</span>,<span class="st">"solutions"</span>,<span class="st">"data"</span>,<span class="st">"will"</span>,<span class="st">"students"</span>,<span class="st">"fall"</span>,<span class="st">"spring"</span>,<span class="st">"important"</span>,<span class="st">"one"</span>,<span class="st">"considered"</span>,<span class="st">"stacks"</span>,<span class="st">"offers"</span>,<span class="st">"types"</span>,<span class="st">"may"</span>,<span class="st">"held"</span>,<span class="st">"former"</span>,<span class="st">"honours"</span>,<span class="st">"faculty"</span>,<span class="st">"related"</span>,<span class="st">"enter"</span>,<span class="st">"review"</span>,<span class="st">"enrolment"</span>,<span class="st">"exercises"</span>,<span class="st">"summer"</span>,<span class="st">"need"</span>,<span class="st">"offered"</span>,<span class="st">"social"</span>,<span class="st">"digital"</span>,<span class="st">"terms"</span>,<span class="st">"real"</span>,<span class="st">"concepts"</span>,<span class="st">"understanding"</span>,<span class="st">"can"</span>,<span class="st">"including"</span>,<span class="st">"programs"</span>,<span class="st">"program"</span>,<span class="st">"recommended"</span>,<span class="st">"examples"</span>,<span class="st">"introduced"</span>,<span class="st">"large"</span>,<span class="st">"search"</span>,<span class="st">"relations"</span>,<span class="st">"key"</span>,<span class="st">"etc"</span>,<span class="st">"reasoning"</span>,<span class="st">"intended"</span>,<span class="st">"fws"</span>,<span class="st">"general"</span>,<span class="st">"restricted"</span>,<span class="st">"version"</span>,<span class="st">"two"</span>,<span class="st">"comp"</span>,<span class="st">"well"</span>,<span class="st">"rich"</span>,<span class="st">"intended"</span>,<span class="st">"required"</span>,<span class="st">"internet"</span>,<span class="st">"recent"</span>,<span class="st">"phys"</span>,<span class="st">"sciences"</span>,<span class="st">"covers"</span>,<span class="st">"year"</span>,<span class="st">"selected"</span>,<span class="st">"renewal"</span>,<span class="st">"explored"</span>,<span class="st">"csch"</span>,<span class="st">"principles"</span>,<span class="st">"practice"</span>,<span class="st">"development"</span>,<span class="st">"studies"</span>,<span class="st">"security"</span>,<span class="st">"provides"</span>,<span class="st">"advanced"</span>,<span class="st">"instruction"</span>,<span class="st">"discussed"</span>,<span class="st">"processes"</span>,<span class="st">"death"</span>,<span class="st">"lower"</span>,<span class="st">"high"</span>,<span class="st">"crncr"</span>,<span class="st">"taken"</span>,<span class="st">"efficient"</span>,<span class="st">"includes"</span>,<span class="st">"core"</span>,<span class="st">"retrieval"</span>,<span class="st">"class"</span>,<span class="st">"within"</span>,<span class="st">"present"</span>,<span class="st">"option"</span>,<span class="st">"interested"</span>,<span class="st">"together"</span>,<span class="st">"session"</span>,<span class="st">"week"</span>,<span class="st">"new"</span>,<span class="st">"order"</span>,<span class="st">"tables"</span>,<span class="st">"small"</span>,<span class="st">"suitable"</span>,<span class="st">"wide"</span>,<span class="st">"without"</span>,<span class="st">"good"</span></span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="cf">function</span>(x) {</span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">removeWords</span>(x, remove_words)</span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Create DTM</span></span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> <span class="fu">DocumentTermMatrix</span>(corpus)</span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(dtm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&lt;&lt;DocumentTermMatrix (documents: 9, terms: 1967)&gt;&gt;
-Non-/sparse entries: 4035/13668
-Sparsity           : 77%
+<pre><code>&lt;&lt;DocumentTermMatrix (documents: 9, terms: 1859)&gt;&gt;
+Non-/sparse entries: 3546/13185
+Sparsity           : 79%
 Maximal term length: 63
 Weighting          : term frequency (tf)
 Sample             :
            Terms
-Docs        algorithms analysis course introduction math methods programming
-  Berkeley           2        3      5            2    1       5           6
-  Concordia          5        7      7           11    1       8           9
-  Laurier           11       14     19           16    0      15           7
-  Manitoba           4       11     31           15   45       4           5
-  SFU                7       16     12           14    8       8          15
-  Toronto            7        9     18           15    0       5           8
-  UBCO               1        7      1            8    5       7           1
-  Waterloo          12        5     11            9    0      16           6
-  Western            7        2      4            8    0       1           4
+Docs        algorithms analysis applications linear math models programming
+  Berkeley           2        3            3      4    1      1           6
+  Concordia          5        7            6      7    1      6           9
+  Laurier           11       14            6      7    0      5           7
+  Manitoba           4       11            4      4   45      3           5
+  SFU                7       16            6      5    8      8          15
+  Toronto            7        9            2      3    0      5           8
+  UBCO               1        7            9      6    5      8           1
+  Waterloo          12        5            7      5    0      5           6
+  Western            7        2            2      4    0      6           4
            Terms
-Docs        science techniques topics
-  Berkeley        6          3      3
-  Concordia       1          5      2
-  Laurier         3         13      6
-  Manitoba       17          5     17
-  SFU            11          7     10
-  Toronto        10          9      9
-  UBCO            1          5      3
-  Waterloo        2          7     15
-  Western         4          6      5</code></pre>
+Docs        regression statistical systems
+  Berkeley           4           3       5
+  Concordia          4           5       6
+  Laurier            4           2       8
+  Manitoba           6           5       6
+  SFU                5           3      10
+  Toronto            6          15       1
+  UBCO               3           7       4
+  Waterloo          10           3       7
+  Western            4           2       4</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="index_cache/html/Examing TF-IDF once more_cbd486b3b754fcfa9c94c8acba8f3e20">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find median TF-IDF</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>tfidf_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(tfidf_dtm)</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(tfidf_mat[tfidf_mat <span class="sc">&gt;</span> <span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/TF-IDF weighting 2_26de8c44f61895a18e8b7cc248e24154">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reweight and filter DTM based on mean TF-IDF</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>tfidf_dtm <span class="ot">&lt;-</span> <span class="fu">weightTfIdf</span>(dtm)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>tfidf_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(tfidf_dtm)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(tfidf_mat[tfidf_mat <span class="sc">&gt;</span> <span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.00220297</code></pre>
+<pre><code>[1] 0.003326259</code></pre>
 </div>
-</div>
-<div class="cell" data-hash="index_cache/html/Filter based on TF-IDF once more_d8fa652ae4305c5dac18e81b768fa09c">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter based on meadian TF-IDF</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>tfidf_dtm_r <span class="ot">&lt;-</span> tfidf_dtm[,tfidf_dtm<span class="sc">$</span>v <span class="sc">&gt;</span> <span class="fl">0.0022</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-hash="index_cache/html/Revert to original weightings_38ced9d0c5599b17d5d61a21975445ed">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get our list of tfidf terms       </span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>terms <span class="ot">&lt;-</span> tfidf_dtm_r<span class="sc">$</span>dimnames<span class="sc">$</span>Terms</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter our original dtm</span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> dtm[,<span class="fu">which</span>(dtm<span class="sc">$</span>dimnames<span class="sc">$</span>Terms <span class="sc">%in%</span> terms)]</span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(dtm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>tfidf_dtm_r <span class="ot">&lt;-</span> tfidf_dtm[,tfidf_dtm<span class="sc">$</span>v <span class="sc">&gt;</span> <span class="fl">0.0033</span>]</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get our list of tfidf terms       </span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>terms <span class="ot">&lt;-</span> tfidf_dtm_r<span class="sc">$</span>dimnames<span class="sc">$</span>Terms</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter our original dtm</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> dtm[,<span class="fu">which</span>(dtm<span class="sc">$</span>dimnames<span class="sc">$</span>Terms <span class="sc">%in%</span> terms)]</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(dtm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&lt;&lt;DocumentTermMatrix (documents: 9, terms: 273)&gt;&gt;
-Non-/sparse entries: 562/1895
-Sparsity           : 77%
-Maximal term length: 22
+<pre><code>&lt;&lt;DocumentTermMatrix (documents: 9, terms: 907)&gt;&gt;
+Non-/sparse entries: 1764/6399
+Sparsity           : 78%
+Maximal term length: 63
 Weighting          : term frequency (tf)
 Sample             :
            Terms
-Docs        basic calculus credit likelihood random search stat theorem time
-  Berkeley      1        1      0          0      1      0    0       0    0
-  Concordia     3        2      2          0      1      2    0       0    0
-  Laurier       7        2      2          2      2      9    0       3    1
-  Manitoba      4        5      2          1      6      0   16       0    1
-  SFU           4        1      4          0      0      1    2       1    4
-  Toronto       2        5      0          3      1      1    0       9    3
-  UBCO          5        1     10          1      2      1    0       0    3
-  Waterloo      3        1      0          7      6      1    1       3    1
-  Western       2        1      0          1      2      1    0       2    3
+Docs        applications database learning linear math model programming
+  Berkeley             3        0        0      4    1     2           6
+  Concordia            6        3        3      7    1     5           9
+  Laurier              6        2       12      7    0     5           7
+  Manitoba             4        1        3      4   45     2           5
+  SFU                  6        6        3      5    8     2          15
+  Toronto              2        3        3      3    0     1           8
+  UBCO                 9        1        2      6    5     3           1
+  Waterloo             7       11        9      5    0     2           6
+  Western              2        3        2      4    0     4           4
            Terms
-Docs        vector
-  Berkeley       2
-  Concordia      4
-  Laurier        3
-  Manitoba       0
-  SFU            2
-  Toronto        4
-  UBCO           0
-  Waterloo       3
-  Western        0</code></pre>
+Docs        regression statistics structures
+  Berkeley           4          0          4
+  Concordia          4          1          2
+  Laurier            4          2          3
+  Manitoba           6         14          1
+  SFU                5          6          4
+  Toronto            6          0          2
+  UBCO               3          2          3
+  Waterloo          10          1          4
+  Western            4          1          2</code></pre>
 </div>
 </div>
 <section id="group-solution" class="level3">
 <h3 class="anchored" data-anchor-id="group-solution">5 Group Solution</h3>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-21_c7518728831bf98382f5b38839d73470">
+<div class="cell" data-hash="index_cache/html/5 groups vis median tf-idf_d385f7320dfd5471aeea482deb9bb51d">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm)</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="group-solution-1" class="level3">
+<h3 class="anchored" data-anchor-id="group-solution-1">8 Group Solution</h3>
+<div class="cell" data-hash="index_cache/html/8 groups vis median tf-idf_dd9880b7d81cda124b4dac953ba4ca58">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">8</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
 <span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
@@ -957,58 +1006,131 @@ Docs        vector
 <span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
-<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a><span class="fu">serVis</span>(json_lda, <span class="at">out.dir =</span> <span class="st">"../LDAvis5"</span>, <span class="at">open.browser =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in dir.create(out.dir): '..\LDAvis5' already exists</code></pre>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Loading required namespace: servr</code></pre>
-</div>
-</div>
-<p>View the 5 group solution <a href="https://danyulll.github.io/LDAvis5Sol/">here</a>.</p>
-</section>
-<section id="group-solution-1" class="level3">
-<h3 class="anchored" data-anchor-id="group-solution-1">8 Group Solution</h3>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-22_7b019a9435e3bb77ce35e24e5d9437e9">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">8</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
-<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm)</span>
-<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
-<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
-<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
-<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
-<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
-<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
-<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
-<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
-<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
-<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
-<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a><span class="fu">serVis</span>(json_lda, <span class="at">out.dir =</span> <span class="st">"../LDAvis8"</span>, <span class="at">open.browser =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in dir.create(out.dir): '..\LDAvis8' already exists</code></pre>
-</div>
-</div>
-<p>View the 8 group solution <a href="https://danyulll.github.io/LDAvis8Sol-/">here</a>.</p>
 </section>
 <section id="group-solution-2" class="level3">
 <h3 class="anchored" data-anchor-id="group-solution-2">10 Group Solution</h3>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-23_bddf9a11703f3c31c99beacc64b99965">
+<div class="cell" data-hash="index_cache/html/10 groups vis median tf-idf_6f8cf1afc76f5618bc6335777b13d6ad">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">10</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm)</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="work-in-progress" class="level2">
+<h2 class="anchored" data-anchor-id="work-in-progress">Work in progress</h2>
+<p>Going to explore cutting TF-IDF at the 25th percentile and no TF-IDF filtering for the 5, 8, and 10 group solutions</p>
+<section id="no-tf-idf" class="level3">
+<h3 class="anchored" data-anchor-id="no-tf-idf">No TF-IDF</h3>
+<div class="cell" data-hash="index_cache/html/Setting up unfiltered dtm_6f0722ff31329f9e51c93ca16c45316d">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading in data</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"../data/RObjects/degree_corpus.RData"</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create corpus object</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">DataframeSource</span>(degree_corpus)</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">Corpus</span>(ds)</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove punctuation</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(removePunctuation))</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Send everything to lower case</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(tolower))</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove stopwords</span></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus,</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">content_transformer</span>(removeWords),</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">stopwords</span>(<span class="st">"english"</span>))</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove whitespace</span></span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, stripWhitespace)</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove numbers</span></span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(removeNumbers))</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove custom stop words</span></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>remove_words <span class="ot">&lt;-</span></span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">"include"</span>,<span class="st">"methods"</span>,<span class="st">"topics"</span>,<span class="st">"design"</span>,<span class="st">"functions"</span>,<span class="st">"emphasis"</span>,<span class="st">"language"</span>,<span class="st">"introduction"</span>,<span class="st">"languages"</span>,<span class="st">"performance"</span>,<span class="st">"experience"</span>,<span class="st">"course"</span>,<span class="st">"science"</span>,<span class="st">"techniques"</span>,<span class="st">"variables"</span>,<span class="st">"number"</span>,<span class="st">"department"</span>,<span class="st">"tools"</span>,<span class="st">"fundamental"</span>,<span class="st">"also"</span>,<span class="st">"major"</span>,<span class="st">"modern"</span>,<span class="st">"issues"</span>,<span class="st">"used"</span>,<span class="st">"methods"</span>,<span class="st">"using"</span>,<span class="st">"case"</span>,<span class="st">"architecture"</span>,<span class="st">"covered"</span>,<span class="st">"credit"</span>,<span class="st">"basic"</span>,<span class="st">"cosc"</span>,<span class="st">"granted"</span>,<span class="st">"use"</span>,<span class="st">"solutions"</span>,<span class="st">"data"</span>,<span class="st">"will"</span>,<span class="st">"students"</span>,<span class="st">"fall"</span>,<span class="st">"spring"</span>,<span class="st">"important"</span>,<span class="st">"one"</span>,<span class="st">"considered"</span>,<span class="st">"stacks"</span>,<span class="st">"offers"</span>,<span class="st">"types"</span>,<span class="st">"may"</span>,<span class="st">"held"</span>,<span class="st">"former"</span>,<span class="st">"honours"</span>,<span class="st">"faculty"</span>,<span class="st">"related"</span>,<span class="st">"enter"</span>,<span class="st">"review"</span>,<span class="st">"enrolment"</span>,<span class="st">"exercises"</span>,<span class="st">"summer"</span>,<span class="st">"need"</span>,<span class="st">"offered"</span>,<span class="st">"social"</span>,<span class="st">"digital"</span>,<span class="st">"terms"</span>,<span class="st">"real"</span>,<span class="st">"concepts"</span>,<span class="st">"understanding"</span>,<span class="st">"can"</span>,<span class="st">"including"</span>,<span class="st">"programs"</span>,<span class="st">"program"</span>,<span class="st">"recommended"</span>,<span class="st">"examples"</span>,<span class="st">"introduced"</span>,<span class="st">"large"</span>,<span class="st">"search"</span>,<span class="st">"relations"</span>,<span class="st">"key"</span>,<span class="st">"etc"</span>,<span class="st">"reasoning"</span>,<span class="st">"intended"</span>,<span class="st">"fws"</span>,<span class="st">"general"</span>,<span class="st">"restricted"</span>,<span class="st">"version"</span>,<span class="st">"two"</span>,<span class="st">"comp"</span>,<span class="st">"well"</span>,<span class="st">"rich"</span>,<span class="st">"intended"</span>,<span class="st">"required"</span>,<span class="st">"internet"</span>,<span class="st">"recent"</span>,<span class="st">"phys"</span>,<span class="st">"sciences"</span>,<span class="st">"covers"</span>,<span class="st">"year"</span>,<span class="st">"selected"</span>,<span class="st">"renewal"</span>,<span class="st">"explored"</span>,<span class="st">"csch"</span>,<span class="st">"principles"</span>,<span class="st">"practice"</span>,<span class="st">"development"</span>,<span class="st">"studies"</span>,<span class="st">"security"</span>,<span class="st">"provides"</span>,<span class="st">"advanced"</span>,<span class="st">"instruction"</span>,<span class="st">"discussed"</span>,<span class="st">"processes"</span>,<span class="st">"death"</span>,<span class="st">"lower"</span>,<span class="st">"high"</span>,<span class="st">"crncr"</span>,<span class="st">"taken"</span>,<span class="st">"efficient"</span>,<span class="st">"includes"</span>,<span class="st">"core"</span>,<span class="st">"retrieval"</span>,<span class="st">"class"</span>,<span class="st">"within"</span>,<span class="st">"present"</span>,<span class="st">"option"</span>,<span class="st">"interested"</span>,<span class="st">"together"</span>,<span class="st">"session"</span>,<span class="st">"week"</span>,<span class="st">"new"</span>,<span class="st">"order"</span>,<span class="st">"tables"</span>,<span class="st">"small"</span>,<span class="st">"suitable"</span>,<span class="st">"wide"</span>,<span class="st">"without"</span>,<span class="st">"good"</span></span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="cf">function</span>(x) {</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">removeWords</span>(x, remove_words)</span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>dtm_notfidf <span class="ot">&lt;-</span> <span class="fu">DocumentTermMatrix</span>(corpus)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Not stemming means we will manually have to combine like terms. For example our corpus contains “math”, “mathematics”, “mathematically”, and “mathematical” so we will need to go in and sum their columns in the DTM.</p>
+<div class="cell" data-hash="index_cache/html/Combining Math Columns_f6235e24df393af43176a039f03e9ca4">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get indices of math columns</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>math_idx <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">colnames</span>(dtm_notfidf) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"math"</span>, <span class="st">"mathematics"</span>, <span class="st">"mathematically"</span>,<span class="st">"mathematical"</span>))</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert sparse matrix dtm to normal matrix</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>dtm_notfidf <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm_notfidf)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine columns that mean math</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>dtm_notfidf[,<span class="fu">c</span>(math_idx[<span class="dv">4</span>])] <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(dtm_notfidf[,<span class="fu">c</span>(math_idx)])</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>dtm_notfidf <span class="ot">&lt;-</span> dtm_notfidf[,<span class="sc">-</span>math_idx[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]]</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert back to DTM</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>dtm_notfidf <span class="ot">&lt;-</span> <span class="fu">as.DocumentTermMatrix</span>(<span class="fu">as.simple_triplet_matrix</span>(dtm_notfidf),<span class="at">weighting =</span> weightTf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="group-solution-3" class="level4">
+<h4 class="anchored" data-anchor-id="group-solution-3">5 Group Solution</h4>
+<div class="cell" data-hash="index_cache/html/5 Group No TF-IDF Weighting Vis_08255ba262e1b4f049046307d8610f3e">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm_notfidf, <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm_notfidf)</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="group-solution-4" class="level4">
+<h4 class="anchored" data-anchor-id="group-solution-4">8 Group Solution</h4>
+<div class="cell" data-hash="index_cache/html/8 Group No TF-IDF Weighting Vis_dff8f3f9c70506e73bb4aad109c9b526">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">10</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm_notfidf, <span class="dv">8</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
@@ -1020,7 +1142,7 @@ Docs        vector
 <span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
 <span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
 <span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm)</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm_notfidf)</span>
 <span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
 <span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
 <span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a></span>
@@ -1034,12 +1156,271 @@ Docs        vector
 <span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
-<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a><span class="fu">serVis</span>(json_lda, <span class="at">out.dir =</span> <span class="st">"../LDAvis10"</span>, <span class="at">open.browser =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in dir.create(out.dir): '..\LDAvis10' already exists</code></pre>
+<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="group-solution-5" class="level4">
+<h4 class="anchored" data-anchor-id="group-solution-5">10 Group Solution</h4>
+<div class="cell" data-hash="index_cache/html/10 Group No TF-IDF Weighting Vis_023e0528bf5854449734f14648f782d6">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm_notfidf, <span class="dv">10</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm_notfidf)</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="tf-idf-25th-percentile" class="level3">
+<h3 class="anchored" data-anchor-id="tf-idf-25th-percentile">TF-IDF 25th Percentile</h3>
+<div class="cell" data-hash="index_cache/html/Remaking DTM for TF-IDF 25th Percentile_60ca6ed793d8ab31496e5c86a8cb460d">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading in data</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"../data/RObjects/degree_corpus.RData"</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct corpus object</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">DataframeSource</span>(degree_corpus)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">Corpus</span>(ds)</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Text preprocessing omitting stemming</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove punctuation</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(removePunctuation))</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Send everything to lower case</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(tolower))</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove stopwords</span></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(removeWords), </span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>          <span class="fu">stopwords</span>(<span class="st">"english"</span>))</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove whitespace</span></span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, stripWhitespace)</span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove numbers</span></span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(removeNumbers))</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove custom stop words</span></span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>remove_words <span class="ot">&lt;-</span></span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">"include"</span>,<span class="st">"methods"</span>,<span class="st">"topics"</span>,<span class="st">"design"</span>,<span class="st">"functions"</span>,<span class="st">"emphasis"</span>,<span class="st">"language"</span>,<span class="st">"introduction"</span>,<span class="st">"languages"</span>,<span class="st">"performance"</span>,<span class="st">"experience"</span>,<span class="st">"course"</span>,<span class="st">"science"</span>,<span class="st">"techniques"</span>,<span class="st">"variables"</span>,<span class="st">"number"</span>,<span class="st">"department"</span>,<span class="st">"tools"</span>,<span class="st">"fundamental"</span>,<span class="st">"also"</span>,<span class="st">"major"</span>,<span class="st">"modern"</span>,<span class="st">"issues"</span>,<span class="st">"used"</span>,<span class="st">"methods"</span>,<span class="st">"using"</span>,<span class="st">"case"</span>,<span class="st">"architecture"</span>,<span class="st">"covered"</span>,<span class="st">"credit"</span>,<span class="st">"basic"</span>,<span class="st">"cosc"</span>,<span class="st">"granted"</span>,<span class="st">"use"</span>,<span class="st">"solutions"</span>,<span class="st">"data"</span>,<span class="st">"will"</span>,<span class="st">"students"</span>,<span class="st">"fall"</span>,<span class="st">"spring"</span>,<span class="st">"important"</span>,<span class="st">"one"</span>,<span class="st">"considered"</span>,<span class="st">"stacks"</span>,<span class="st">"offers"</span>,<span class="st">"types"</span>,<span class="st">"may"</span>,<span class="st">"held"</span>,<span class="st">"former"</span>,<span class="st">"honours"</span>,<span class="st">"faculty"</span>,<span class="st">"related"</span>,<span class="st">"enter"</span>,<span class="st">"review"</span>,<span class="st">"enrolment"</span>,<span class="st">"exercises"</span>,<span class="st">"summer"</span>,<span class="st">"need"</span>,<span class="st">"offered"</span>,<span class="st">"social"</span>,<span class="st">"digital"</span>,<span class="st">"terms"</span>,<span class="st">"real"</span>,<span class="st">"concepts"</span>,<span class="st">"understanding"</span>,<span class="st">"can"</span>,<span class="st">"including"</span>,<span class="st">"programs"</span>,<span class="st">"program"</span>,<span class="st">"recommended"</span>,<span class="st">"examples"</span>,<span class="st">"introduced"</span>,<span class="st">"large"</span>,<span class="st">"search"</span>,<span class="st">"relations"</span>,<span class="st">"key"</span>,<span class="st">"etc"</span>,<span class="st">"reasoning"</span>,<span class="st">"intended"</span>,<span class="st">"fws"</span>,<span class="st">"general"</span>,<span class="st">"restricted"</span>,<span class="st">"version"</span>,<span class="st">"two"</span>,<span class="st">"comp"</span>,<span class="st">"well"</span>,<span class="st">"rich"</span>,<span class="st">"intended"</span>,<span class="st">"required"</span>,<span class="st">"internet"</span>,<span class="st">"recent"</span>,<span class="st">"phys"</span>,<span class="st">"sciences"</span>,<span class="st">"covers"</span>,<span class="st">"year"</span>,<span class="st">"selected"</span>,<span class="st">"renewal"</span>,<span class="st">"explored"</span>,<span class="st">"csch"</span>,<span class="st">"principles"</span>,<span class="st">"practice"</span>,<span class="st">"development"</span>,<span class="st">"studies"</span>,<span class="st">"security"</span>,<span class="st">"provides"</span>,<span class="st">"advanced"</span>,<span class="st">"instruction"</span>,<span class="st">"discussed"</span>,<span class="st">"processes"</span>,<span class="st">"death"</span>,<span class="st">"lower"</span>,<span class="st">"high"</span>,<span class="st">"crncr"</span>,<span class="st">"taken"</span>,<span class="st">"efficient"</span>,<span class="st">"includes"</span>,<span class="st">"core"</span>,<span class="st">"retrieval"</span>,<span class="st">"class"</span>,<span class="st">"within"</span>,<span class="st">"present"</span>,<span class="st">"option"</span>,<span class="st">"interested"</span>,<span class="st">"together"</span>,<span class="st">"session"</span>,<span class="st">"week"</span>,<span class="st">"new"</span>,<span class="st">"order"</span>,<span class="st">"tables"</span>,<span class="st">"small"</span>,<span class="st">"suitable"</span>,<span class="st">"wide"</span>,<span class="st">"without"</span>,<span class="st">"good"</span></span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="cf">function</span>(x) {</span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">removeWords</span>(x, remove_words)</span>
+<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Create DTM</span></span>
+<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a>dtm_25tfidf <span class="ot">&lt;-</span> <span class="fu">DocumentTermMatrix</span>(corpus)</span>
+<span id="cb44-31"><a href="#cb44-31" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(dtm_25tfidf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;&lt;DocumentTermMatrix (documents: 9, terms: 1859)&gt;&gt;
+Non-/sparse entries: 3546/13185
+Sparsity           : 79%
+Maximal term length: 63
+Weighting          : term frequency (tf)
+Sample             :
+           Terms
+Docs        algorithms analysis applications linear math models programming
+  Berkeley           2        3            3      4    1      1           6
+  Concordia          5        7            6      7    1      6           9
+  Laurier           11       14            6      7    0      5           7
+  Manitoba           4       11            4      4   45      3           5
+  SFU                7       16            6      5    8      8          15
+  Toronto            7        9            2      3    0      5           8
+  UBCO               1        7            9      6    5      8           1
+  Waterloo          12        5            7      5    0      5           6
+  Western            7        2            2      4    0      6           4
+           Terms
+Docs        regression statistical systems
+  Berkeley           4           3       5
+  Concordia          4           5       6
+  Laurier            4           2       8
+  Manitoba           6           5       6
+  SFU                5           3      10
+  Toronto            6          15       1
+  UBCO               3           7       4
+  Waterloo          10           3       7
+  Western            4           2       4</code></pre>
 </div>
 </div>
-<p>View the 10 group solution <a href="https://danyulll.github.io/LDAvis10Sol/">here</a>.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-21_7e3a30edb4323775af0bd6cc44fa42dd">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get indices of math columns</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>math_idx <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">colnames</span>(dtm_25tfidf) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"math"</span>, <span class="st">"mathematics"</span>, <span class="st">"mathematically"</span>,<span class="st">"mathematical"</span>))</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert sparse matrix dtm to normal matrix</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>dtm_25tfidf <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm_25tfidf)</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine columns that mean math</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>dtm_25tfidf[,<span class="fu">c</span>(math_idx[<span class="dv">4</span>])] <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(dtm_25tfidf[,<span class="fu">c</span>(math_idx)])</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>dtm_25tfidf <span class="ot">&lt;-</span> dtm_25tfidf[,<span class="sc">-</span>math_idx[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]]</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert back to DTM</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>dtm_25tfidf <span class="ot">&lt;-</span> <span class="fu">as.DocumentTermMatrix</span>(<span class="fu">as.simple_triplet_matrix</span>(dtm_25tfidf),<span class="at">weighting =</span> weightTf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="index_cache/html/TF-IDF weighting for 25th pt 1_ffa708360296d4ae7fb073b29a7edb0b">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reweight and filter DTM based on mean TF-IDF</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>tfidf_dtm <span class="ot">&lt;-</span> <span class="fu">weightTfIdf</span>(dtm_25tfidf)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>tfidf_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(tfidf_dtm)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tfidf_mat[tfidf_mat <span class="sc">&gt;</span> <span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+0.0001783 0.0020241 0.0033263 0.0039243 0.0048575 0.0415728 </code></pre>
+</div>
+</div>
+<div class="cell" data-hash="index_cache/html/TF-IDF weighting for 25th pt 2_5695cfd4aeea76cb974ed0e6b073a396">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>tfidf_dtm_r <span class="ot">&lt;-</span> tfidf_dtm[,tfidf_dtm<span class="sc">$</span>v <span class="sc">&gt;</span> <span class="fl">0.0020</span>]</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get our list of tfidf terms       </span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>terms <span class="ot">&lt;-</span> tfidf_dtm_r<span class="sc">$</span>dimnames<span class="sc">$</span>Terms</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter our original dtm</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>dtm_25tfidf <span class="ot">&lt;-</span> dtm_25tfidf[,<span class="fu">which</span>(dtm<span class="sc">$</span>dimnames<span class="sc">$</span>Terms <span class="sc">%in%</span> terms)]</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(dtm_25tfidf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;&lt;DocumentTermMatrix (documents: 9, terms: 542)&gt;&gt;
+Non-/sparse entries: 1359/3519
+Sparsity           : 72%
+Maximal term length: 63
+Weighting          : term frequency (tf)
+Sample             :
+           Terms
+Docs        algorithms computer database model probability regression software
+  Berkeley           2        2        0     2           1          4        1
+  Concordia          5        3        3     5           2          4        5
+  Laurier           11        5        2     5           3          4        3
+  Manitoba           4        3        1     2           4          6        3
+  SFU                7        6        6     2           1          5        5
+  Toronto            7        5        3     1           2          6        5
+  UBCO               1        1        1     3           2          3        5
+  Waterloo          12        6       11     2           6         10        4
+  Western            7        1        3     4           2          4        4
+           Terms
+Docs        statistical systems theory
+  Berkeley            3       5      2
+  Concordia           5       6      2
+  Laurier             2       8      4
+  Manitoba            5       6      8
+  SFU                 3      10      6
+  Toronto            15       1      3
+  UBCO                7       4      4
+  Waterloo            3       7      4
+  Western             2       4      3</code></pre>
+</div>
+</div>
+<section id="group-solution-6" class="level4">
+<h4 class="anchored" data-anchor-id="group-solution-6">5 Group Solution</h4>
+<div class="cell" data-hash="index_cache/html/5 Group TF-IDF Weighting Vis_c254c16135bc8d58ee27e8f648822e8e">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm_25tfidf, <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm_25tfidf)</span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-26"><a href="#cb51-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-27"><a href="#cb51-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb51-28"><a href="#cb51-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="group-solution-7" class="level4">
+<h4 class="anchored" data-anchor-id="group-solution-7">8 Group Solution</h4>
+<div class="cell" data-hash="index_cache/html/8 Group TF-IDF Weighting Vis_d22ada1d4b0d86bd729335d89b90a913">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm_25tfidf, <span class="dv">8</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm_25tfidf)</span>
+<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-18"><a href="#cb52-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb52-19"><a href="#cb52-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb52-20"><a href="#cb52-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb52-21"><a href="#cb52-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb52-22"><a href="#cb52-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb52-23"><a href="#cb52-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb52-24"><a href="#cb52-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb52-25"><a href="#cb52-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb52-26"><a href="#cb52-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-27"><a href="#cb52-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb52-28"><a href="#cb52-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="group-solution-8" class="level4">
+<h4 class="anchored" data-anchor-id="group-solution-8">10 Group Solution</h4>
+<div class="cell" data-hash="index_cache/html/10 Group TF-IDF Weighting Vis_50549172c9c710c087305ac03f7e7795">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm_25tfidf, <span class="dv">10</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>)</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm_25tfidf)</span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb53-19"><a href="#cb53-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb53-20"><a href="#cb53-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb53-21"><a href="#cb53-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb53-22"><a href="#cb53-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb53-23"><a href="#cb53-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb53-24"><a href="#cb53-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb53-25"><a href="#cb53-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb53-26"><a href="#cb53-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-27"><a href="#cb53-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb53-28"><a href="#cb53-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 </section>
 </section>
 <section id="references" class="level2">
