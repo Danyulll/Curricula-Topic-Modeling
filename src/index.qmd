@@ -569,7 +569,7 @@ top_terms %>%
 
 ## Inspecting Other Solutions
 
-From our 20 group visualization we see significant overlap on the left clusters. This suggests one of our fewer topic solutions may be more apt. Therefore we opt to visualize the 5, 8, and 10 group solutions. Furthermore, it seems in our word clouds stemming has made interpretability more difficult. Therefore we change our DTM to not include stemming; if similair rooted words appear we can always go back and combine them by hand.
+From our 20 group visualization we see significant overlap on the left clusters. This suggests one of our fewer topic solutions may be more apt. Therefore we opt to visualize the 5, 8, and 10 group solutions. Furthermore, it seems in our word clouds stemming has made interpretability more difficult. Therefore we change our DTM to not include stemming; if similar rooted words appear we can always go back and combine them by hand.
 
 ```{r Remaking DTM}
 # Loading in data
@@ -750,7 +750,7 @@ corpus <- tm_map(corpus, stripWhitespace)
 corpus <- tm_map(corpus, content_transformer(removeNumbers))
 # Remove custom stop words
 remove_words <-
-  c("include","methods","topics","design","functions","emphasis","language","introduction","languages","performance","experience","course","science","techniques","variables","number","department","tools","fundamental","also","major","modern","issues","used","methods","using","case","architecture","covered","credit","basic","cosc","granted","use","solutions","data","will","students","fall","spring","important","one","considered","stacks","offers","types","may","held","former","honours","faculty","related","enter","review","enrolment","exercises","summer","need","offered","social","digital","terms","real","concepts","understanding","can","including","programs","program","recommended","examples","introduced","large","search","relations","key","etc","reasoning","intended","fws","general","restricted","version","two","comp","well","rich","intended","required","internet","recent","phys","sciences","covers","year","selected","renewal","explored","csch","principles","practice","development","studies","security","provides","advanced","instruction","discussed","processes","death","lower","high","crncr","taken","efficient","includes","core","retrieval","class","within","present","option","interested","together","session","week","new","order","tables","small","suitable","wide","without","good"
+  c("include","methods","topics","design","functions","emphasis","language","introduction","languages","performance","experience","course","science","techniques","variables","number","department","tools","fundamental","also","major","modern","issues","used","methods","using","case","architecture","covered","credit","basic","cosc","granted","use","solutions","data","will","students","fall","spring","important","one","considered","stacks","offers","types","may","held","former","honours","faculty","related","enter","review","enrolment","exercises","summer","need","offered","social","digital","terms","real","concepts","understanding","can","including","programs","program","recommended","examples","introduced","large","search","relations","key","etc","reasoning","intended","fws","general","restricted","version","two","comp","well","rich","intended","required","internet","recent","phys","sciences","covers","year","selected","renewal","explored","csch","principles","practice","development","studies","security","provides","advanced","instruction","discussed","processes","death","lower","high","crncr","taken","efficient","includes","core","retrieval","class","within","present","option","interested","together","session","week","new","order","tables","small","suitable","wide","without","good","introduces","assignments","current","thinking","completed","basics","essential","gain","effective","file","three","many","classes","extensive","tasks","work","meaningful","first","creating","elementary","image"
   )
 corpus <- tm_map(corpus, function(x) {
   removeWords(x, remove_words)
@@ -761,27 +761,65 @@ dtm_notfidf <- DocumentTermMatrix(corpus)
 
 Not stemming means we will manually have to combine like terms. For example our corpus contains "math", "mathematics", "mathematically", and "mathematical" so we will need to go in and sum their columns in the DTM.
 
-```{r Combining Math Columns}
-# Get indices of math columns
-math_idx <- which(colnames(dtm_notfidf) %in% c("math", "mathematics", "mathematically","mathematical"))
+```{r Define combineCols function}
+combineCols <- function(words, dtm){
+  # Get indices of columns
+idx <- which(colnames(dtm) %in% words)
 
 # Convert sparse matrix dtm to normal matrix
-dtm_notfidf <- as.matrix(dtm_notfidf)
+dtm <- as.matrix(dtm)
 
-# Combine columns that mean math
-dtm_notfidf[,c(math_idx[4])] <- rowSums(dtm_notfidf[,c(math_idx)])
-dtm_notfidf <- dtm_notfidf[,-math_idx[1:3]]
+# Combine columns
+dtm[,c(idx[1])] <- rowSums(dtm[,c(idx)])
 
+if(length(words) == 2){
+dtm <- dtm[,-idx[2]]  
+}else{
+dtm <- dtm[,-idx[2:length(words)]]  
+}
 # Convert back to DTM
-dtm_notfidf <- as.DocumentTermMatrix(as.simple_triplet_matrix(dtm_notfidf),weighting = weightTf)
+dtm <- as.DocumentTermMatrix(as.simple_triplet_matrix(dtm),weighting = weightTf)
+
+return(dtm)
+}
 ```
 
+```{r Combining Columns}
+dtm_notfidf <-
+  combineCols(c("math", "mathematics", "mathematically", "mathematical"),
+              dtm_notfidf)
+
+dtm_notfidf <-
+  combineCols(c("model", "modeling", "modelling", "models"), dtm_notfidf)
+
+dtm_notfidf <- combineCols(c("algorithm", "algorithms"), dtm_notfidf)
+
+dtm_notfidf <- combineCols(c("learn", "learning"), dtm_notfidf)
+
+dtm_notfidf <- combineCols(c("stat", "statistics","statistical"), dtm_notfidf)
+
+dtm_notfidf <- combineCols(c("proof", "proofs"), dtm_notfidf)
+
+dtm_notfidf <- combineCols(c("fields", "field"), dtm_notfidf)
+dtm_notfidf <- combineCols(c("application","applications", "apply"), dtm_notfidf)
+
+dtm_notfidf <- combineCols(c("logical", "logic"), dtm_notfidf)
+
+dtm_notfidf <- combineCols(c("limit", "limits"), dtm_notfidf)
+
+dtm_notfidf <- combineCols(c("distributions", "distribution"), dtm_notfidf)
+
+dtm_notfidf <- combineCols(c("theorem", "theorems"), dtm_notfidf)
+
+```
+
+Note for the following visualization we will have $\lambda=0.6$ as suggested by Sievert and Shirley.
 
 #### 5 Group Solution
 
-```{r 5 Group No TF-IDF Weighting Vis}
+```{r 5 Group No TF-IDF Weighting Vis, cache=TRUE}
 # Fit largest model
-lda.out <- LDA(dtm_notfidf, 5, method = "Gibbs")
+lda.out <- LDA(dtm_notfidf, 5, method = "Gibbs", control = list(seed = 87460945))
 
 # Find required quantities
 phi <- posterior(lda.out)$terms %>% as.matrix
@@ -807,12 +845,38 @@ json_lda <- LDAvis::createJSON(
 )
 
 # Open server for visualization
-# serVis(json_lda, open.browser = TRUE)
+suppressWarnings(serVis(json_lda, open.browser = TRUE))
 ```
+Top terms:
+- Group 1: model, applications, systems, software, probability, structures (using software to apply models?)
+- Group 2: database, algorithms, regression, theorem, proofs, distributions (databases topic?)
+- Group 3: mathematical, statistical, calculus, problems, linear, multiple (math and stats topic)
+- Group 4: programming, analysis, business, time, computing, estimation, visualization, management, marketing, algorithms (certainly a programming topic, maybe a data analysis,visualization topic with applications in business?)
+- Group 5: information, learning, mining, graph, machine, knowledge, text, linear, big (machine learning topic, big could be for big data)
+
+Top terms for $\beta$
+  
+```{r}
+uni_topics <- tidy(lda.out,matrix="beta")
+
+top_terms <- uni_topics %>%
+ group_by(topic) %>%
+ top_n(10, beta) %>%
+ ungroup() %>%
+ arrange(topic, -beta) %>%
+  mutate(term = reorder(term, beta))
+
+top_terms %>%
+ ggplot(aes(term, beta, fill = factor(topic))) +
+ geom_col(show.legend = FALSE) +
+ facet_wrap(~ topic, scales = "free") +
+ coord_flip()
+```
+
 #### 8 Group Solution
 ```{r 8 Group No TF-IDF Weighting Vis}
 # Fit largest model
-lda.out <- LDA(dtm_notfidf, 8, method = "Gibbs")
+lda.out <- LDA(dtm_notfidf, 8, method = "Gibbs", control = list(seed = 87460945))
 
 # Find required quantities
 phi <- posterior(lda.out)$terms %>% as.matrix
@@ -838,12 +902,40 @@ json_lda <- LDAvis::createJSON(
 )
 
 # Open server for visualization
-# serVis(json_lda, open.browser = TRUE)
+ serVis(json_lda, open.browser = TRUE)
 ```
+Top Terms:
+- Group 1: model, applications, programming, systems, algorithms, linear, analysis (applications of models in data analysis)
+- Group 2: mathematical, statistical, calculus, multiple, problems, variance, random, optimzation, theory (clearly a math/stats topic)
+- Group 3: machine, knowledge, text, mining, objectorientated, classification, system, environment (machine learning topic with focus on data mining)
+- Group 4: theorem, logic, skills, proofs, study, inference, estiamtors, compelxity (mathematical proof topics or probability theory topic)
+- Group 5: differential, queues, sampling, distributions, regression, databases, liklehood, ordinary (the fact that differential occurs with distribtions, likelihood, ordinary, and regression makes me think of a GLM topic)
+- Group 6: information, sets, big, practical, graph, control, problem, network (a graph/set theory topic, potential focus on big data and network analysis)
+- Group 7: computing, business, analysis, marketing, writing, team, decision, research (data analysis topic in business/marketing)
+- Group 8: equations, partial, implementation, derivatives, chains, critical, physical, applied, actuarial, eigenvalues, privacy, generalized (pretty noisey topic maybe something to do with applied math)
+
+Top terms for $\beta$ (notably this one has a few differences like the statistical learning topic for 2)
+```{r}
+uni_topics <- tidy(lda.out,matrix="beta")
+
+top_terms <- uni_topics %>%
+ group_by(topic) %>%
+ top_n(15, beta) %>%
+ ungroup() %>%
+ arrange(topic, -beta) %>%
+  mutate(term = reorder(term, beta))
+
+top_terms %>%
+ ggplot(aes(term, beta, fill = factor(topic))) +
+ geom_col(show.legend = FALSE) +
+ facet_wrap(~ topic, scales = "free") +
+ coord_flip()
+```
+
 #### 10 Group Solution
 ```{r 10 Group No TF-IDF Weighting Vis}
 # Fit largest model
-lda.out <- LDA(dtm_notfidf, 10, method = "Gibbs")
+lda.out <- LDA(dtm_notfidf, 10, method = "Gibbs",control = list(seed = 87460945))
 
 # Find required quantities
 phi <- posterior(lda.out)$terms %>% as.matrix
@@ -869,58 +961,96 @@ json_lda <- LDAvis::createJSON(
 )
 
 # Open server for visualization
-# serVis(json_lda, open.browser = TRUE)
+ serVis(json_lda, open.browser = TRUE)
+ 
+ 
 ```
+Top Terms
+- Group 1: model, applications, algorithms, programming, systems, linear, regression (applications of models in data analysis, likely focus on programming them)
+- Group 2: mathematical, statistical, multiple, calculus, varainces, derivatives, optimization (math and stat classes though notably math has a higher estiamted teerm frequency)
+- Group 3: learning, machine, integrals, text, mining, web, information, practical, patterns (definitely a machine learning topic though since neither classification nor regression show up probably machine learning with respect to feature extraction whether from text, web, etc)
+- Group 4: database, likelihood, logic, simulation, distributions, space, prediction, sample (noisey topic, database has the highest estimated frequency so maybe we can take it as a databases topic)
+- Group 5: computing, business, marketing, management, analysis, objectoreintated, communication, quantitative (business data analysis with a focus on programming and communicating results)
+- Group 6: theorem, proofs, field, theoretical, estimators (mathematical proof topic, estimators makes me think it includes probability theory)
+- Group 7: big, operations, transformation, power, engines, trees, partial, vector, variable, algorithmic, diagonalization, construction (a topic on working with big data and data sets, likely covers transforming data and applying linear algebra techniques like diagonalization to datasets)
+- Group 8: problems, learning, realworld, study, finite, reading, database, exponential, inference, crossvalidation (applying datascience / machine learning to realworld studies?)
+- Group 9: sets, sampling, matrices, simple, privacy, searching, complex, recursive (privacy mixed with sampling makes me think of a data sampling topic or experiment design)
+- Group 10: graphs, implementation, presentation, unsupervised, scientific, java, analytics, automata, python, applying, lifecycle, objective, ridge (noisey topic but something to do with scientific programming)
+
+Top terms for $\beta$
+```{r}
+uni_topics <- tidy(lda.out,matrix="beta")
+
+top_terms <- uni_topics %>%
+ group_by(topic) %>%
+ top_n(10, beta) %>%
+ ungroup() %>%
+ arrange(topic, -beta) %>%
+  mutate(term = reorder(term, beta))
+
+top_terms %>%
+ ggplot(aes(term, beta, fill = factor(topic))) +
+ geom_col(show.legend = FALSE) +
+ facet_wrap(~ topic, scales = "free") +
+ coord_flip()
+```
+
 ### TF-IDF 25th Percentile
 
-```{r Remaking DTM for TF-IDF 25th Percentile}
+```{r Setting up 25tfidf dtm}
 # Loading in data
 load("../data/RObjects/degree_corpus.RData")
 
-# Construct corpus object
+# Create corpus object
 ds <- DataframeSource(degree_corpus)
 corpus <- Corpus(ds)
-
-# Text preprocessing omitting stemming
 
 # Remove punctuation
 corpus <- tm_map(corpus, content_transformer(removePunctuation))
 # Send everything to lower case
 corpus <- tm_map(corpus, content_transformer(tolower))
 # Remove stopwords
-corpus <- tm_map(corpus, content_transformer(removeWords), 
-          stopwords("english"))
+corpus <- tm_map(corpus,
+                 content_transformer(removeWords),
+                 stopwords("english"))
 # Remove whitespace
 corpus <- tm_map(corpus, stripWhitespace)
 # Remove numbers
 corpus <- tm_map(corpus, content_transformer(removeNumbers))
 # Remove custom stop words
 remove_words <-
-  c("include","methods","topics","design","functions","emphasis","language","introduction","languages","performance","experience","course","science","techniques","variables","number","department","tools","fundamental","also","major","modern","issues","used","methods","using","case","architecture","covered","credit","basic","cosc","granted","use","solutions","data","will","students","fall","spring","important","one","considered","stacks","offers","types","may","held","former","honours","faculty","related","enter","review","enrolment","exercises","summer","need","offered","social","digital","terms","real","concepts","understanding","can","including","programs","program","recommended","examples","introduced","large","search","relations","key","etc","reasoning","intended","fws","general","restricted","version","two","comp","well","rich","intended","required","internet","recent","phys","sciences","covers","year","selected","renewal","explored","csch","principles","practice","development","studies","security","provides","advanced","instruction","discussed","processes","death","lower","high","crncr","taken","efficient","includes","core","retrieval","class","within","present","option","interested","together","session","week","new","order","tables","small","suitable","wide","without","good"
+  c("include","methods","topics","design","functions","emphasis","language","introduction","languages","performance","experience","course","science","techniques","variables","number","department","tools","fundamental","also","major","modern","issues","used","methods","using","case","architecture","covered","credit","basic","cosc","granted","use","solutions","data","will","students","fall","spring","important","one","considered","stacks","offers","types","may","held","former","honours","faculty","related","enter","review","enrolment","exercises","summer","need","offered","social","digital","terms","real","concepts","understanding","can","including","programs","program","recommended","examples","introduced","large","search","relations","key","etc","reasoning","intended","fws","general","restricted","version","two","comp","well","rich","intended","required","internet","recent","phys","sciences","covers","year","selected","renewal","explored","csch","principles","practice","development","studies","security","provides","advanced","instruction","discussed","processes","death","lower","high","crncr","taken","efficient","includes","core","retrieval","class","within","present","option","interested","together","session","week","new","order","tables","small","suitable","wide","without","good","introduces","assignments","current","thinking","completed","basics","essential","gain","effective","file","three","many","classes","extensive","tasks","work","meaningful","first","creating","various", "majors"
   )
 corpus <- tm_map(corpus, function(x) {
   removeWords(x, remove_words)
 })
 
-# Create DTM
 dtm_25tfidf <- DocumentTermMatrix(corpus)
-inspect(dtm_25tfidf)
+
+dtm_25tfidf <-
+  combineCols(c("math", "mathematics", "mathematically", "mathematical"),
+              dtm_25tfidf)
+
+dtm_25tfidf <-
+  combineCols(c("model", "modeling", "modelling", "models"), dtm_25tfidf)
+
+dtm_25tfidf <- combineCols(c("algorithm", "algorithms"), dtm_25tfidf)
+
+dtm_25tfidf <- combineCols(c("learn", "learning"), dtm_25tfidf)
+
+dtm_25tfidf <- combineCols(c("stat", "statistics","statistical"), dtm_25tfidf)
+
+dtm_25tfidf <- combineCols(c("proof", "proofs"), dtm_25tfidf)
+
+dtm_25tfidf <- combineCols(c("fields", "field"), dtm_25tfidf)
+dtm_25tfidf <- combineCols(c("application","applications", "apply"), dtm_25tfidf)
+
+dtm_25tfidf <- combineCols(c("logical", "logic"), dtm_25tfidf)
+
+dtm_25tfidf <- combineCols(c("limit", "limits"), dtm_25tfidf)
+
+dtm_25tfidf <- combineCols(c("distributions", "distribution"), dtm_25tfidf)
 ```
-```{r}
-# Get indices of math columns
-math_idx <- which(colnames(dtm_25tfidf) %in% c("math", "mathematics", "mathematically","mathematical"))
-
-# Convert sparse matrix dtm to normal matrix
-dtm_25tfidf <- as.matrix(dtm_25tfidf)
-
-# Combine columns that mean math
-dtm_25tfidf[,c(math_idx[4])] <- rowSums(dtm_25tfidf[,c(math_idx)])
-dtm_25tfidf <- dtm_25tfidf[,-math_idx[1:3]]
-
-# Convert back to DTM
-dtm_25tfidf <- as.DocumentTermMatrix(as.simple_triplet_matrix(dtm_25tfidf),weighting = weightTf)
-```
-
 
 ```{r TF-IDF weighting for 25th pt 1}
 # Reweight and filter DTM based on mean TF-IDF
@@ -929,22 +1059,23 @@ tfidf_mat <- as.matrix(tfidf_dtm)
 summary(tfidf_mat[tfidf_mat > 0])
 ```
 
-
 ```{r TF-IDF weighting for 25th pt 2}
-tfidf_dtm_r <- tfidf_dtm[,tfidf_dtm$v > 0.0020]
+tfidf_dtm_r <- tfidf_dtm[,tfidf_dtm$v > 0.0020719]
 
 # Get our list of tfidf terms       
 terms <- tfidf_dtm_r$dimnames$Terms
 
 # Filter our original dtm
-dtm_25tfidf <- dtm_25tfidf[,which(dtm$dimnames$Terms %in% terms)]
-inspect(dtm_25tfidf)
+dtm_25tfidf <- dtm_25tfidf[,which(dtm_25tfidf$dimnames$Terms %in% terms)]
 ```
+
+These will also be examined at $\lambda = 0.6$
+
 #### 5 Group Solution
 
 ```{r 5 Group TF-IDF Weighting Vis}
 # Fit largest model
-lda.out <- LDA(dtm_25tfidf, 5, method = "Gibbs")
+lda.out <- LDA(dtm_25tfidf, 5, method = "Gibbs",control = list(seed = 87460945))
 
 # Find required quantities
 phi <- posterior(lda.out)$terms %>% as.matrix
@@ -970,14 +1101,38 @@ json_lda <- LDAvis::createJSON(
 )
 
 # Open server for visualization
-# serVis(json_lda, open.browser = TRUE)
+serVis(json_lda, open.browser = TRUE)
+```
+Top Terms:
+- Group 1: regression, computer, distributions, algorithms (regression topic)
+- Group 2: applications, theorem, proofs, time, algorithms, theoretical (proofs topic but applications term throws that off)
+- Group 3: analysis, systems, computing, communication, business, project, visualization, management (data analysis topic that focuses on visualizing and communicating results)
+- Group 4: mathematical, theory, random, multiple, simple (math topic not sure what on)
+- Group 5: estimation, information, graphs, networks, matrix, text, big, sets, (estimation in statistics / information theory?)
+
+Top terms for $\beta$
+```{r}
+uni_topics <- tidy(lda.out,matrix="beta")
+
+top_terms <- uni_topics %>%
+ group_by(topic) %>%
+ top_n(10, beta) %>%
+ ungroup() %>%
+ arrange(topic, -beta) %>%
+  mutate(term = reorder(term, beta))
+
+top_terms %>%
+ ggplot(aes(term, beta, fill = factor(topic))) +
+ geom_col(show.legend = FALSE) +
+ facet_wrap(~ topic, scales = "free") +
+ coord_flip()
 ```
 
 #### 8 Group Solution
 
 ```{r 8 Group TF-IDF Weighting Vis}
 # Fit largest model
-lda.out <- LDA(dtm_25tfidf, 8, method = "Gibbs")
+lda.out <- LDA(dtm_25tfidf, 8, method = "Gibbs",control = list(seed = 87460945))
 
 # Find required quantities
 phi <- posterior(lda.out)$terms %>% as.matrix
@@ -1003,14 +1158,40 @@ json_lda <- LDAvis::createJSON(
 )
 
 # Open server for visualization
-# serVis(json_lda, open.browser = TRUE)
+ serVis(json_lda, open.browser = TRUE)
 ```
+Top Terms:
+- Group 1: applications, regression, distributions, generalized, algorithms, probability (GLMs topic)
+- Group 2: mathematical, theory, problems, random, multiple, method, probability, intervals, variance (probability thoery?)
+- Group 3: proofs theorem (mathematical proofs topic)
+- Group 4: analysis, business, computin, practical, project, research, realworld, quantitative, managment (business data analysis with project)
+- Group 5: systems, management, visualization (data visualziation topic)
+- Group 6: estimation, information, grpahs, discrete, field, databases (too noisey to interpret)
+- Group 7: sets, applications, clustering, image, derivatives, unsupervised (unsupervised learning topic maybe some applications to image data)
+- Group 8: big, reading, error, projects, written, network, matrix, graphical (pretty hard to tell)
 
+Top terms for $\beta$
+```{r}
+uni_topics <- tidy(lda.out,matrix="beta")
+
+top_terms <- uni_topics %>%
+ group_by(topic) %>%
+ top_n(10, beta) %>%
+ ungroup() %>%
+ arrange(topic, -beta) %>%
+  mutate(term = reorder(term, beta))
+
+top_terms %>%
+ ggplot(aes(term, beta, fill = factor(topic))) +
+ geom_col(show.legend = FALSE) +
+ facet_wrap(~ topic, scales = "free") +
+ coord_flip()
+```
 #### 10 Group Solution
 
 ```{r 10 Group TF-IDF Weighting Vis}
 # Fit largest model
-lda.out <- LDA(dtm_25tfidf, 10, method = "Gibbs")
+lda.out <- LDA(dtm_25tfidf, 10, method = "Gibbs",control = list(seed = 87460945))
 
 # Find required quantities
 phi <- posterior(lda.out)$terms %>% as.matrix
@@ -1036,8 +1217,198 @@ json_lda <- LDAvis::createJSON(
 )
 
 # Open server for visualization
-# serVis(json_lda, open.browser = TRUE)
+ serVis(json_lda, open.browser = TRUE)
 ```
+Top Terms
+- Group 1: algorithms, probability, distributions, expectation, method, systems, generating, theorems, computation (definitely statistics though algorithms and computation make me think some kind of computational statistics)
+- Group 2: trees, applications, graphs, discrete, differential, random, regression, systems (graph theory course or CARTs)
+- Group 3: regression, analysis, applications, theorem, theoretical, iterative, generalized, confience (regression/GLM topic)
+- Group 4: mathematical, theory, multiple, analysis, abstraction, finite, nonlinear, monte, carlo, simulationased, processing (mathematical simulation topic)
+- Group 5: business. management, analysis, systems, decision, quantitative, project, computing (data analysis topic in business)
+- Group 6: computer, information, text, big, web, document, graphical, deep, humanities, analysis (working with text as data)
+- Group 7: estimation, field, graphs, ability, binary, neural (neural networks topic)
+- Group 8: visualization, clustering, prediction, markov, practical, complex, regularization, handson, segmentation, dimensionality, forecasting (data visualization ?)\
+- Group 9: realword, matrices, image, testing, construction, automata, applied, code, determinants (applied linear algebra)
+- Group 10: presentation, conditional, series, bayesian, value, eigenvectors, eigenvalues (tough to say)
+
+Top terms for $\beta$
+```{r}
+uni_topics <- tidy(lda.out,matrix="beta")
+
+top_terms <- uni_topics %>%
+ group_by(topic) %>%
+ top_n(10, beta) %>%
+ ungroup() %>%
+ arrange(topic, -beta) %>%
+  mutate(term = reorder(term, beta))
+
+top_terms %>%
+ ggplot(aes(term, beta, fill = factor(topic))) +
+ geom_col(show.legend = FALSE) +
+ facet_wrap(~ topic, scales = "free") +
+ coord_flip()
+```
+
+Overall results are quite varied though there are certainly some shared topics between all the models. All models agree on some sort of topic applying Data Science in business setting. This topic is also mixed with a visualization topic. This occurred 8 times between all the models. Next mathematics/statistics occurring as a topic 4 times. They always appear together. Both machine learning and GLMs were popular topics and appear 4 times.
+
+The remaining topics were less frequent and slightly more nosiey. There is some kind of topic involving modeling or applications of models that occurred 3 times. Text and data mining occurred 3 times. Proofs occurred 3 times and probability theory occurred twice though these topics often occurred together as well so it would not be a stretch to combine them. A graph/set theory topic emerged twice. Some sort of big data topic came up twice. Lastly, neural networks, linear algebra, data sampling/experiment design, and databases came up once.
+
+## n-grams
+n-grams allow us to look at different combinations of words and see how they generate topics. I will be looking at bi-grams which means combinations of two words.
+```{r bigrams}
+library(quanteda)
+
+# Loading in data
+load("../data/RObjects/degree_corpus.RData")
+
+# Create corpus object
+ds <- DataframeSource(degree_corpus)
+corpus <- Corpus(ds)
+
+# Remove punctuation
+corpus <- tm_map(corpus, content_transformer(removePunctuation))
+# Send everything to lower case
+corpus <- tm_map(corpus, content_transformer(tolower))
+# Remove stopwords
+corpus <- tm_map(corpus,
+                 content_transformer(removeWords),
+                 stopwords("english"))
+# Remove whitespace
+corpus <- tm_map(corpus, stripWhitespace)
+# Remove numbers
+corpus <- tm_map(corpus, content_transformer(removeNumbers))
+# Remove custom stop words
+remove_words <-
+  c("include","methods","topics","design","functions","emphasis","language","introduction","languages","performance","experience","course","science","techniques","variables","number","department","tools","fundamental","also","major","modern","issues","used","methods","using","case","architecture","covered","credit","basic","cosc","granted","use","solutions","data","will","students","fall","spring","important","one","considered","stacks","offers","types","may","held","former","honours","faculty","related","enter","review","enrolment","exercises","summer","need","offered","social","digital","terms","real","concepts","understanding","can","including","programs","program","recommended","examples","introduced","large","search","relations","key","etc","reasoning","intended","fws","general","restricted","version","two","comp","well","rich","intended","required","internet","recent","phys","sciences","covers","year","selected","renewal","explored","csch","principles","practice","development","studies","security","provides","advanced","instruction","discussed","processes","death","lower","high","crncr","taken","efficient","includes","core","retrieval","class","within","present","option","interested","together","session","week","new","order","tables","small","suitable","wide","without","good","introduces","assignments","current","thinking","completed","basics","essential","gain","effective","file","three","many","classes","extensive","tasks","work","meaningful","first","creating","elementary","image"
+  )
+corpus <- tm_map(corpus, function(x) {
+  removeWords(x, remove_words)
+})
+
+quan_cor <- quanteda::corpus(corpus)
+quan_cor <- tokens(quan_cor, ngrams = 2)%>%
+                          tokens_ngrams(n=2)
+
+dtm_bi <- as.DocumentTermMatrix(dfm(quan_cor),weighting = weightTf)
+inspect(dtm_bi)
+```
+Since the 8 group solution yielded the best results before let's try it out on this.
+
+```{r bigram 8 sol lda}
+# Fit largest model
+lda.out <- LDA(dtm_bi, 8, method = "Gibbs",control = list(seed = 87460945))
+
+# Find required quantities
+phi <- posterior(lda.out)$terms %>% as.matrix
+theta <- posterior(lda.out)$topics %>% as.matrix
+vocab <- colnames(phi)
+doc_length <- vector()
+for (i in 1:length(corpus)) {
+  temp <- paste(corpus[[i]]$content, collapse = ' ')
+  doc_length <-
+    c(doc_length, stri_count(temp, regex = '\\S+'))
+}
+temp_frequency <- as.matrix(dtm_bi)
+freq_matrix <- data.frame(ST = colnames(temp_frequency),
+                          Freq = colSums(temp_frequency))
+
+# Convert to json
+json_lda <- LDAvis::createJSON(
+  phi = phi,
+  theta = theta,
+  vocab = vocab,
+  doc.length = doc_length,
+  term.frequency = freq_matrix$Freq
+)
+
+# Open server for visualization
+ serVis(json_lda, open.browser = TRUE)
+```
+Immediately having bigrams helps us gain intuition about our terms. For example support and vector are being put together for SVMs but previously I had been interpreting vector in the linear algebra sense.
+
+Top terms:
+- Group 1: math, stat, graph theory, linear equations, analysis variances, model selection (definitely some competing topics. Since math, stats, and graph theory are the highest I will opt for a graph theory topic)
+- Group 2: conditional probability, limit theorem, permutation combinations, loglinear models, moment generating (this is a probability theory topic)
+- Group 3: estimation hypothesis, law numbers, sequence series, machine learning, algorithms greedy, statistical analysis (probably intro machine learning or statistical learning since machine learning and estimation hypothesis are tied)
+- Group 4: linear regression, differential equations, logsitic regression, linear models, neural networks (this is still likely a glm topic though the NN throw it off)
+- Group 5: additive models, machine learning, operating system, oral written, staitstical software (another machine learning topic though too noisey)
+- Group 6: limits continuity, central limit, lagrange multiplies, least squares, time series, hypothesis testing (more probability theory?)
+- Group 7: supper vector, markov chains, vector machines, maximum likelihood (MC or SVM topic)
+Group 8: decision making, regression classification, computer programming (again ML topic)
+
+Unforunately while the terms themselves are more informative they don't do well for interpreting topics.
+
+## Collocations
+Collocations are terms that have a higer probability of appearing together than they do individually. Rather than just have a model of singular terms or just have a model of bigrams we can have a model that encorporates the most common singular terms, bigrams, and trigrams.
+
+```{r}
+# Loading in data
+load("../data/RObjects/degree_corpus.RData")
+
+# Create corpus object
+ds <- DataframeSource(degree_corpus)
+corpus <- Corpus(ds)
+
+# Remove punctuation
+corpus <- tm_map(corpus, content_transformer(removePunctuation))
+# Send everything to lower case
+corpus <- tm_map(corpus, content_transformer(tolower))
+# Remove stopwords
+corpus <- tm_map(corpus,
+                 content_transformer(removeWords),
+                 stopwords("english"))
+# Remove whitespace
+corpus <- tm_map(corpus, stripWhitespace)
+# Remove numbers
+corpus <- tm_map(corpus, content_transformer(removeNumbers))
+# Remove custom stop words
+remove_words <-
+  c("include","methods","topics","design","functions","emphasis","language","introduction","languages","performance","experience","course","science","techniques","variables","number","department","tools","fundamental","also","major","modern","issues","used","methods","using","case","architecture","covered","credit","basic","cosc","granted","use","solutions","data","will","students","fall","spring","important","one","considered","stacks","offers","types","may","held","former","honours","faculty","related","enter","review","enrolment","exercises","summer","need","offered","social","digital","terms","real","concepts","understanding","can","including","programs","program","recommended","examples","introduced","large","search","relations","key","etc","reasoning","intended","fws","general","restricted","version","two","comp","well","rich","intended","required","internet","recent","phys","sciences","covers","year","selected","renewal","explored","csch","principles","practice","development","studies","security","provides","advanced","instruction","discussed","processes","death","lower","high","crncr","taken","efficient","includes","core","retrieval","class","within","present","option","interested","together","session","week","new","order","tables","small","suitable","wide","without","good","introduces","assignments","current","thinking","completed","basics","essential","gain","effective","file","three","many","classes","extensive","tasks","work","meaningful","first","creating","elementary","image"
+  )
+corpus <- tm_map(corpus, function(x) {
+  removeWords(x, remove_words)
+})
+
+dtm_col <- DocumentTermMatrix(corpus)
+
+# convert dtm into sparse matrix
+dtm_col_sparse <- Matrix::sparseMatrix(i = dtm_col$i, j = dtm_col$j, 
+                           x = dtm_col$v, 
+                           dims = c(dtm_col$nrow, dtm_col$ncol),
+                           dimnames = dimnames(dtm_col))
+
+# calculate co-occurrence counts
+coocurrences <- t(dtm_col_sparse) %*% dtm_col_sparse
+# convert into matrix
+collocates <- as.matrix(coocurrences)
+as.data.frame(collocates)
+```
+
+We now have a co-occurence matrix. We can now use a function defined [here](https://ladal.edu.au/coll.html) to show which words are strongly associated with other words. Let's try machine, the obvious strong association we should see is learning.
+
+This currently doesn't work but the visualizations at https://ladal.edu.au/coll.html look very promising. If we can get it to work we can have LDA models like this https://towardsdatascience.com/6-tips-to-optimize-an-nlp-topic-model-for-interpretability-20742f3047e2 which is really cool because it has best bigrams, trigrams, and singular terms which makes for really intepretable topics.
+
+```{r}
+# load function for co-occurrence calculation
+source("https://slcladal.github.io/rscripts/calculateCoocStatistics.R")
+# define term
+coocTerm <- "machine"
+# calculate co-occurrence statistics
+coocs <- calculateCoocStatistics(coocTerm, dtm_col_sparse, measure="LOGLIK")
+coocdf <- coocs %>%
+  as.data.frame() %>%
+  dplyr::mutate(CollStrength = coocs,
+                Term = names(coocs)) %>%
+  dplyr::filter(CollStrength > 30)
+
+ggplot(coocdf, aes(x = reorder(Term, CollStrength, mean), y = CollStrength)) +
+  geom_point() +
+  coord_flip() +
+  theme_bw() +
+  labs(y = "")
+```
+
+
 
 ## References
 
@@ -1066,5 +1437,9 @@ Sievert, C., & Shirley, K. (2014, June). LDAvis: A method for visualizing and in
 Silge, J., Robinson, D., & ProQuest (Firm). (2017). Text mining with R: A tidy approach (First ed.). &nbsp;&nbsp;&nbsp;&nbsp;O'Reilly Media.
 
 Tufts, C. (n.d.). The Little Book of LDA. Latest Posts – Mining the Details. Retrieved March 20, 2023, &nbsp;&nbsp;&nbsp;&nbsp;from https://miningthedetails.com/LDA_Inference_Book/lda-inference.html 
+
+
+https://ladal.edu.au/coll.html
+
 
 
