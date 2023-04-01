@@ -1336,10 +1336,216 @@ Top terms:
 - Group 7: supper vector, markov chains, vector machines, maximum likelihood (MC or SVM topic)
 Group 8: decision making, regression classification, computer programming (again ML topic)
 
-Unforunately while the terms themselves are more informative they don't do well for interpreting topics.
+Unfortunately while the terms themselves are more informative they don't do well for interpreting topics.
 
 ## Collocations
-Collocations are terms that have a higer probability of appearing together than they do individually. Rather than just have a model of singular terms or just have a model of bigrams we can have a model that encorporates the most common singular terms, bigrams, and trigrams.
+Collocations are terms that have a higher probability of appearing together than they do individually. Rather than just have a model of singular terms or just have a model of bigrams we can have a model that incorporates the most common singular terms and bigrams.
+
+```{r}
+library(quanteda.textstats)
+library(quanteda)
+
+# Loading in data
+load("../data/RObjects/degree_corpus.RData")
+
+# Create corpus object
+ds <- DataframeSource(degree_corpus)
+corpus <- Corpus(ds)
+
+# Remove punctuation
+corpus <- tm_map(corpus, content_transformer(removePunctuation))
+# Send everything to lower case
+corpus <- tm_map(corpus, content_transformer(tolower))
+# Remove stopwords
+corpus <- tm_map(corpus,
+                 content_transformer(removeWords),
+                 stopwords("english"))
+# Remove whitespace
+corpus <- tm_map(corpus, stripWhitespace)
+# Remove numbers
+corpus <- tm_map(corpus, content_transformer(removeNumbers))
+# Remove custom stop words
+# remove_words <-
+#   c("include","methods","topics","design","functions","emphasis","language","introduction","languages","performance","experience","course","science","techniques","variables","number","department","tools","fundamental","also","major","modern","issues","used","methods","using","case","architecture","covered","credit","basic","cosc","granted","use","solutions","will","students","fall","spring","important","one","considered","stacks","offers","types","may","held","former","honours","faculty","related","enter","review","enrolment","exercises","summer","need","offered","social","digital","terms","real","concepts","understanding","can","including","programs","program","recommended","examples","introduced","large","search","relations","key","etc","reasoning","intended","fws","general","restricted","version","two","comp","well","rich","intended","required","internet","recent","phys","sciences","covers","year","selected","renewal","explored","csch","principles","practice","development","studies","security","provides","advanced","instruction","discussed","processes","death","lower","high","crncr","taken","efficient","includes","core","retrieval","class","within","present","option","interested","together","session","week","new","order","tables","small","suitable","wide","without","good","introduces","assignments","current","thinking","completed","basics","essential","gain","effective","file","three","many","classes","extensive","tasks","work","meaningful","first","creating","elementary","image"
+#   )
+# corpus <- tm_map(corpus, function(x) {
+#   removeWords(x, remove_words)
+# })
+
+corpusq <- quanteda::corpus(corpus)
+
+corpuz_tokzd <- quanteda::tokens(corpusq)
+
+BiGrams <- corpuz_tokzd %>% 
+       quanteda::tokens_select(pattern = "^[A-Z]", 
+                               valuetype = "regex",
+                               case_insensitive = TRUE, 
+                               padding = TRUE) %>% 
+       textstat_collocations(min_count = 4, tolower = FALSE,size=2)
+
+BiGrams[order(BiGrams$count,decreasing = TRUE),]
+```
+This produces the most common collocations with statistical signifigance. Some of the terms are nonsensical like math math and are simply a product of us concatenating course descrptions. However we can examine the list and choose bigrams that we think ought to be included. Notable signifigant bigrams include:
+
+The thing im doing is supported by this paper: https://people.eng.unimelb.edu.au/tbaldwin/pubs/tslp2013-topiccoll.pdf
+
+It is suggested than you can go through your corpus and manually replace bigrams with a unigram representing the significant collocation to improve topic intelligibility. Therefore for all the significant bigrams I will do so except for the nonsensical ones such as math math or statistics data.
+
+```{r}
+create_Bigram <- function(df,term1,term2,replacement){
+  regex <- paste0(term1,"\\s+",term2)
+  for (i in 1:nrow(df)) {
+    row_text <- df[i, 2]
+    df[i, 2] <- str_replace(row_text, regex, replacement)
+  }
+  return(df)
+}
+```
+
+```{r}
+# Recreate data frame
+df <- cbind(data.frame("doc_id" = names(cor)),data.frame("text"=t(as.data.frame(cor))))
+
+# Combine collocations
+df <- create_Bigram(df,"data","structures","data_structures")
+df <- create_Bigram(df,"differential","equations","differential_equations")
+df <- create_Bigram(df,"data","mining","data_mining")
+df <- create_Bigram(df,"data","analysis","data_analysis")
+df <- create_Bigram(df,"machine","learning","machine_learning")
+df <- create_Bigram(df,"hypothesis","testing","hypothesis_testing")
+df <- create_Bigram(df,"database","systems","database_systems")
+df <- create_Bigram(df,"linear","regression","linear_regression")
+df <- create_Bigram(df,"big","data","big_data")
+df <- create_Bigram(df,"data","visualization","data_visualization")
+df <- create_Bigram(df,"neural","networks","neural_networks")
+df <- create_Bigram(df,"linear","models","linear_models")
+df <- create_Bigram(df,"markov","chains","markov_chains")
+df <- create_Bigram(df,"model","selection","model_selection")
+df <- create_Bigram(df,"graph","theory","graph_theory")
+df <- create_Bigram(df,"conditional","probability","conditional_probability")
+df <- create_Bigram(df,"support","vector","support_vector")
+df <- create_Bigram(df,"text","data","text_data")
+```
+```{r}
+ds2 <- DataframeSource(df)
+corpus2 <- Corpus(ds2)
+dtm_col <- DocumentTermMatrix(corpus2)
+
+inspect(dtm_col)
+```
+
+```{r}
+dtm_col <-
+  combineCols(c("math", "mathematics", "mathematically", "mathematical"),
+              dtm_col)
+
+dtm_col <-
+  combineCols(c("model", "modeling", "modelling", "models"), dtm_col)
+
+dtm_col <- combineCols(c("algorithm", "algorithms"), dtm_col)
+
+dtm_col <- combineCols(c("learn", "learning"), dtm_col)
+
+dtm_col <- combineCols(c("stat", "statistics","statistical"), dtm_col)
+
+dtm_col <- combineCols(c("proof", "proofs"), dtm_col)
+
+dtm_col <- combineCols(c("fields", "field"), dtm_col)
+dtm_col <- combineCols(c("application","applications", "apply"), dtm_col)
+
+dtm_col <- combineCols(c("logical", "logic"), dtm_col)
+
+dtm_col <- combineCols(c("limit", "limits"), dtm_col)
+
+dtm_col <- combineCols(c("distributions", "distribution"), dtm_col)
+
+dtm_col <- combineCols(c("theorem", "theorems"), dtm_col)
+
+```
+
+
+```{r}
+# Fit largest model
+lda.out <- LDA(dtm_col, 8, method = "Gibbs",control = list(seed = 87460945))
+
+# Find required quantities
+phi <- posterior(lda.out)$terms %>% as.matrix
+theta <- posterior(lda.out)$topics %>% as.matrix
+vocab <- colnames(phi)
+doc_length <- vector()
+for (i in 1:length(corpus)) {
+  temp <- paste(corpus[[i]]$content, collapse = ' ')
+  doc_length <-
+    c(doc_length, stri_count(temp, regex = '\\S+'))
+}
+temp_frequency <- as.matrix(dtm_col)
+freq_matrix <- data.frame(ST = colnames(temp_frequency),
+                          Freq = colSums(temp_frequency))
+
+# Convert to json
+json_lda <- LDAvis::createJSON(
+  phi = phi,
+  theta = theta,
+  vocab = vocab,
+  doc.length = doc_length,
+  term.frequency = freq_matrix$Freq
+)
+
+# Open server for visualization
+ serVis(json_lda, open.browser = TRUE)
+```
+
+
+
+
+
+```{r}
+library(FactoMineR)
+library(factoextra)
+library(flextable)
+library(GGally)
+library(ggdendro)
+library(igraph)
+library(network)
+library(Matrix)
+library(quanteda)
+library(dplyr)
+library(stringr)
+library(tm)
+
+ngram_extract <- quanteda::tokens_compound(corpuz_tokzd, pattern = BiGrams)
+ngram_extract
+ngram_kwic <- kwic(ngram_extract, pattern = c("machine_learning", "neural_networks")) %>%
+  as.data.frame() %>%
+  dplyr::select(-to, -from, -pattern)
+
+ngram_kwic
+```
+
+
+### Finding Collocations
+
+
+
+```{r}
+
+
+# read in and process text
+darwinsentences <- darwin %>%
+  stringr::str_squish() %>%
+  tokenizers::tokenize_sentences(.) %>%
+  unlist() %>%
+  stringr::str_remove_all("- ") %>%
+  stringr::str_replace_all("\\W", " ") %>%
+  stringr::str_squish()
+# inspect data
+head(darwinsentences)
+```
+
+
+
+
+
 
 ```{r}
 # Loading in data
