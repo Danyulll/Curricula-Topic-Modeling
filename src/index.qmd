@@ -66,6 +66,8 @@ First this data will be examined from a degree pathway perspective with the docu
 
 ```{r Libraries, echo=FALSE}
 # Load Libraries
+library(quanteda.textstats)
+library(quanteda)
 library(tm)
 library(topicmodels)
 library(ggplot2)
@@ -762,7 +764,7 @@ dtm_notfidf <- DocumentTermMatrix(corpus)
 Not stemming means we will manually have to combine like terms. For example our corpus contains "math", "mathematics", "mathematically", and "mathematical" so we will need to go in and sum their columns in the DTM.
 
 ```{r Define combineCols function}
-combineCols <- function(words, dtm){
+combineCols <- function(words, dtm, newColName){
   # Get indices of columns
 idx <- which(colnames(dtm) %in% words)
 
@@ -771,6 +773,9 @@ dtm <- as.matrix(dtm)
 
 # Combine columns
 dtm[,c(idx[1])] <- rowSums(dtm[,c(idx)])
+
+# Rename term
+colnames(dtm)[idx[1]] <- newColName
 
 if(length(words) == 2){
 dtm <- dtm[,-idx[2]]  
@@ -1256,8 +1261,6 @@ The remaining topics were less frequent and slightly more nosiey. There is some 
 ## n-grams
 n-grams allow us to look at different combinations of words and see how they generate topics. I will be looking at bi-grams which means combinations of two words.
 ```{r bigrams}
-library(quanteda)
-
 # Loading in data
 load("../data/RObjects/degree_corpus.RData")
 
@@ -1342,9 +1345,6 @@ Unfortunately while the terms themselves are more informative they don't do well
 Collocations are terms that have a higher probability of appearing together than they do individually. Rather than just have a model of singular terms or just have a model of bigrams we can have a model that incorporates the most common singular terms and bigrams.
 
 ```{r}
-library(quanteda.textstats)
-library(quanteda)
-
 # Loading in data
 load("../data/RObjects/degree_corpus.RData")
 
@@ -1392,6 +1392,7 @@ The thing im doing is supported by this paper: https://people.eng.unimelb.edu.au
 It is suggested than you can go through your corpus and manually replace bigrams with a unigram representing the significant collocation to improve topic intelligibility. Therefore for all the significant bigrams I will do so except for the nonsensical ones such as math math or statistics data.
 
 ```{r}
+library(stringr)
 create_Bigram <- function(df,term1,term2,replacement){
   regex <- paste0(term1,"\\s+",term2)
   for (i in 1:nrow(df)) {
@@ -1431,7 +1432,7 @@ ds2 <- DataframeSource(df)
 corpus2 <- Corpus(ds2)
 dtm_col <- DocumentTermMatrix(corpus2)
 
-inspect(dtm_col)
+inspect(dtm_col[1])
 ```
 
 ```{r}
@@ -1497,62 +1498,16 @@ json_lda <- LDAvis::createJSON(
 
 
 
+## Sampling multiple degree pathways
+So far we have only been sampling 1 student's journey through a Data Science Curriculum. Perhaps if we sampled say 100 students from each program the most important courses would come to the surface with some added variance from electives.
 
-
-```{r}
-library(FactoMineR)
-library(factoextra)
-library(flextable)
-library(GGally)
-library(ggdendro)
-library(igraph)
-library(network)
-library(Matrix)
-library(quanteda)
-library(dplyr)
-library(stringr)
-library(tm)
-
-ngram_extract <- quanteda::tokens_compound(corpuz_tokzd, pattern = BiGrams)
-ngram_extract
-ngram_kwic <- kwic(ngram_extract, pattern = c("machine_learning", "neural_networks")) %>%
-  as.data.frame() %>%
-  dplyr::select(-to, -from, -pattern)
-
-ngram_kwic
-```
-
-
-### Finding Collocations
-
-
-
-```{r}
-
-
-# read in and process text
-darwinsentences <- darwin %>%
-  stringr::str_squish() %>%
-  tokenizers::tokenize_sentences(.) %>%
-  unlist() %>%
-  stringr::str_remove_all("- ") %>%
-  stringr::str_replace_all("\\W", " ") %>%
-  stringr::str_squish()
-# inspect data
-head(darwinsentences)
-```
-
-
-
-
-
-
-```{r}
+First we create our corpus
+```{r Sampling multiple degree pathways}
 # Loading in data
-load("../data/RObjects/degree_corpus.RData")
+load("../data/RObjects/degree_corpus_total.RData")
 
 # Create corpus object
-ds <- DataframeSource(degree_corpus)
+ds <- DataframeSource(degree_corpus_total)
 corpus <- Corpus(ds)
 
 # Remove punctuation
@@ -1567,52 +1522,279 @@ corpus <- tm_map(corpus,
 corpus <- tm_map(corpus, stripWhitespace)
 # Remove numbers
 corpus <- tm_map(corpus, content_transformer(removeNumbers))
+```
+
+Then we check for Bigrams to include
+```{r}
+corpusq <- quanteda::corpus(corpus)
+
+corpuz_tokzd <- quanteda::tokens(corpusq)
+
+BiGrams <- corpuz_tokzd %>% 
+       quanteda::tokens_select(pattern = "^[A-Z]", 
+                               valuetype = "regex",
+                               case_insensitive = TRUE, 
+                               padding = TRUE) %>% 
+       textstat_collocations(min_count = 4, tolower = FALSE,size=2)
+
+BiGrams[order(BiGrams$count,decreasing = TRUE),]
+```
+
+```{r}
+# Recreate data frame
+cor <- as.list(corpus)
+df <- cbind(data.frame("doc_id" = names(cor)),data.frame("text"=t(as.data.frame(cor))))
+
+# Combine collocations
+df <- create_Bigram(df,"data","science","datascience")
+df <- create_Bigram(df,"random","variables","randomvariables")
+df <- create_Bigram(df,"data","structures","datastructures")
+df <- create_Bigram(df,"differential","equations","differentialequations")
+df <- create_Bigram(df,"data","mining","datamining")
+df <- create_Bigram(df,"machine","learning","machinelearning")
+df <- create_Bigram(df,"hypothesis","testing","hypothesistesting")
+df <- create_Bigram(df,"big","data","bigdata")
+df <- create_Bigram(df,"neural","networks","neuralnetworks")
+df <- create_Bigram(df,"data","visualization","datavisualization")
+df <- create_Bigram(df,"markov","chains","markovchains")
+df <- create_Bigram(df,"graph","theory","graphtheory")
+df <- create_Bigram(df,"linear","algebra","linearalgebra")
+df <- create_Bigram(df,"confidence","intervals","confidenceintervals")
+df <- create_Bigram(df,"time","series","timeseries")
+df <- create_Bigram(df,"data","analytics","dataanalytics")
+```
+
+```{r}
+ds2 <- DataframeSource(df)
+corpus2 <- Corpus(ds2)
+# inspect(corpus2[2])
+```
+
+```{r}
 # Remove custom stop words
 remove_words <-
-  c("include","methods","topics","design","functions","emphasis","language","introduction","languages","performance","experience","course","science","techniques","variables","number","department","tools","fundamental","also","major","modern","issues","used","methods","using","case","architecture","covered","credit","basic","cosc","granted","use","solutions","data","will","students","fall","spring","important","one","considered","stacks","offers","types","may","held","former","honours","faculty","related","enter","review","enrolment","exercises","summer","need","offered","social","digital","terms","real","concepts","understanding","can","including","programs","program","recommended","examples","introduced","large","search","relations","key","etc","reasoning","intended","fws","general","restricted","version","two","comp","well","rich","intended","required","internet","recent","phys","sciences","covers","year","selected","renewal","explored","csch","principles","practice","development","studies","security","provides","advanced","instruction","discussed","processes","death","lower","high","crncr","taken","efficient","includes","core","retrieval","class","within","present","option","interested","together","session","week","new","order","tables","small","suitable","wide","without","good","introduces","assignments","current","thinking","completed","basics","essential","gain","effective","file","three","many","classes","extensive","tasks","work","meaningful","first","creating","elementary","image"
+  c("include","data","methods","topics","design","functions","emphasis","language","introduction","languages","performance","experience","course","science","techniques","variables","number","department","tools","fundamental","also","major","modern","issues","used","methods","using","case","architecture","covered","credit","basic","cosc","granted","use","solutions","will","students","fall","spring","important","one","considered","stacks","offers","types","may","held","former","honours","faculty","related","enter","review","enrolment","exercises","summer","need","offered","social","digital","terms","real","concepts","understanding","can","including","programs","program","recommended","examples","introduced","large","search","relations","key","etc","reasoning","intended","fws","general","restricted","version","two","comp","well","rich","intended","required","internet","recent","phys","sciences","covers","year","selected","renewal","explored","csch","principles","practice","development","studies","security","provides","advanced","instruction","discussed","processes","death","lower","high","crncr","taken","efficient","includes","core","retrieval","class","within","present","option","interested","together","session","week","new","order","tables","small","suitable","wide","without","good","introduces","assignments","current","thinking","completed","basics","essential","gain","effective","file","three","many","classes","extensive","tasks","work","meaningful","first","creating","elementary","image"
   )
-corpus <- tm_map(corpus, function(x) {
+corpus2 <- tm_map(corpus, function(x) {
   removeWords(x, remove_words)
 })
 
-dtm_col <- DocumentTermMatrix(corpus)
-
-# convert dtm into sparse matrix
-dtm_col_sparse <- Matrix::sparseMatrix(i = dtm_col$i, j = dtm_col$j, 
-                           x = dtm_col$v, 
-                           dims = c(dtm_col$nrow, dtm_col$ncol),
-                           dimnames = dimnames(dtm_col))
-
-# calculate co-occurrence counts
-coocurrences <- t(dtm_col_sparse) %*% dtm_col_sparse
-# convert into matrix
-collocates <- as.matrix(coocurrences)
-as.data.frame(collocates)
+dtm_total <- DocumentTermMatrix(corpus2)
 ```
-
-We now have a co-occurence matrix. We can now use a function defined [here](https://ladal.edu.au/coll.html) to show which words are strongly associated with other words. Let's try machine, the obvious strong association we should see is learning.
-
-This currently doesn't work but the visualizations at https://ladal.edu.au/coll.html look very promising. If we can get it to work we can have LDA models like this https://towardsdatascience.com/6-tips-to-optimize-an-nlp-topic-model-for-interpretability-20742f3047e2 which is really cool because it has best bigrams, trigrams, and singular terms which makes for really intepretable topics.
 
 ```{r}
-# load function for co-occurrence calculation
-source("https://slcladal.github.io/rscripts/calculateCoocStatistics.R")
-# define term
-coocTerm <- "machine"
-# calculate co-occurrence statistics
-coocs <- calculateCoocStatistics(coocTerm, dtm_col_sparse, measure="LOGLIK")
-coocdf <- coocs %>%
-  as.data.frame() %>%
-  dplyr::mutate(CollStrength = coocs,
-                Term = names(coocs)) %>%
-  dplyr::filter(CollStrength > 30)
+dtm_total <-
+  combineCols(c("math", "mathematics", "mathematically", "mathematical"),
+              dtm_total)
 
-ggplot(coocdf, aes(x = reorder(Term, CollStrength, mean), y = CollStrength)) +
-  geom_point() +
-  coord_flip() +
-  theme_bw() +
-  labs(y = "")
+dtm_total <-
+  combineCols(c("model", "modeling", "modelling", "models"), dtm_total)
+
+dtm_total <- combineCols(c("algorithm", "algorithms"), dtm_total)
+
+dtm_total <- combineCols(c("learn", "learning"), dtm_total)
+
+dtm_total <- combineCols(c("stat", "statistics","statistical"), dtm_total)
+
+dtm_total <- combineCols(c("proof", "proofs"), dtm_total)
+
+dtm_total <- combineCols(c("fields", "field"), dtm_total)
+dtm_total <- combineCols(c("application","applications", "apply"), dtm_total)
+
+dtm_total <- combineCols(c("logical", "logic"), dtm_total)
+
+dtm_total <- combineCols(c("limit", "limits"), dtm_total)
+
+dtm_total <- combineCols(c("distributions", "distribution"), dtm_total)
 ```
+
+
+```{r}
+# Fit largest model
+lda.out <- LDA(dtm_total, 8, method = "Gibbs",control = list(seed = 87460945))
+
+# Find required quantities
+phi <- posterior(lda.out)$terms %>% as.matrix
+theta <- posterior(lda.out)$topics %>% as.matrix
+vocab <- colnames(phi)
+doc_length <- vector()
+for (i in 1:length(corpus)) {
+  temp <- paste(corpus[[i]]$content, collapse = ' ')
+  doc_length <-
+    c(doc_length, stri_count(temp, regex = '\\S+'))
+}
+temp_frequency <- as.matrix(dtm_total)
+freq_matrix <- data.frame(ST = colnames(temp_frequency),
+                          Freq = colSums(temp_frequency))
+
+# Convert to json
+json_lda <- LDAvis::createJSON(
+  phi = phi,
+  theta = theta,
+  vocab = vocab,
+  doc.length = doc_length,
+  term.frequency = freq_matrix$Freq
+)
+
+# Open server for visualization
+ serVis(json_lda, open.browser = TRUE)
+```
+
+## By course
+maybe topic modeling where the courses are the document ids will give better results
+```{r}
+# Loading in data
+load("../data/RObjects/degree_corpus_by_course.RData")
+colnames(degree_corpus_by_course) <- c("doc_id", "text")
+length(degree_corpus_by_course$doc_id) ==  length(unique(degree_corpus_by_course$doc_id))
+
+
+df <- degree_corpus_by_course
+#df <- degree_corpus_by_course[!duplicated(degree_corpus_by_course[,c('doc_id')]),]
+#df <- df[-which(df$text==""),]
+
+# Create corpus object
+ds <- DataframeSource(df)
+corpus <- Corpus(ds)
+
+# Remove punctuation
+corpus <- tm_map(corpus, content_transformer(removePunctuation))
+# Send everything to lower case
+corpus <- tm_map(corpus, content_transformer(tolower))
+# Remove stopwords
+corpus <- tm_map(corpus,
+                 content_transformer(removeWords),
+                 stopwords("english"))
+# Remove numbers
+corpus <- tm_map(corpus, content_transformer(removeNumbers))
+
+# Remove whitespace
+corpus <- tm_map(corpus, stripWhitespace)
+
+inspect(corpus[1])
+```
+```{r}
+corpusq <- quanteda::corpus(corpus)
+
+corpuz_tokzd <- quanteda::tokens(corpusq)
+
+BiGrams <- corpuz_tokzd %>% 
+       quanteda::tokens_select(pattern = "^[A-Z]", 
+                               valuetype = "regex",
+                               case_insensitive = TRUE, 
+                               padding = TRUE) %>% 
+       textstat_collocations(min_count = 4, tolower = FALSE,size=2)
+
+BiGrams[order(BiGrams$count,decreasing = TRUE),]
+```
+
+```{r}
+# Recreate data frame
+cor <- as.list(corpus)
+df <- cbind(data.frame("doc_id" = names(cor)),data.frame("text"=t(as.data.frame(cor))))
+
+# Combine collocations
+df <- create_Bigram(df,"data","science","data_science")
+df <- create_Bigram(df,"random","variables","random_variables")
+df <- create_Bigram(df,"data","structures","data_structures")
+df <- create_Bigram(df,"differential","equations","differential_equations")
+df <- create_Bigram(df,"data","mining","data_mining")
+df <- create_Bigram(df,"machine","learning","machine_learning")
+df <- create_Bigram(df,"hypothesis","testing","hypothesis_testing")
+df <- create_Bigram(df,"big","data","big_data")
+df <- create_Bigram(df,"neural","networks","neural_networks")
+df <- create_Bigram(df,"data","visualization","data_visualization")
+df <- create_Bigram(df,"markov","chains","markov_chains")
+df <- create_Bigram(df,"graph","theory","graph_theory")
+df <- create_Bigram(df,"linear","algebra","linear_algebra")
+df <- create_Bigram(df,"confidence","intervals","confidence_intervals")
+df <- create_Bigram(df,"time","series","time_series")
+df <- create_Bigram(df,"data","analytics","data_analytics")
+```
+
+```{r}
+ds2 <- DataframeSource(df)
+corpus2 <- Corpus(ds2)
+
+remove_words <-
+  c("include","data","methods","topics","design","functions","emphasis","language","introduction","languages","performance","experience","course","science","techniques","variables","number","department","tools","fundamental","also","major","modern","issues","used","methods","using","case","architecture","covered","credit","basic","cosc","granted","use","solutions","will","students","fall","spring","important","one","considered","stacks","offers","types","may","held","former","honours","faculty","related","enter","review","enrolment","exercises","summer","need","offered","social","digital","terms","real","concepts","understanding","can","including","programs","program","recommended","examples","introduced","large","search","relations","key","etc","reasoning","intended","fws","general","restricted","version","two","comp","well","rich","intended","required","internet","recent","phys","sciences","covers","year","selected","renewal","explored","csch","principles","practice","development","studies","security","provides","advanced","instruction","discussed","processes","death","lower","high","crncr","taken","efficient","includes","core","retrieval","class","within","present","option","interested","together","session","week","new","order","tables","small","suitable","wide","without","good","introduces","assignments","current","thinking","completed","basics","essential","gain","effective","file","three","many","classes","extensive","tasks","work","meaningful","first","creating","elementary","image"
+  )
+corpus2 <- tm_map(corpus2, function(x) {
+  removeWords(x, remove_words)
+})
+
+
+dtm <- DocumentTermMatrix(corpus2)
+```
+
+```{r}
+dtm <-
+  combineCols(c("math", "mathematics", "mathematically", "mathematical"),
+              dtm,"mathematics")
+dtm <- combineCols(c("stat", "statistics","statistical"), dtm,"statistics")
+```
+
+
+
+
+```{r}
+dtm <- DocumentTermMatrix(corpus)
+# dtm <- dtm[!which(slam::row_sums(dtm)==0),]
+
+```
+
+
+
+```{r}
+# Find number of topics
+result <- FindTopicsNumber(
+  dtm,
+  topics = seq(from = 2, to = 20, by = 1),
+  metrics = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
+  method = "Gibbs",
+  control = list(seed = 77),
+  mc.cores = 2L,
+)
+# Plot metrics
+suppressWarnings(FindTopicsNumber_plot(result))
+```
+
+```{r}
+# Fit largest model
+lda.out <- LDA(dtm, 9, method = "Gibbs",control = list(seed = 87460945))
+
+# Find required quantities
+phi <- posterior(lda.out)$terms %>% as.matrix
+theta <- posterior(lda.out)$topics %>% as.matrix
+vocab <- colnames(phi)
+doc_length <- vector()
+for (i in 1:length(corpus)) {
+  temp <- paste(corpus[[i]]$content, collapse = ' ')
+  doc_length <-
+    c(doc_length, stri_count(temp, regex = '\\S+'))
+}
+temp_frequency <- as.matrix(dtm)
+freq_matrix <- data.frame(ST = colnames(temp_frequency),
+                          Freq = colSums(temp_frequency))
+
+# Convert to json
+json_lda <- LDAvis::createJSON(
+  phi = phi,
+  theta = theta,
+  vocab = vocab,
+  doc.length = doc_length,
+  term.frequency = freq_matrix$Freq
+)
+
+# Open server for visualization
+ serVis(json_lda, open.browser = TRUE)
+ 
+ 
+ # degree_corpus_by_course
+```
+
+
+
 
 
 

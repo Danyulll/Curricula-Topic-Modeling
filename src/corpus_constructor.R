@@ -2,7 +2,7 @@
 ## DGP for Curricla Topic Modeling
 ## dkrasnov@student.ubc.ca - April 2023
 #############################################################
-
+set.seed(87460945)
 
 ##############################
 # 0 - Load librairies
@@ -18,7 +18,7 @@ library(textclean)
 # 1 - Berkeley DGP
 ##############################
 Degree_pathway_total <- c()
-std_sample <- 100
+std_sample <- 50
 for (i in 1:std_sample) {
   ## Load in course description data
   course_descrips <-
@@ -138,9 +138,7 @@ for (i in 1:std_sample) {
   Degree_pathway <- c(Degree_pathway, str_squish(newcourses))
   
   Degree_pathway_total <- c(Degree_pathway_total,Degree_pathway)
-}
-
-
+ }
 
 Degree_pathway <- data.frame(Course_Code = Degree_pathway)
 Degree_pathway$Course_Code <-
@@ -159,6 +157,8 @@ df <- sqldf(query)
 query_total <-
   "SELECT Course_Code,Course_Description FROM Degree_pathway_total LEFT JOIN course_descrips USING(Course_Code)"
 df_total <- sqldf(query_total)
+
+berkeley_by_course <- df
 
 
 berkeley <- df
@@ -203,20 +203,30 @@ course_descrips_mathstat$Course_Code <-
   replace_non_ascii(course_descrips_mathstat$Course_Code)
 
 Degree_pathway_total <- c()
-std_sample <- 100
+std_sample <- 50
+dup_check <- c()
 for (i in 1:std_sample) {
   # G1 - G19
   Degree_pathway <- ds_cal$Category_Description[1:19]
   
   # G20
-  newcourses <-
-    subset(
-      course_descrips_mathstat,
-      str_detect(Course_Code, "^[MAST|MATH|STAT]* [3|4]"),
-      select = Course_Code
-    )
-  Degree_pathway <-
-    c(Degree_pathway, sample(newcourses$Course_Code, 2))
+  done <- FALSE
+  while(!done){
+    newcourses <-
+      subset(
+        course_descrips_mathstat,
+        str_detect(Course_Code, "^[MAST|MATH|STAT]* [3|4]"),
+        select = Course_Code
+      )
+    
+    samp <- sample(newcourses$Course_Code, 2)
+    
+    if(sum(samp %in% Degree_pathway) == 0){
+      Degree_pathway <- c(Degree_pathway, samp)
+      done <- TRUE
+    }
+    
+  }
   
   # G21
   done <- FALSE
@@ -234,15 +244,15 @@ for (i in 1:std_sample) {
       subset(course_descrips_compsci,
              Course_Code == newcourses[2],
              select = Credit.Amount)
-    if (course1 + course2 >= 6) {
+    if (course1 + course2 >= 6 & sum(newcourses %in% Degree_pathway)==0) {
       done <- TRUE
     }
   }
   
   Degree_pathway <- c(Degree_pathway, newcourses)
   Degree_pathway_total <- c(Degree_pathway_total, Degree_pathway)
+  
 }
-
 
 Degree_pathway <- data.frame(Course_Code = Degree_pathway)
 Degree_pathway_total <- data.frame(Course_Code = Degree_pathway_total)
@@ -261,6 +271,8 @@ concordia <-
     "doc_id" = "Concordia",
     "text" = paste(concordia$Course_Description, collapse = " ")
   )
+
+concordia_by_course <- result
 
 query_total <-
   "SELECT Course_Code, Course_Description FROM Degree_pathway_total JOIN course_descrips_compsci USING(Course_Code)
@@ -339,7 +351,7 @@ course_descrips_math$Course_Code <-
   replace_non_ascii(course_descrips_math$Course_Code)
 
 Degree_pathway_total <- c()
-std_sample <- 100
+std_sample <- 50
 for (i in 1:std_sample) {
   # G1
   Degree_pathway <-
@@ -405,15 +417,15 @@ for (i in 1:std_sample) {
     courses <- sample(result$Course_Code, 5)
     credits <-
       subset(result, Course_Code %in% courses, select = Credit_Amount)
-    if (sum(credits) >= 15) {
+    if (sum(credits) >= 15 & sum(courses %in% Degree_pathway) == 0) {
       done <- TRUE
       Degree_pathway <- c(Degree_pathway, courses)
     }
   }
   
   # Choose specialization
-  spec <-
-    sample(c("[a-zA-Z]* S1", "[a-zA-Z]* S2", "[a-zA-Z]* S3"), 1)
+  spec <-"[a-zA-Z]* S3"
+  sample(c("[a-zA-Z]* S1", "[a-zA-Z]* S2", "[a-zA-Z]* S3"), 1)
   newcourses <-
     subset(ds_spec_cal,
            str_detect(Requirement.Category, spec),
@@ -421,48 +433,92 @@ for (i in 1:std_sample) {
   
   # S1
   if (str_detect(newcourses[1, 1], " Financial Risk Analysis")) {
+    
+    courses <- newcourses$Category_Description[c(2:5, 7)]
+    courses <- courses[!(courses %in% Degree_pathway)]
+    
     Degree_pathway <-
-      c(Degree_pathway, newcourses$Category_Description[c(2:5, 7)])
-    Degree_pathway <-
-      c(Degree_pathway, sample(str_trim(unlist(
+      c(Degree_pathway, courses)
+    
+    samp <- sample(str_trim(unlist(
+      str_split(str_sub(
+        newcourses$Category_Description[6], 17, 43
+      ), ", ")
+    )), 1)
+    
+    while (sum(samp %in% Degree_pathway) != 0) {
+      samp <- sample(str_trim(unlist(
         str_split(str_sub(
           newcourses$Category_Description[6], 17, 43
         ), ", ")
-      )), 1))
+      )), 1)
+    }
+    
+    Degree_pathway <-
+      c(Degree_pathway, samp)
   }
   
   
   # S2
   if (str_detect(newcourses[1, 1], "Big Data")) {
+    courses <- newcourses$Category_Description[2:6]
+    courses <- courses[!(courses %in% Degree_pathway)]
     Degree_pathway <-
-      c(Degree_pathway, newcourses$Category_Description[2:6])
+      c(Degree_pathway, courses)
   }
   
   
   # S3
   if (str_detect(newcourses[1, 1], "Statistical Analysis Concentration")) {
+    
+    courses <- c(newcourses$Category_Description[2],
+                 newcourses$Category_Description[4],
+                 newcourses$Category_Description[5])
+    courses <- courses[!(courses %in% Degree_pathway)]
+    
     Degree_pathway <-
       c(
         Degree_pathway,
-        newcourses$Category_Description[2],
-        newcourses$Category_Description[4],
-        newcourses$Category_Description[5]
+        courses
       )
-    Degree_pathway <-
-      c(Degree_pathway, sample(unlist(str_split(
+    
+    samp <- sample(unlist(str_split(
+      str_sub(newcourses$Category_Description[3], 10, 25), " and "
+    )), 1)
+    
+    while(sum(samp %in% Degree_pathway) != 0){
+      samp <- sample(unlist(str_split(
         str_sub(newcourses$Category_Description[3], 10, 25), " and "
-      )), 1))
+      )), 1)
+    }
+    
     Degree_pathway <-
-      c(Degree_pathway, sample(unlist(
+      c(Degree_pathway, samp)
+    
+    samp <- sample(unlist(
+      subset(
+        course_descrips_math,
+        str_detect(Course_Code, "(^ST3)|(^ST4)")
+      )$Course_Code
+    ), 1)
+    
+    
+    while(sum(samp %in% Degree_pathway) != 0){
+      samp <- sample(unlist(
         subset(
           course_descrips_math,
           str_detect(Course_Code, "(^ST3)|(^ST4)")
         )$Course_Code
-      ), 1))
+      ), 1)
+    }
+    
+    Degree_pathway <-
+      c(Degree_pathway, samp)
   }
   
   Degree_pathway_total <- c(Degree_pathway_total,Degree_pathway)
 }
+
 
 Degree_pathway <- data.frame(Course_Code = Degree_pathway)
 
@@ -480,6 +536,8 @@ laurier <- result
 laurier <-
   data.frame("doc_id" = "Laurier",
              "text" = paste(laurier$Course_Description, collapse = " "))
+
+laurier_by_course <- result
 
 Degree_pathway_total <- data.frame(Course_Code = Degree_pathway_total)
 
@@ -549,11 +607,25 @@ course_descrips_stat$Course_Code <-
   replace_non_ascii(course_descrips_stat$Course_Code)
 
 Degree_pathway_total <- c()
-std_sample <- 100
+std_sample <- 50
 for (i in 1:std_sample) {
   # F1 - F7
   Degree_pathway <- ds_cal$Category_Description[1:7]
   # NOTE: There are no arts classes scrapped so cant do G1
+  
+  # S1 - S6
+  Degree_pathway <-
+    c(Degree_pathway, ds_cal$Category_Description[10:15])
+  
+  # U1 - U8
+  Degree_pathway <-
+    c(Degree_pathway, ds_cal$Category_Description[17:24])
+  
+  # C1 - C4 if opted in
+  if (sample(c(TRUE, FALSE), 1)) {
+    Degree_pathway <-
+      c(Degree_pathway, ds_cal$Category_Description[31:34])
+  }
   
   # G2
   newcourses <-
@@ -563,46 +635,99 @@ for (i in 1:std_sample) {
       course_descrips_inter$Course_Code,
       course_descrips_ds$Course_Code
     )
-  Degree_pathway <-
-    c(Degree_pathway, sample(newcourses[!(newcourses %in% ds_cal$Category_Description) |
-                                          !(newcourses %in% Degree_pathway)], 1))
   
-  # S1 - S6
+  samp <- sample(newcourses[!(newcourses %in% ds_cal$Category_Description) |
+                              !(newcourses %in% Degree_pathway)], 1)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(newcourses[!(newcourses %in% ds_cal$Category_Description) |
+                                !(newcourses %in% Degree_pathway)], 1)
+  }
+  
   Degree_pathway <-
-    c(Degree_pathway, ds_cal$Category_Description[10:15])
+    c(Degree_pathway, samp)
+  
+  
   
   # G3
-  Degree_pathway <-
-    c(Degree_pathway, sample(newcourses[!(newcourses %in% ds_cal$Category_Description) |
-                                          !(newcourses %in% Degree_pathway)], 4))
   
-  # U1 - U8
+  samp <- sample(newcourses[!(newcourses %in% ds_cal$Category_Description) |
+                              !(newcourses %in% Degree_pathway)], 4)
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(newcourses[!(newcourses %in% ds_cal$Category_Description) |
+                                !(newcourses %in% Degree_pathway)], 4)
+  }
+  
+  
   Degree_pathway <-
-    c(Degree_pathway, ds_cal$Category_Description[17:24])
+    c(Degree_pathway, samp)
+  
+  
   
   # U9
-  Degree_pathway <-
-    c(Degree_pathway, sample(
+  samp <- sample(
+    subset(
+      course_descrips_compsci,
+      Course_Code %in% c("COMP 2080", "COMP 2150", "COMP 4510", "COMP 4710")
+    )$Course_Code,
+    1
+  )
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(
       subset(
         course_descrips_compsci,
         Course_Code %in% c("COMP 2080", "COMP 2150", "COMP 4510", "COMP 4710")
       )$Course_Code,
       1
-    ))
+    )
+  }
+  
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # U10
-  Degree_pathway <-
-    c(Degree_pathway, sample(
+  samp <- sample(
+    subset(
+      course_descrips_math,
+      Course_Code %in% c("MATH 2070", "MATH 2080", "MATH 2090", "MATH 2180", "MATH 4370")
+    )$Course_Code,
+    1
+  )
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(
       subset(
         course_descrips_math,
         Course_Code %in% c("MATH 2070", "MATH 2080", "MATH 2090", "MATH 2180", "MATH 4370")
       )$Course_Code,
       1
-    ))
+    )
+  }
+  
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # U11
-  Degree_pathway <-
-    c(Degree_pathway, sample(
+  samp <- sample(
+    subset(
+      course_descrips_stat,
+      Course_Code %in% c(
+        "STAT 2300",
+        "STAT 2800",
+        "STAT 3030",
+        "STAT 3550",
+        "STAT 3690",
+        "STAT 4100",
+        "STAT 4150",
+        "STAT 4250"
+      )
+    )$Course_Code,
+    1
+  )
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(
       subset(
         course_descrips_stat,
         Course_Code %in% c(
@@ -617,21 +742,30 @@ for (i in 1:std_sample) {
         )
       )$Course_Code,
       1
-    ))
-  
-  # G4 - G5
-  Degree_pathway <-
-    c(Degree_pathway, sample(newcourses[!(newcourses %in% ds_cal$Category_Description) |
-                                          !(newcourses %in% Degree_pathway)], 8))
-  
-  # C1 - C4 if opted in
-  if (sample(c(TRUE, FALSE), 1)) {
-    Degree_pathway <-
-      c(Degree_pathway, ds_cal$Category_Description[31:34])
+    )
   }
   
+  Degree_pathway <-
+    c(Degree_pathway, samp)
+  
+  # G4 - G5
+  samp <- sample(newcourses[!(newcourses %in% ds_cal$Category_Description) |
+                              !(newcourses %in% Degree_pathway)], 8)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(newcourses[!(newcourses %in% ds_cal$Category_Description) |
+                                !(newcourses %in% Degree_pathway)], 8)
+  }
+  
+  Degree_pathway <-
+    c(Degree_pathway, samp)
+  
+  
+  
   Degree_pathway_total <- c(Degree_pathway_total, Degree_pathway)
+  
 }
+
 
 Degree_pathway <- data.frame(Course_Code = Degree_pathway)
 
@@ -651,6 +785,8 @@ manitoba <- result
 manitoba <-
   data.frame("doc_id" = "Manitoba",
              "text" = paste(manitoba$Course_Description, collapse = " "))
+
+manitoba_by_course <- result
 
 Degree_pathway_total <- data.frame(Course_Code = Degree_pathway_total)
 
@@ -735,7 +871,7 @@ course_descrips_stat$Course_Code <-
 
 
 Degree_pathway_total <- c()
-std_sample <- 100
+std_sample <- 50
 for (i in 1:std_sample) {
   # L1
   Degree_pathway <-
@@ -851,6 +987,8 @@ sfu <-
   data.frame("doc_id" = "SFU",
              "text" = paste(sfu$Course_Description, collapse = " "))
 
+sfu_by_course <- result
+
 
 Degree_pathway_total <- data.frame(Course_Code = Degree_pathway_total)
 
@@ -916,34 +1054,60 @@ course_descrips_stat$Course_Code <-
   replace_non_ascii(course_descrips_stat$Course_Code)
 
 Degree_pathway_total <- c()
-std_sample <- 100
+std_sample <- 50
 for (i in 1:std_sample) {# F1
   Degree_pathway <-
     sample(unlist(str_split(ds_cal$Category_Description[1], " or ")), 1)
   
   # F2
-  Degree_pathway <-
-    c(Degree_pathway, sample(unlist(
+  samp <- sample(unlist(
+    str_split(ds_cal$Category_Description[2], " or ")
+  ), 1)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(unlist(
       str_split(ds_cal$Category_Description[2], " or ")
-    ), 1))
+    ), 1)
+  }
+  
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # F3
   Degree_pathway <-
     c(Degree_pathway, ds_cal$Category_Description[3])
   
   # F4
-  Degree_pathway <-
-    c(Degree_pathway, substr(unlist(str_split(
+  samp <- substr(unlist(str_split(
+    sample(unlist(
+      str_split(ds_cal$Category_Description[4], " or ")
+    ), 1), " and "
+  )), 2, 8)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- substr(unlist(str_split(
       sample(unlist(
         str_split(ds_cal$Category_Description[4], " or ")
       ), 1), " and "
-    )), 2, 8))
+    )), 2, 8)
+  }
+  
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # S1
-  Degree_pathway <-
-    c(Degree_pathway, sample(unlist(
+  samp <-  sample(unlist(
+    str_split(ds_cal$Category_Description[7], " or ")
+  ), 1)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <-  sample(unlist(
       str_split(ds_cal$Category_Description[7], " or ")
-    ), 1))
+    ), 1)
+  }
+  
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # S2-S4
   Degree_pathway <-
@@ -955,43 +1119,92 @@ for (i in 1:std_sample) {# F1
   if (str_detect(course, "and")) {
     course <- unlist(str_split(str_sub(course, 3, 23), " and "))
   }
+  
+  while(sum(course %in% Degree_pathway) != 0){
+    course <-
+      sample(unlist(str_split(ds_cal$Category_Description[11], " or ")), 1)
+    if (str_detect(course, "and")) {
+      course <- unlist(str_split(str_sub(course, 3, 23), " and "))
+    }
+  }
   Degree_pathway <- c(Degree_pathway, course)
   
   # S5A
-  Degree_pathway <-
-    c(Degree_pathway, unlist(str_split(
-      str_sub(ds_cal$Category_Description[12], 3, 23), " and "
-    )))
+  courses <- unlist(str_split(
+    str_sub(ds_cal$Category_Description[12], 3, 23), " and "
+  ))
+  
+  for (cor in courses) {
+    if(!(cor %in% Degree_pathway)){
+      Degree_pathway <-
+        c(Degree_pathway, cor)
+    }
+  }
   
   # S5B - U1
-  Degree_pathway <-
-    c(Degree_pathway, ds_cal$Category_Description[c(13, 14, 16)], "JSC270H1")
+  
+  if(!(ds_cal$Category_Description[13] %in% Degree_pathway)){
+    Degree_pathway <-
+      c(Degree_pathway, ds_cal$Category_Description[13])
+  }
+  if(!(ds_cal$Category_Description[14] %in% Degree_pathway)){
+    Degree_pathway <-
+      c(Degree_pathway, ds_cal$Category_Description[14])
+  }
+  if(!(ds_cal$Category_Description[16] %in% Degree_pathway)){
+    Degree_pathway <- c(Degree_pathway, ds_cal$Category_Description[16])
+  }
+  if(!("JSC270H1" %in% Degree_pathway)){
+    Degree_pathway <-
+      c(Degree_pathway, "JSC270H1")
+  }
   
   # U2
-  Degree_pathway <-
-    c(Degree_pathway, sample(unlist(str_split(
+  samp <- sample(unlist(str_split(
+    str_sub(ds_cal$Category_Description[17], 8, 27), " or "
+  )), 1)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(unlist(str_split(
       str_sub(ds_cal$Category_Description[17], 8, 27), " or "
-    )), 1))
+    )), 1)
+  }
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # U3-U4
   Degree_pathway <-
     c(Degree_pathway, ds_cal$Category_Description[18:19])
   
   # U5
-  Degree_pathway <-
-    c(Degree_pathway, sample(unlist(
+  samp <- sample(unlist(
+    str_split(ds_cal$Category_Description[20], " or ")
+  ), 1)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(unlist(
       str_split(ds_cal$Category_Description[20], " or ")
-    ), 1))
+    ), 1)
+  }
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # U6 - U8
   Degree_pathway <-
     c(Degree_pathway, ds_cal$Category_Description[21:22], "JSC370H1")
   
   # U9
-  Degree_pathway <-
-    c(Degree_pathway, sample(unlist(
+  samp <- sample(unlist(
+    str_split(ds_cal$Category_Description[24], " or ")
+  ), 1)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(unlist(
       str_split(ds_cal$Category_Description[24], " or ")
-    ), 1))
+    ), 1)
+  }
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # General Category 1 (4 courses at least 2 courses at 400-level)
   courses <-
@@ -1002,17 +1215,16 @@ for (i in 1:std_sample) {# F1
       )
     ),
     subset(course_descrips_stat, str_detect(Course_Code, "^STA4"))$Course_Code)
+  courses <- unique(courses)
   
+  course_samp <- sample(courses, 4)
   
-  done <- FALSE
-  while (!done) {
+  while(sum(str_detect(course_samp, "[A-Z]*4")) < 2 & sum(course_samp %in% Degree_pathway)!=0){
     course_samp <- sample(courses, 4)
-    if (sum(str_detect(course_samp, "[A-Z]*4")) >= 2) {
-      done <- TRUE
-    }
   }
   
   Degree_pathway <- c(Degree_pathway, course_samp)
+  Degree_pathway <- unique(Degree_pathway)
   
   # General Category 2
   if (!("STA130H1" %in% Degree_pathway)) {
@@ -1022,13 +1234,14 @@ for (i in 1:std_sample) {# F1
         str_detect(Course_Code, "(^STA4)|(^STA3)")
       )$Course_Code, 1))
   }
-  
   Degree_pathway <- unique(Degree_pathway)
   Degree_pathway_total <- c(Degree_pathway_total, Degree_pathway)
 }
 
 
 Degree_pathway <- data.frame(Course_Code = Degree_pathway)
+
+Degree_pathway$Course_Code <- replace_non_ascii(Degree_pathway$Course_Code)
 
 query <-
   "SELECT Course_Code, Course_Description FROM Degree_pathway  JOIN course_descrips_compsci USING(Course_Code)
@@ -1040,10 +1253,13 @@ query <-
   SELECT Course_Code, Course_Description FROM Degree_pathway JOIN course_descrips_stat USING(Course_Code)"
 
 result <- sqldf(query)
-toronto <- result[which(!duplicated(result$Course_Code)), ]
+result <- result[!duplicated(result$Course_Code), ]
+
 toronto <-
   data.frame("doc_id" = "Toronto",
-             "text" = paste(toronto$Course_Description, collapse = " "))
+             "text" = paste(result$Course_Description, collapse = " "))
+
+toronto_by_course <- result
 
 
 Degree_pathway_total <- data.frame(Course_Code = Degree_pathway_total)
@@ -1127,7 +1343,7 @@ course_descrips_stat$Course_Code <-
   replace_non_ascii(course_descrips_stat$Course_Code)
 
 Degree_pathway_total <- c()
-std_sample <- 100
+std_sample <- 50
 for (i in 1:std_sample) {# DS Courses
   # G1
   Degree_pathway <-
@@ -1136,10 +1352,18 @@ for (i in 1:std_sample) {# DS Courses
     )), 1)
   
   # G2
-  Degree_pathway <-
-    c(Degree_pathway, sample(unlist(str_split(
+  samp <- sample(unlist(str_split(
+    str_sub(ds_cal$Category_Description[2], 9, 26), ", "
+  )), 1)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(unlist(str_split(
       str_sub(ds_cal$Category_Description[2], 9, 26), ", "
-    )), 1))
+    )), 1)
+  }
+  
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # G3
   Degree_pathway <-
@@ -1148,30 +1372,62 @@ for (i in 1:std_sample) {# DS Courses
     )))
   
   # G4
-  Degree_pathway <-
-    c(Degree_pathway, sample(unlist(str_split(
+  samp <- sample(unlist(str_split(
+    str_sub(ds_cal$Category_Description[4], 9, 22), ", "
+  )), 1)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(unlist(str_split(
       str_sub(ds_cal$Category_Description[4], 9, 22), ", "
-    )), 1))
+    )), 1)
+  }
+  
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # G5
-  Degree_pathway <-
-    c(Degree_pathway, sample(unlist(str_split(
+  samp <- sample(unlist(str_split(
+    str_sub(ds_cal$Category_Description[5], 9, 40), ", "
+  )), 1)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(unlist(str_split(
       str_sub(ds_cal$Category_Description[5], 9, 40), ", "
-    )), 1))
+    )), 1)
+  }
+  
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # G6
-  Degree_pathway <-
-    c(Degree_pathway, sample(unlist(str_split(
+  samp <- sample(unlist(str_split(
+    str_sub(ds_cal$Category_Description[6], 49, 90), ", "
+  )), 2)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(unlist(str_split(
       str_sub(ds_cal$Category_Description[6], 49, 90), ", "
-    )), 2))
+    )), 2)
+  }
+  
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # Stat courses
   
   # G1
-  Degree_pathway <-
-    c(Degree_pathway, sample(unlist(str_split(
+  samp <- sample(unlist(str_split(
+    str_sub(stat_cal$Category_Description[1], 9, 26), ", "
+  )), 1)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(unlist(str_split(
       str_sub(stat_cal$Category_Description[1], 9, 26), ", "
-    )), 1))
+    )), 1)
+  }
+  
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # G2
   Degree_pathway <-
@@ -1180,16 +1436,31 @@ for (i in 1:std_sample) {# DS Courses
     )))
   
   # G3
-  Degree_pathway <-
-    c(Degree_pathway, sample(unlist(str_split(
+  samp <- sample(unlist(str_split(
+    str_sub(stat_cal$Category_Description[3], 9, 89), ", "
+  )), 1)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(unlist(str_split(
       str_sub(stat_cal$Category_Description[3], 9, 89), ", "
-    )), 1))
+    )), 1)
+  }
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # G4
-  Degree_pathway <-
-    c(Degree_pathway, sample(subset(
+  samp <- sample(subset(
+    course_descrips_stat, str_detect(Course_Code, "(^STAT) 4")
+  )$Course_Code, 2)
+  
+  while(sum(samp %in% Degree_pathway) != 0){
+    samp <- sample(subset(
       course_descrips_stat, str_detect(Course_Code, "(^STAT) 4")
-    )$Course_Code, 2))
+    )$Course_Code, 2)
+  }
+  
+  Degree_pathway <-
+    c(Degree_pathway, samp)
   
   # G5
   done <- FALSE
@@ -1206,7 +1477,6 @@ for (i in 1:std_sample) {# DS Courses
   Degree_pathway <- c(Degree_pathway, course)
   
   # G6
-  stat_cal
   course <- sample(c("CS 457", "CS 485", "CS 486", "STAT"), 1)
   if (course == "STAT") {
     done <- FALSE
@@ -1219,6 +1489,24 @@ for (i in 1:std_sample) {# DS Courses
         1)
       if (!(course %in% Degree_pathway)) {
         done <- TRUE
+      }
+    }
+  }
+  
+  while(sum(course %in% Degree_pathway) != 0){
+    course <- sample(c("CS 457", "CS 485", "CS 486", "STAT"), 1)
+    if (course == "STAT") {
+      done <- FALSE
+      while (!done) {
+        course <-
+          sample(subset(
+            course_descrips_stat,
+            str_detect(Course_Code, "(^STAT) 4")
+          )$Course_Code,
+          1)
+        if (!(course %in% Degree_pathway)) {
+          done <- TRUE
+        }
       }
     }
   }
@@ -1251,6 +1539,7 @@ for (i in 1:std_sample) {# DS Courses
   
   Degree_pathway <- c(Degree_pathway, courses)
   Degree_pathway_total <- c(Degree_pathway_total,Degree_pathway)
+  
 }
 
 
@@ -1274,6 +1563,8 @@ waterloo <- result
 waterloo <-
   data.frame("doc_id" = "Waterloo",
              "text" = paste(waterloo$Course_Description, collapse = " "))
+
+waterloo_by_course <- result
 
 Degree_pathway_total <- data.frame("Course_Code" = Degree_pathway_total)
 
@@ -1348,13 +1639,12 @@ course_descrips_stat$Course_Code <-
   replace_non_ascii(course_descrips_stat$Course_Code)
 
 Degree_pathway_total <- c()
-std_sample <- 100
+std_sample <- 50
 for (i in 1:std_sample) {
   # G1
   Degree_pathway <-
     unlist(str_split(ds_cal$Category_Description[1], ", "))
   Degree_pathway[1] <- "Data Science 2000A/B"
-  Degree_pathway
   
   # G2
   Degree_pathway <-
@@ -1365,10 +1655,9 @@ for (i in 1:std_sample) {
       )))
   Degree_pathway[13] <- "Computer Science 3340A/B"
   
-  # G2A - G2F
+  # G2F (G2A - G2E contain duplicates)
   Degree_pathway <-
-    c(Degree_pathway, ds_cal$Category_Description[4:7])
-  Degree_pathway[7] <- "Statistical Sciences 2864A/B"
+    c(Degree_pathway, ds_cal$Category_Description[8])
   
   # G3
   Degree_pathway <-
@@ -1377,6 +1666,7 @@ for (i in 1:std_sample) {
     )))
   
   Degree_pathway_total <- c(Degree_pathway_total,Degree_pathway)  
+  
 }
 
 
@@ -1396,6 +1686,8 @@ western <- result
 western <-
   data.frame("doc_id" = "Western",
              "text" = paste(western$Course_Description, collapse = " "))
+
+western_by_course <- result
 
 Degree_pathway_total <- data.frame(Course_Code = Degree_pathway_total)
 
@@ -1424,7 +1716,7 @@ course_descrips_UBCO <-
          Course_Description = Course.Description)
 
 Degree_pathway_total <- c()
-std_sample <- 100
+std_sample <- 50
 for (i in 1:std_sample) {
   
   
@@ -1496,17 +1788,19 @@ for (i in 1:std_sample) {
       "PHYS 420"
     )
   course <- c()
-  while (length(unique(course)) < 9) {
-    var <- sample(c("1", "2", "3"), 1)
-    
-    if (var == 1) {
-      course <- c(course, sample(max_2_stat, 1))
+  while(sum(unique(course) %in% Degree_pathway)!=0){
+    while (length(unique(course)) < 9) {
+      var <- sample(c("1", "2", "3"), 1)
       
-    } else if (var == 2) {
-      course <- c(course, sample(max_2_cosc_math_phys, 1))
-      
-    } else if (var == 3) {
-      course <- c(course, sample(upper_year_data, 1))
+      if (var == 1) {
+        course <- c(course, sample(max_2_stat, 1))
+        
+      } else if (var == 2) {
+        course <- c(course, sample(max_2_cosc_math_phys, 1))
+        
+      } else if (var == 3) {
+        course <- c(course, sample(upper_year_data, 1))
+      }
     }
   }
   Degree_pathway <- c(Degree_pathway, unique(course))
@@ -1523,6 +1817,8 @@ ubco <-
   data.frame("doc_id" = "UBCO",
              "text" = paste(ubco$Course_Description, collapse = " "))
 
+ubco_by_course <- result
+
 Degree_pathway_total <- data.frame(Course_Code = Degree_pathway_total)
 
 query_total <-
@@ -1537,6 +1833,7 @@ ubco_total <-
 # 10 - Save Corpus Objects
 ##############################
 
+
 degree_corpus <-
   rbind(western,
         waterloo,
@@ -1550,15 +1847,32 @@ degree_corpus <-
 
 # save(degree_corpus,file="./data/RObjects/degree_corpus.RData")
 
-degree_corpus_total <-
-  rbind(western_total,
-        waterloo_total,
-        toronto_total,
-        sfu_total,
-        manitoba_total,
-        laurier_total,
-        concordia_total,
-        berkeley_total,
-        ubco_total)
+degree_corpus_by_course <-
+  rbind(
+    western_by_course,
+    waterloo_by_course,
+    toronto_by_course,
+    sfu_by_course,
+    manitoba_by_course,
+    laurier_by_course,
+    concordia_by_course,
+    berkeley_by_course,
+    ubco_by_course
+  )
 
-# save(degree_corpus_total,file="./data/RObjects/degree_corpus_total.RData")
+save(degree_corpus_by_course, file = "./data/RObjects/degree_corpus_by_course.RData")
+
+
+degree_corpus_total <- rbind(
+  western_total,
+  waterloo_total,
+  toronto_total,
+  sfu_total,
+  manitoba_total,
+  laurier_total,
+  concordia_total,
+  berkeley_total,
+  ubco_total
+)
+
+#save(degree_corpus_total,file="./data/RObjects/degree_corpus_total.RData")
