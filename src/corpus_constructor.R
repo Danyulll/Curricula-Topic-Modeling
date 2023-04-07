@@ -164,7 +164,7 @@ berkeley_by_course <- df
 berkeley <- df
 berkeley <-
   data.frame("doc_id" = "Berkeley",
-             "text" = paste(berkeley$Course_Description, collapse = " "))
+             "text" = str_squish(paste(berkeley$Course_Description, collapse = " ")))
 
 berkeley_total <- df_total
 berkeley_total <-
@@ -269,7 +269,7 @@ concordia <- result
 concordia <-
   data.frame(
     "doc_id" = "Concordia",
-    "text" = paste(concordia$Course_Description, collapse = " ")
+    "text" = str_squish(paste(concordia$Course_Description, collapse = " "))
   )
 
 concordia_by_course <- result
@@ -535,7 +535,7 @@ result <- sqldf(query)
 laurier <- result
 laurier <-
   data.frame("doc_id" = "Laurier",
-             "text" = paste(laurier$Course_Description, collapse = " "))
+             "text" = str_squish(paste(laurier$Course_Description, collapse = " ")))
 
 laurier_by_course <- result
 
@@ -784,7 +784,7 @@ result <- sqldf(query)
 manitoba <- result
 manitoba <-
   data.frame("doc_id" = "Manitoba",
-             "text" = paste(manitoba$Course_Description, collapse = " "))
+             "text" = str_squish(paste(manitoba$Course_Description, collapse = " ")))
 
 manitoba_by_course <- result
 
@@ -985,7 +985,7 @@ result <- sqldf(query)
 sfu <- result
 sfu <-
   data.frame("doc_id" = "SFU",
-             "text" = paste(sfu$Course_Description, collapse = " "))
+             "text" = str_squish(paste(sfu$Course_Description, collapse = " ")))
 
 sfu_by_course <- result
 
@@ -1253,11 +1253,11 @@ query <-
   SELECT Course_Code, Course_Description FROM Degree_pathway JOIN course_descrips_stat USING(Course_Code)"
 
 result <- sqldf(query)
-result <- result[!duplicated(result$Course_Code), ]
+toronto <- result[!duplicated(result$Course_Code), ]
 
 toronto <-
   data.frame("doc_id" = "Toronto",
-             "text" = paste(result$Course_Description, collapse = " "))
+             "text" = str_squish(paste(toronto$Course_Description, collapse = " ")))
 
 toronto_by_course <- result
 
@@ -1562,7 +1562,7 @@ result <- sqldf(query)
 waterloo <- result
 waterloo <-
   data.frame("doc_id" = "Waterloo",
-             "text" = paste(waterloo$Course_Description, collapse = " "))
+             "text" = str_squish(paste(waterloo$Course_Description, collapse = " ")))
 
 waterloo_by_course <- result
 
@@ -1685,7 +1685,7 @@ result <- sqldf(query)
 western <- result
 western <-
   data.frame("doc_id" = "Western",
-             "text" = paste(western$Course_Description, collapse = " "))
+             "text" = str_squish(paste(western$Course_Description, collapse = " ")))
 
 western_by_course <- result
 
@@ -1815,7 +1815,7 @@ result <- sqldf(query)
 ubco <- result
 ubco <-
   data.frame("doc_id" = "UBCO",
-             "text" = paste(ubco$Course_Description, collapse = " "))
+             "text" = str_squish(paste(ubco$Course_Description, collapse = " ")))
 
 ubco_by_course <- result
 

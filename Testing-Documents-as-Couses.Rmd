@@ -1,68 +1,19 @@
 ---
-title: "Curricula-Topic-Modeling"
+title: "By Course ID Test"
+author: "Daniel Krasnov"
+date: "2023-04-03"
+output:
+  html_document: default
+  pdf_document: default
 ---
 
-## Introduction to Topic Modeling and LDA
+```{r setup, include=FALSE, echo=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
-### Terminology
+Having the university as the document and the concatenated course descriptions as the text tends to lead to noisy clusters. Therefore we opt to try training our model on a corpus where documents are the courses and their descriptions are the text. Our document number will then go from 9 to approximately 200.
 
-Before beginning there are three important preliminary definitions one will need in any text analysis:
-
--   Document: a distinct text object that one wishes to analyze. This could be a paper, a paragraph, etc.
--   Term: an individual word in a given document.
--   Corpus: The set of all documents.
-
-### Topic Models
-
-Topic Modeling is a statistical model that attempts to cluster the words found in a document into various "topics". The hope is that these topics would capture some underlying subject contained within the text. It is important to note that Topic Models are fuzzy in the sense that documents are assumed to be comprised of multiple topics with varying degrees of membership to each.
-
-### Latent Dirichlet Allocation
-
-Perhaps the most famous topic model is *Latent Dirichlet Allocation* (LDA) (Blei et al., 2003). It is a three-level hierarchical Bayesian model that defines a collection of documents as a random mixture over some underlying topic set where each topic is itself a distribution over our vocabulary.
-
-LDA works by assuming a data generating process (DGP) for our documents and then employs inference to discover the most likely parameters (Grimmer et al., 2022).
-
-Blei, Ng, and Jordan define the following DGP (2003):
-
-1.  Choose $N \sim$ Poisson($\xi$)
-2.  Choose $\theta \sim$ Dir($\alpha$)
-3.  For each of the $N$ words $w_n$:
-    1.  Choose a topic $z_n\sim$Multinomial($\theta$)
-    2.  Choose a word $w_n$ from $p(w_n|z_n,\beta)$, a multinomial probability conditioned on the topic $z_n$
-
-For the following analysis we estimate the parameters using the *collapsed Gibbs sampling method*, though it is important to note there are others that yield varied results. To further complicate things, when fitting LDA in R one must predefine the number of topics for the model. Finding a good estimate for the number of topics is paramount and many methods are explored.
-
-Once a model is fitted, it is common to extract 2 matrices $\Phi$ and $\Theta$. These are also commonly referred to as $\beta$ and $\gamma$ respectively. Both are given by the priors of LDA. $\Phi$ represents the probability mass over the terms. $\Theta$ represents the probability mass function over the topics or the per-document-per-topic probabilities.
-
-
-## Feature Extraction and Preprocessing
-
-### Document-Term Matrices
-
-There are many methods of feature extraction from text, we opt for the *bag of words* model. To construct this model simply define a common set of words shared between documents and store a count of word appearances for each document. Commonly this is stored as a *Document-Term Matrix* (DTM), for example, given the documents:
-
-::: {#tbl-panel layout-ncol="2"}
-| Document 1   |
-|--------------|
-| "I am happy" |
-
-| Document 2 |
-|------------|
-| "I am sad" |
-
-Corpus
-:::
-
-the corresponding DTM would be
-
-|           | I   |  am | happy | sad |
-|-----------|:----|----:|:-----:|:---:|
-| **Doc 1** | 1   |   1 |   1   |  0  |
-| **Doc 2** | 1   |   1 |   0   |  1  |
-
-In R we can us the tm package to create our Corpus and DTM objects. For these examples scrapped Data Science course information from various universities will be preprocessed.
-
-```{r Libraries, echo=FALSE, include=FALSE}
+```{r Libraries, echo=FALSE, results='hide'}
 # Load Libraries
 library(quanteda.textstats)
 library(quanteda)
@@ -82,9 +33,10 @@ library(slam)
 library(gridExtra)
 ```
 
+We begin by constructing our corpus object,
 
-```{r Load in Data}
-data <- load("../data/RObjects/degree_corpus_by_course.RData")
+```{r Load in dataframe}
+data <- load("./data/RObjects/degree_corpus_by_course.RData")
 colnames(degree_corpus_by_course) <- c("doc_id", "text")
 degree_corpus_by_course <- degree_corpus_by_course[!duplicated(degree_corpus_by_course$doc_id),]
 degree_corpus_by_course <- degree_corpus_by_course[degree_corpus_by_course$text != "",]
@@ -97,26 +49,9 @@ corpus <- Corpus(ds)
 inspect(corpus[1])
 ```
 
-As shown the first element of the corpus is the course Computer Science 2210A/B and it holds the course description.
+We now clean our corpus. As previously explored using TF-IDF for term inclusion and stemming both lead to more difficult to interpret topics. Therefore we opt very basic cleaning. We also remove custom stopwords found in the previous attempts at modeling this dataset to be cumbersome for interpretation.
 
-### DTM Construction
-
-#### Text Preprocessing
-
-Raw text data lends itself to difficult analysis. NLP posses several best practices for cleaning text:
-
--   Punctation/Number Removal: deleting any non alphabetic characters.
--   Lowercasing: sending all words to lowercase.
--   Stopword Removal: stopwords are words used often in sentences that give little to no information, e.g., articles such as the, a, etc.
--   Tokenizing: dividing a document into a set of individual words, note we opt to combine synonymous tokens in our analysis as well
-
-
-::: {.callout-note}
-[TF-IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) and [stemming](https://en.wikipedia.org/wiki/Stemming) are also very popular techniques for reducing dimensionality. We found for our analysis these both lead to cumbersome topic interpretation, and we therefore omit them, though they should both be attempted in any analysis.
-:::
-
-
-```{r Text Preprocessing}
+```{r}
 # Remove punctuation
 corpus <- tm_map(corpus, content_transformer(removePunctuation))
 # Send everything to lower case
@@ -142,18 +77,11 @@ corpus <- tm_map(corpus, stripWhitespace)
 inspect(corpus[1])
 ```
 
-#### Collocations
+Through experimentation it has been found that certain unigrams are better interpretable if we construct the most likely bigram the unigram is likely to participate in. This is found through collocations: terms that have a higher probability of appearing together than they do individually. High values of count, $\lambda$ and $z$ all point towards potentially good bigrams to include. We decide term inclusion ultimately by testing different models.
 
-*Collocations* are terms that have a higher probability of appearing together adjacently than they do individually. Rather than just have a model of singular terms, *unigrams*, we can incorporate the most pairs of terms as single terms, *bigrams*.
-
-This produces the most common collocations with statistical signifigance. Some of the terms are nonsensical like math math and are simply a product of us concatenating course descrptions. However we can examine the list and choose bigrams that we think ought to be included. Notable signifigant bigrams include:
-
-The thing im doing is supported by this paper: https://people.eng.unimelb.edu.au/tbaldwin/pubs/tslp2013-topiccoll.pdf
-
-It is suggested than you can go through your corpus and manually replace bigrams with a unigram representing the significant collocation to improve topic intelligibility. Therefore for all the significant bigrams I will do so except for the nonsensical ones such as math math or statistics data.
-
-```{r Crease Bigrams}
+```{r}
 # Inspecting BiGrams table
+
 corpusq <- quanteda::corpus(corpus)
 
 corpuz_tokzd <- quanteda::tokens(corpusq)
@@ -168,7 +96,7 @@ BiGrams <- corpuz_tokzd %>%
 head(BiGrams)
 ```
 
-```{r Plot Bigrams}
+```{r}
 # Plotting BiGrams
 plot1 <- ggplot(BiGrams, aes(fill=count, y=lambda, x=reorder(collocation, -lambda))) + 
     geom_bar(position="dodge", stat="identity") + coord_flip()+labs(x= "Bigrams", y = "lambda")
@@ -258,6 +186,7 @@ corpus2 <- tm_map(corpus2, function(x) {
 })
 
 dtm <- DocumentTermMatrix(corpus2)
+inspect(dtm)
 ```
 
 We also manually combine synonymous terms,
@@ -271,27 +200,21 @@ dtm <- combineCols(c("model","models","modeling"), dtm,"models")
 dtm <- combineCols(c("database","databases"), dtm,"database")
 ```
 
+Now we can move onto discovering optimal $K$ values.
 
-Our DTM now includes Bigrams:
-```{r}
-inspect(dtm[1:5,50:55])
+```{r ldatuning, cache=TRUE}
+# Find number of topics
+result <- FindTopicsNumber(
+  dtm,
+  topics = seq(from = 2, to = 20, by = 1),
+  metrics = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
+  method = "Gibbs",
+  control = list(seed = 77),
+  mc.cores = 2L,
+)
+# Plot metrics
+suppressWarnings(FindTopicsNumber_plot(result))
 ```
-
-## Topic Number Discovery
-
-LDA, like many unsupervised learning methods, is extremely dependent on its parameters. One such parameter that requires meticulous tuning is the number of topics. In the literature there exist many metrics for discovering the optimal number of topics with several being readily available in R.
-
-### Perplexity
-
-Perplexity is a measure of a model's ability to generalize to unseen data. It is the log-likelihood of a a test set of data and is given by Pleplé:
-
-$$\ell(w)=\text{log}p(w|\Phi,\alpha)=\sum_d \text{log} p(w_d|\Phi,\alpha)$$
-
-- $w_d$: the unseen document
-- $\Phi$: the matrix for the topics
-- $\alpha$: the hyperparameter for the topic distributions
-
-The lower our perplexity score the better. We can use 3-fold cross validation and plot our perplexities for various topic numbers.
 
 ```{r Perplexity 3-fold CV, cache=TRUE}
 set.seed(87460945)
@@ -334,94 +257,8 @@ ggplot(results, aes(x=K, y=Perplexity)) + geom_line() + ggtitle("Perplexity vs. 
 results[which.min(results$Perplexity),"K"]
 ```
 
+Some optimal topic numbers are 3, 5, 8, 9, 12, 14, 15, 20, 25. Now we can visualize them with LDAvis noting that we set $\lambda=0.6$.
 
-Looks like in terms of Perplexity 14 is our optimal number of topics though there is a sizable inital tip at $K=8$ that is work exploring.
-
-
-
-### ldatuning
-
-The ldatuning package provides us with several metrics to evaluate the number topics all of which rely on find extrema. We seek to minimize Arun2010 and CaoJuan2009 and maximize Deveaud2014 and Griffiths2004.
-
-```{r ldatuning1, cache=TRUE, warning=FALSE}
-# Find number of topics
-result <- FindTopicsNumber(
-  dtm,
-  topics = seq(from = 2, to = 40, by = 1),
-  metrics = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
-  method = "Gibbs",
-  control = list(seed = 77),
-  mc.cores = 2L,
-)
-# Plot metrics
-FindTopicsNumber_plot(result)
-```
-
-It seems no topic numbers over 25 are viable. Let us zoom in on the 2-25 range.
-
-```{r ldatuning2, cache=TRUE, warning=FALSE}
-# Find number of topics
-result <- FindTopicsNumber(
-  dtm,
-  topics = seq(from = 2, to = 25, by = 1),
-  metrics = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
-  method = "Gibbs",
-  control = list(seed = 77),
-  mc.cores = 2L,
-)
-# Plot metrics
-FindTopicsNumber_plot(result)
-```
-
-For our minima we see CaoJuan2009 suggests 3 and 9 while Arun2010 promotes somewhere in the 20-25 range. Examining our maxima we find Deveaud2014 also suggests around 3 and Griffiths2004 recommends 15 or 18. This provides us with a good range of topic numbers to explore, $k = 3,5,8,9,12,14,15,20,25$.
-
-## Topic Visualization
-
-Rather than individually fit each model model for our topic numbers the R package LDAvis creates a fantastic interactable visualization of our LDA model. LDAvis tries to answer 3 questions (Sievert & Shirley, 2014): 
-
-- How prevalent is each topic? 
-- How do the topics relate to each other? 
-- How do the topics relate to each other?
-
-To interpret these visualizations we fist need to define several quantities:
-
-*Relevance* - Sievert and Shirley propose relevance  as a metric to rank terms based on their usefulness for interpreting topics (2014). They define it as follows:
-
-$$r(w,k|\lambda)=\lambda \text{log}(\phi_{kw}+(1-\lambda)\text{log}\left( \frac{\phi_{kw}}{p_w}\right)$$
-
-- $\phi_{kw}$: the probability of term $w$ for topic $k$.
-- $p_w$: the marginal probability of term $w$ in the corpus.
-- $\lambda$: a weight parameter such that $0 \leq \lambda \leq 1$.
-- $\text{log}\left( \frac{\phi_{kw}}{p_w}\right)$: the lift of a term.
-
-A $\lambda$ of 1 orders terms based on their topic-specific probability whereas a $\lambda$ of 0 orders term based on their lift. Sievert and Shirley suggest $\lambda = 6$. The higher this metric the better.
-
-*Lift* - As seen above Lift is the ratio of a term's probability in a given topic to its marginal probability. The metric downweights terms that are frequent throughout an entire corpus (Sievert & Shirley 2014).
-
-*Saliency* - Introuced by Chuang, Manning, and Heer, it is defined as follows (2012):
-$$\begin{align} saliency(w) &= P(W) \times distinctiveness(w) \\
-distinctiveness(w) &= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
-\end{align}$$
-
-- $P(T|w)$: the probability a word $w$ was genereted by a topic $T$
-- $P(T)$: the marginal probability of the topic, i.e., the probability a word was produced b topic $T$
-
-The general idea is that distinctiveness is the Kullback-Leibler divergence between $P(T|w)$ and $P(T)$ and informs us how useful a $w$ is for determining a generating topic. Multiplying this by $P(w)$ yields saliency; a metric that ranks terms in their usefulness in identifying topics.
-
-With these we can understand our visuals:
-
-- Topic circles: circles are drawn equal to the number of topics. Their areas are proportional to the estimated number of words produced by that topic. The centers of the circles are determined by computing the distances between topics which are then projected onto a 2D plane. The larger a circle is, the more prevalent it is.
-
--   Red Bars: the estimated number of times a term was created by a  topic. When you select a circle (topic) the red bars for the most relevant terms will be highlighted.
-
--   Blue Bars: each bar represents the frequency of each term. When no topic is selected the blue bars for the most salient terms are displayed. When a topic is selected the blue bars are the frequency of the most relevant terms.
-
--   Topic-Term Circles: When you highlight a term the circles' areas will change. These circles' areas are proportional to the number of times a topic generated that specific term.
-
-If $\lambda=1$ terms are ranked in decreasing order of their topic-specific probability. $\lambda=0$ ranks terms solely by their lift. The suggested $\lambda$ is $\lambda=0.6$ though in our experimentation we found $\lambda \in [0.6,0.8]$ tends to provide good results.
-
-
-### K=3 Solution
 ```{r LDAvvis 3 Group Sol}
 # Fit largest model
 lda.out <- LDA(dtm, 3, method = "Gibbs",control = list(seed = 87460945))
@@ -458,8 +295,6 @@ View the visualization [here](https://danyulll.github.io/vis_k_3/).
 
 As we might expect the overarching topics of any Data Science curriculum are programming, statistics, and mathematics. Importantly, models actually beats out statistics indicating that data scientists are primarily concerned with modelling as opposed to inference or estimation.
 
-### K=5 Solution
-
 ```{r LDAvvis 5 Group Sol}
 # Fit largest model
 lda.out <- LDA(dtm, 5, method = "Gibbs",control = list(seed = 87460945))
@@ -495,13 +330,11 @@ json_lda <- LDAvis::createJSON(
 View the visualization [here](https://danyulll.github.io/vis_k_5/).
 
 Now topics begin to become more nuanced:
--   Topic 1: statistics comes to the top with applications, random, theory, probability, estimation, and distributions trailing behind. Clearly a statistics topic.
--   Topic 2: software, database, and systems come to the top of this topic. Databases are an important part of any data scientist's job and it makes sense this would be put into its own topic- its quite distinct from any of the others.
--   Topic 3: models, analysis, learning, regression, clustering, classification, and machine_learning. Very clearly a machine learning topic.
--   Topic 4: mathematics is by in large the most relevant term. This coupled with words such as calculus, equations, linear, integration shows this is a mathematics topic.
--   Topic 5: programming, algorithms, computer, objectorientated, this is likely the computer science and programming aspect of any data science program.
-
-### K=8 Solution
+- Topic 1: statistics comes to the top with applications, random, theory, probability, estimation, and distributions trailing behind. Clearly a statistics topic.
+- Topic 2: software, database, and systems come to the top of this topic. Databases are an important part of any data scientist's job and it makes sense this would be put into its own topic- its quite distinct from any of the others.
+- Topic 3: models, analysis, learning, regression, clustering, classification, and machine_learning. Very clearly a machine learning topic.
+- Topic 4: mathematics is by in large the most relevant term. This coupled with words such as calculus, equations, linear, integration shows this is a mathematics topic.
+- Topic 5: programming, algorithms, computer, objectorientated, this is likely the computer science and programming aspect of any data science program.
 
 ```{r LDAvvis 8 Group Sol}
 # Fit largest model
@@ -536,7 +369,7 @@ json_lda <- LDAvis::createJSON(
 ```
 View the visualization [here](https://danyulll.github.io/vis_k_8/).
 
-For the sake of brevity I will simply list what I consider to be the most likely topics from here on out. Note asterisks indicate noisey topics I am unsure of and a ? indicates the topic is just noise.
+For the sake of brevity I will simply list what I consider to be the most likely topics from here on out. Note asterisks indicate noisey topics I am unsure of.
 
 - Topic 1: statistics
 - Topic 2: machine learning
@@ -547,7 +380,6 @@ For the sake of brevity I will simply list what I consider to be the most likely
 - Topic 7: computer science
 - Topic 8: linear algebra
 
-### K=9 Solution
 
 ```{r LDAvvis 9 Group Sol}
 # Fit largest model
@@ -593,7 +425,6 @@ View the visualization [here](https://danyulll.github.io/vis_k_9/).
 - Topic 8: business applications*
 - Topic 9: communication
 
-### K=12 Solution
 
 ```{r LDAvvis 12 Group Sol}
 # Fit largest model
@@ -641,8 +472,6 @@ View the visualization [here](https://danyulll.github.io/vis_k_12/).
 - Topic 10: applications*
 - Topic 11: data analysis*
 - Topic 12: proofs
-
-### K=14 Solution
 
 ```{r LDAvvis 14 Group Sol}
 # Fit largest model
@@ -693,8 +522,6 @@ View the visualization [here](https://danyulll.github.io/vis_k_14/).
 - Topic 13: programming*
 - Topic 14: applications*
 
-### K=15 Solution
-
 ```{r LDAvvis 15 Group Sol}
 # Fit largest model
 lda.out <- LDA(dtm, 15, method = "Gibbs",control = list(seed = 87460945))
@@ -744,8 +571,6 @@ View the visualization [here](https://danyulll.github.io/vis_k_15/).
 - Topic 13: statistics*
 - Topic 14: experiment design
 - Topic 15: analytics*
-
-### K=20 Solution
 
 ```{r LDAvvis 20 Group Sol}
 # Fit largest model
@@ -801,8 +626,6 @@ View the visualization [here](https://danyulll.github.io/vis_k_20/).
 - Topic 18: regression
 - Topic 19: ?
 - Topic 20: statistics
-
-### K=25 Solution
 
 ```{r LDAvvis 25 Group Sol}
 # Fit largest model
@@ -863,111 +686,6 @@ View the visualization [here](https://danyulll.github.io/vis_k_25/).
 - Topic 23: time series
 - Topic 24: data analysis*
 - Topic 25: research/marketing
-
-
-## Resampling Course Pathways
-
-## University-Topic Composition
-
-***
-
-## Inspecting $\beta$
-
-Given our optimal model we may now move onto exploring what words comprise each of the topics. To do so we first plot the terms with the highest $\beta$ values and then move onto wordclouds. Recall $\beta$ provides us with the per-topic-per-word probabilities. These are the probability a term was created by a topic.
-
-```{r Graph Beta University Level}
-#| fig-width: 10
-#| fig-height: 10
-uni_topics <- tidy(lda.out,matrix="beta")
-
-top_terms <- uni_topics %>%
- group_by(topic) %>%
- top_n(9, beta) %>%
- ungroup() %>%
- arrange(topic, -beta) %>%
-  mutate(term = reorder(term, beta))
-
-top_terms %>%
- ggplot(aes(term, beta, fill = factor(topic))) +
- geom_col(show.legend = FALSE) +
- facet_wrap(~ topic, scales = "free") +
- coord_flip()
-```
-
-Examining word clouds may also prove fruitful.
-
-```{r wordcloud beta topics in university}
-
-set.seed(87460945)
-
-top_terms <- uni_topics %>%
- group_by(topic) %>%
- top_n(20, beta) %>%
- ungroup() %>%
- arrange(topic, -beta) %>%
-  mutate(term = reorder(term, beta))
-
-# for (i in 1:20) {
-# df <- subset(as.data.frame(top_terms),topic==i)  
-# wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred"))
-# title(paste("Topic ",i), font.main = 1)
-# }
-```
-
-
-## Inspecting $\gamma$
-
-Another interesting question to explore is which topics do universities prioritize? Is one university's Data Science program more heavily biased towards Math? How about Statistics? Recall the $\gamma$ matrix provides us with the per-document-per-topic probabilities. That is, it provides us with a percentage break down of which topics generated each document.
-
-```{r Graph Gamma University Level}
-# #| fig-width: 10
-# #| fig-height: 10
-# 
-# uni_topics <- tidy(lda.out,matrix="gamma")
-# 
-# top_terms <- uni_topics %>%
-#  group_by(topic) %>%
-#  arrange(topic, gamma)
-# 
-# top_terms %>%
-#  mutate(topic = reorder(topic, gamma)) %>%
-#  ggplot(aes(topic, gamma, fill = factor(document))) +
-#  geom_col(show.legend = FALSE) +
-#  facet_wrap(~ document, scales = "free") +
-#  coord_flip()
-```
-
-
-## References
-
-A topic model for movie reviews. (n.d.). Retrieved March 20, 2023, from  
-&nbsp;&nbsp;&nbsp;&nbsp;https://ldavis.cpsievert.me/reviews/reviews.html 
-
-Blei, D. M., Ng, A. Y., & Jordan, M. I. (2003). Latent dirichlet allocation. Journal of
-machine Learning 
-&nbsp;&nbsp;&nbsp;&nbsp;research, 3(Jan), 993-1022.
-
-Fernandes, E. (2019, November 2). Text preprocessing for NLP and Machine Learning Using R.
-DataMathStat. Retrieved March 20, 2023, from  &nbsp;&nbsp;&nbsp;&nbsp;https://datamathstat.wordpress.com/2019/10/25/text-preprocessing-for-nlp-and-machine-learning-using-r/ 
-
-Gandrud, C. (2015, May 8). A Link Between topicmodels LDA and LDAvis. R. Retrieved March 20, &nbsp;&nbsp;&nbsp;&nbsp;2023, from https://www.r-bloggers.com/2015/05/a-link-between-topicmodels-lda-and-ldavis/ 
-
-Grimmer, J., Roberts, M. E., &amp; Stewart, B. M. (2022). Text as data: A New Framework for Machine 
-&nbsp;&nbsp;&nbsp;&nbsp;Learning and the Social Sciences. Princeton University Press. 
-
-Meza, D. (2015, July 20). Topic modeling using R · Knowledger. knowledgeR. Retrieved March 20, &nbsp;&nbsp;&nbsp;&nbsp;2023,from https://knowledger.rbind.io/post/topic-modeling-using-r/ 
-
-Pleplé, Q. (n.d.). Perplexity To Evaluate Topic Models. qpleple. Retrieved March 20, 2023, from 
-&nbsp;&nbsp;&nbsp;&nbsp;http://qpleple.com/perplexity-to-evaluate-topic-models/ 
-
-Sievert, C., & Shirley, K. (2014, June). LDAvis: A method for visualizing and interpreting topics. In Proceedings of the workshop on interactive language learning, visualization, and interfaces (pp. 63-70).
-
-Silge, J., Robinson, D., & ProQuest (Firm). (2017). Text mining with R: A tidy approach (First ed.). &nbsp;&nbsp;&nbsp;&nbsp;O'Reilly Media.
-
-Tufts, C. (n.d.). The Little Book of LDA. Latest Posts – Mining the Details. Retrieved March 20, 2023, &nbsp;&nbsp;&nbsp;&nbsp;from https://miningthedetails.com/LDA_Inference_Book/lda-inference.html 
-
-
-https://ladal.edu.au/coll.html
 
 
 

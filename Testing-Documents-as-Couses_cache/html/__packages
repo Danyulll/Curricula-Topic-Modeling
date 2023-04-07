@@ -1,3 +1,5 @@
+quanteda.textstats
+quanteda
 NLP
 tm
 topicmodels
@@ -6,12 +8,10 @@ ldatuning
 LDAvis
 dplyr
 stringi
+stringr
 tidytext
 tidyr
 RColorBrewer
 wordcloud
 slam
-quanteda.textstats
-quanteda
-stringr
 gridExtra
