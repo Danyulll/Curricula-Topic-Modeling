@@ -2,7 +2,7 @@
 ## DGP for Curricla Topic Modeling
 ## dkrasnov@student.ubc.ca - April 2023
 #############################################################
-set.seed(87460945)
+# set.seed(87460945)
 
 ##############################
 # 0 - Load librairies
@@ -18,7 +18,7 @@ library(textclean)
 # 1 - Berkeley DGP
 ##############################
 Degree_pathway_total <- c()
-std_sample <- 50
+std_sample <- 100
 for (i in 1:std_sample) {
   ## Load in course description data
   course_descrips <-
@@ -167,10 +167,7 @@ berkeley <-
              "text" = str_squish(paste(berkeley$Course_Description, collapse = " ")))
 
 berkeley_total <- df_total
-berkeley_total <-
-  data.frame("doc_id" = "Berkeley",
-             "text" = paste(berkeley_total$Course_Description, collapse = " "))
-
+berkeley_total$Course_Code <- paste("Berkeley ",berkeley_total$Course_Code,sep=""," (",1:nrow(berkeley_total),")")
 
 ##############################
 # 2 - Concordia DGP
@@ -203,7 +200,6 @@ course_descrips_mathstat$Course_Code <-
   replace_non_ascii(course_descrips_mathstat$Course_Code)
 
 Degree_pathway_total <- c()
-std_sample <- 50
 dup_check <- c()
 for (i in 1:std_sample) {
   # G1 - G19
@@ -283,12 +279,14 @@ query_total <-
   "
 result_total <- sqldf(query_total)
 concordia_total <- result_total
-concordia_total <-
-  data.frame(
-    "doc_id" = "Concordia",
-    "text" = paste(concordia_total$Course_Description, collapse = " ")
-  )
+# concordia_total <-
+#   data.frame(
+#     "doc_id" = "Concordia",
+#     "text" = paste(concordia_total$Course_Description, collapse = " ")
+#   )
 
+concordia_total <- result_total
+concordia_total$Course_Code <- paste("Concordia ",concordia_total$Course_Code,sep=""," (",1:nrow(concordia_total),")")
 
 ##############################
 # 3 - Laurier DGP
@@ -351,7 +349,6 @@ course_descrips_math$Course_Code <-
   replace_non_ascii(course_descrips_math$Course_Code)
 
 Degree_pathway_total <- c()
-std_sample <- 50
 for (i in 1:std_sample) {
   # G1
   Degree_pathway <-
@@ -552,9 +549,11 @@ query_total <-
   "
 result_total <- sqldf(query_total)
 laurier_total <- result_total
-laurier_total <-
-  data.frame("doc_id" = "Laurier",
-             "text" = paste(laurier_total$Course_Description, collapse = " "))
+# laurier_total <-
+#   data.frame("doc_id" = "Laurier",
+#              "text" = paste(laurier_total$Course_Description, collapse = " "))
+laurier_total$Course_Code <- paste("Laurier ",laurier_total$Course_Code,sep=""," (",1:nrow(laurier_total),")")
+
 
 
 ##############################
@@ -607,7 +606,6 @@ course_descrips_stat$Course_Code <-
   replace_non_ascii(course_descrips_stat$Course_Code)
 
 Degree_pathway_total <- c()
-std_sample <- 50
 for (i in 1:std_sample) {
   # F1 - F7
   Degree_pathway <- ds_cal$Category_Description[1:7]
@@ -803,9 +801,10 @@ query_total <-
 
 result_total <- sqldf(query_total)
 manitoba_total <- result_total
-manitoba_total <-
-  data.frame("doc_id" = "Manitoba",
-             "text" = paste(manitoba_total$Course_Description, collapse = " "))
+# manitoba_total <-
+#   data.frame("doc_id" = "Manitoba",
+#              "text" = paste(manitoba_total$Course_Description, collapse = " "))
+manitoba_total$Course_Code <- paste("Manitoba ",manitoba_total$Course_Code,sep=""," (",1:nrow(manitoba_total),")")
 
 
 ##############################
@@ -871,7 +870,6 @@ course_descrips_stat$Course_Code <-
 
 
 Degree_pathway_total <- c()
-std_sample <- 50
 for (i in 1:std_sample) {
   # L1
   Degree_pathway <-
@@ -1009,9 +1007,10 @@ query_total <-
 
 result_total <- sqldf(query_total)
 sfu_total <- result_total
-sfu_total <-
-  data.frame("doc_id" = "SFU",
-             "text" = paste(sfu_total$Course_Description, collapse = " "))
+# sfu_total <-
+#   data.frame("doc_id" = "SFU",
+#              "text" = paste(sfu_total$Course_Description, collapse = " "))
+sfu_total$Course_Code <- paste("SFU ",sfu_total$Course_Code,sep=""," (",1:nrow(sfu_total),")")
 
 
 ##############################
@@ -1054,7 +1053,6 @@ course_descrips_stat$Course_Code <-
   replace_non_ascii(course_descrips_stat$Course_Code)
 
 Degree_pathway_total <- c()
-std_sample <- 50
 for (i in 1:std_sample) {# F1
   Degree_pathway <-
     sample(unlist(str_split(ds_cal$Category_Description[1], " or ")), 1)
@@ -1275,10 +1273,10 @@ query_total <-
 
 result_total <- sqldf(query_total)
 toronto_total <- result_total[which(!duplicated(result_total$Course_Code)), ]
-toronto_total <-
-  data.frame("doc_id" = "Toronto",
-             "text" = paste(toronto_total$Course_Description, collapse = " "))
-
+# toronto_total <-
+#   data.frame("doc_id" = "Toronto",
+#              "text" = paste(toronto_total$Course_Description, collapse = " "))
+toronto_total$Course_Code <- paste("Toronto ",toronto_total$Course_Code,sep=""," (",1:nrow(toronto_total),")")
 
 ##############################
 # 7 - Waterloo DGP
@@ -1343,7 +1341,6 @@ course_descrips_stat$Course_Code <-
   replace_non_ascii(course_descrips_stat$Course_Code)
 
 Degree_pathway_total <- c()
-std_sample <- 50
 for (i in 1:std_sample) {# DS Courses
   # G1
   Degree_pathway <-
@@ -1583,10 +1580,10 @@ query_total <- "
 
 result_total <- sqldf(query_total)
 waterloo_total <- result_total
-waterloo_total <-
-  data.frame("doc_id" = "Waterloo",
-             "text" = paste(waterloo_total$Course_Description, collapse = " "))
-
+# waterloo_total <-
+#   data.frame("doc_id" = "Waterloo",
+#              "text" = paste(waterloo_total$Course_Description, collapse = " "))
+waterloo_total$Course_Code <- paste("Waterloo ",waterloo_total$Course_Code,sep=""," (",1:nrow(waterloo_total),")")
 
 ##############################
 # 8 - Western DGP
@@ -1639,7 +1636,6 @@ course_descrips_stat$Course_Code <-
   replace_non_ascii(course_descrips_stat$Course_Code)
 
 Degree_pathway_total <- c()
-std_sample <- 50
 for (i in 1:std_sample) {
   # G1
   Degree_pathway <-
@@ -1702,10 +1698,10 @@ query_total <-
 
 result_total <- sqldf(query_total)
 western_total <- result_total
-western_total <-
-  data.frame("doc_id" = "Western",
-             "text" = paste(western_total$Course_Description, collapse = " "))
-
+# western_total <-
+#   data.frame("doc_id" = "Western",
+#              "text" = paste(western_total$Course_Description, collapse = " "))
+western_total$Course_Code <- paste("Western ",western_total$Course_Code,sep=""," (",1:nrow(western_total),")")
 
 ##############################
 # 9 - UBCO DGP
@@ -1716,7 +1712,6 @@ course_descrips_UBCO <-
          Course_Description = Course.Description)
 
 Degree_pathway_total <- c()
-std_sample <- 50
 for (i in 1:std_sample) {
   
   
@@ -1825,9 +1820,11 @@ query_total <-
   "SELECT Course_Code, Course_Description FROM Degree_pathway_total JOIN course_descrips_UBCO USING(Course_Code)"
 result_total <- sqldf(query_total)
 ubco_total <- result_total
-ubco_total <-
-  data.frame("doc_id" = "UBCO",
-             "text" = paste(ubco_total$Course_Description, collapse = " "))
+# ubco_total <-
+#   data.frame("doc_id" = "UBCO",
+#              "text" = paste(ubco_total$Course_Description, collapse = " "))
+ubco_total$Course_Code <- paste("UBCO ",ubco_total$Course_Code,sep=""," (",1:nrow(ubco_total),")")
+
 
 ##############################
 # 10 - Save Corpus Objects
@@ -1860,7 +1857,7 @@ degree_corpus_by_course <-
     ubco_by_course
   )
 
-save(degree_corpus_by_course, file = "./data/RObjects/degree_corpus_by_course.RData")
+# save(degree_corpus_by_course, file = "./data/RObjects/degree_corpus_by_course.RData")
 
 
 degree_corpus_total <- rbind(
@@ -1875,4 +1872,4 @@ degree_corpus_total <- rbind(
   ubco_total
 )
 
-#save(degree_corpus_total,file="./data/RObjects/degree_corpus_total.RData")
+save(degree_corpus_total,file="./data/RObjects/degree_corpus_total.RData")

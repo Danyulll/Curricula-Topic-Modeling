@@ -141,8 +141,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#k20-solution" id="toc-k20-solution" class="nav-link" data-scroll-target="#k20-solution">K=20 Solution</a></li>
   <li><a href="#k25-solution" id="toc-k25-solution" class="nav-link" data-scroll-target="#k25-solution">K=25 Solution</a></li>
   </ul></li>
-  <li><a href="#inspecting-beta" id="toc-inspecting-beta" class="nav-link" data-scroll-target="#inspecting-beta">Inspecting <span class="math inline">\(\beta\)</span></a></li>
-  <li><a href="#inspecting-gamma" id="toc-inspecting-gamma" class="nav-link" data-scroll-target="#inspecting-gamma">Inspecting <span class="math inline">\(\gamma\)</span></a></li>
+  <li><a href="#resampling-course-pathways" id="toc-resampling-course-pathways" class="nav-link" data-scroll-target="#resampling-course-pathways">Resampling Course Pathways</a>
+  <ul>
+  <li><a href="#k-3-solution" id="toc-k-3-solution" class="nav-link" data-scroll-target="#k-3-solution">K = 3 Solution</a></li>
+  <li><a href="#k-20-solution" id="toc-k-20-solution" class="nav-link" data-scroll-target="#k-20-solution">K = 20 Solution</a></li>
+  <li><a href="#k-23-solution" id="toc-k-23-solution" class="nav-link" data-scroll-target="#k-23-solution">K = 23 Solution</a></li>
+  <li><a href="#k-24-solution" id="toc-k-24-solution" class="nav-link" data-scroll-target="#k-24-solution">K = 24 Solution</a>
+  <ul class="collapse">
+  <li><a href="#k-30-solution" id="toc-k-30-solution" class="nav-link" data-scroll-target="#k-30-solution">K = 30 Solution</a></li>
+  </ul></li>
+  <li><a href="#k-40-solution" id="toc-k-40-solution" class="nav-link" data-scroll-target="#k-40-solution">K = 40 Solution</a></li>
+  </ul></li>
+  <li><a href="#university-topic-composition" id="toc-university-topic-composition" class="nav-link" data-scroll-target="#university-topic-composition">University-Topic Composition</a></li>
+  <li><a href="#topic-word-composition" id="toc-topic-word-composition" class="nav-link" data-scroll-target="#topic-word-composition">Topic-Word Composition</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
@@ -196,14 +207,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ol></li>
 </ol>
 <p>For the following analysis we estimate the parameters using the <em>collapsed Gibbs sampling method</em>, though it is important to note there are others that yield varied results. To further complicate things, when fitting LDA in R one must predefine the number of topics for the model. Finding a good estimate for the number of topics is paramount and many methods are explored.</p>
-<p>Once a model is fitted, it is common to extract 2 matrices <span class="math inline">\(\Phi\)</span> and <span class="math inline">\(\Theta\)</span>. These are also commonly referred to as <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\gamma\)</span> respectively. Both are given by the priors of LDA. <span class="math inline">\(\Phi\)</span> represents the probability mass over the terms. <span class="math inline">\(\Theta\)</span> represents the probability mass function over the topics or the per-document-per-topic probabilities.</p>
+<p>Once a model is fitted, it is common to extract 2 matrices <span class="math inline">\(\Phi\)</span> and <span class="math inline">\(\Theta\)</span>. These are also commonly referred to as <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\gamma\)</span> respectively. Both are given by the priors of LDA. <span class="math inline">\(\Phi\)</span> represents the probability mass over the terms. <span class="math inline">\(\Theta\)</span> represents the probability mass function over the topics.</p>
 </section>
 </section>
 <section id="feature-extraction-and-preprocessing" class="level2">
 <h2 class="anchored" data-anchor-id="feature-extraction-and-preprocessing">Feature Extraction and Preprocessing</h2>
 <section id="document-term-matrices" class="level3">
 <h3 class="anchored" data-anchor-id="document-term-matrices">Document-Term Matrices</h3>
-<p>There are many methods of feature extraction from text, we opt for the <em>bag of words</em> model. To construct this model simply define a common set of words shared between documents and store a count of word appearances for each document. Commonly this is stored as a <em>Document-Term Matrix</em> (DTM), for example, given the documents:</p>
+<p>There are many methods of feature extraction from text; we opt for the <em>bag of words</em> model. To construct this model simply define a common set of words shared between documents and store a count of word appearances. Commonly this is stored as a <em>Document-Term Matrix</em> (DTM), for example, given the documents:</p>
 <div id="tbl-panel" class="tbl-parent quarto-layout-panel anchored">
 <div class="panel-caption table-caption">
 <p>Corpus</p>
@@ -268,8 +279,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 <p>In R we can us the tm package to create our Corpus and DTM objects. For these examples scrapped Data Science course information from various universities will be preprocessed.</p>
-<div class="cell" data-hash="index_cache/html/Load in Data_198e65abd44465080c70bb66ad368276">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">load</span>(<span class="st">"../data/RObjects/degree_corpus_by_course.RData"</span>)</span>
+<div class="cell" data-hash="index_cache/html/Load in Data_ff251e53607d63262e29c0d016a4c11d">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"../data/RObjects/degree_corpus_by_course.RData"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(degree_corpus_by_course) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"doc_id"</span>, <span class="st">"text"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>degree_corpus_by_course <span class="ot">&lt;-</span> degree_corpus_by_course[<span class="sc">!</span><span class="fu">duplicated</span>(degree_corpus_by_course<span class="sc">$</span>doc_id),]</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>degree_corpus_by_course <span class="ot">&lt;-</span> degree_corpus_by_course[degree_corpus_by_course<span class="sc">$</span>text <span class="sc">!=</span> <span class="st">""</span>,]</span>
@@ -291,7 +302,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 6                                                                                                                                                                                                                          Upper and lower time and space bounds; levels of intractability; graph algorithms; greedy algorithms; dynamic algorithms; exhaustive search techniques; parallel algorithms.</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="index_cache/html/Construct Corpus_333cf327eec832ab7ac7398c415c92e6">
+<div class="cell" data-hash="index_cache/html/Construct Corpus_6925c3c9190d949453481be92ca46596">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">DataframeSource</span>(degree_corpus_by_course)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">Corpus</span>(ds)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(corpus[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -304,7 +315,7 @@ Content:  documents: 1
 Lists, stacks, queues, priority queues, trees, graphs, and their associated algorithms; file structures; sorting, searching, and hashing techniques; time and space complexity. </code></pre>
 </div>
 </div>
-<p>As shown the first element of the corpus is the course Computer Science 2210A/B and it holds the course description.</p>
+<p>As shown the first element of the corpus is the course Computer Science 2210A/B and it holds a course description.</p>
 </section>
 <section id="dtm-construction" class="level3">
 <h3 class="anchored" data-anchor-id="dtm-construction">DTM Construction</h3>
@@ -327,10 +338,10 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf">TF-IDF</a> and <a href="https://en.wikipedia.org/wiki/Stemming">stemming</a> are also very popular techniques for reducing dimensionality. We found for our analysis these both lead to cumbersome topic interpretation, and we therefore omit them, though they should both be attempted in any analysis.</p>
+<p><a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf">TF-IDF</a> and <a href="https://en.wikipedia.org/wiki/Stemming">stemming</a> are also very popular techniques. We found for our analysis these both lead to cumbersome topic interpretation, and we therefore omit them, though they should both be attempted in any complete analysis.</p>
 </div>
 </div>
-<div class="cell" data-hash="index_cache/html/Text Preprocessing_9455273ac3d92da5cdafc39d9b4aae34">
+<div class="cell" data-hash="index_cache/html/Text Preprocessing_502358ed6f080356f1e5b3a422cb47fd">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove punctuation</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(removePunctuation))</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Send everything to lower case</span></span>
@@ -366,11 +377,8 @@ lists queues priority queues trees graphs associated algorithms structures sorti
 </section>
 <section id="collocations" class="level4">
 <h4 class="anchored" data-anchor-id="collocations">Collocations</h4>
-<p><em>Collocations</em> are terms that have a higher probability of appearing together adjacently than they do individually. Rather than just have a model of singular terms, <em>unigrams</em>, we can incorporate the most pairs of terms as single terms, <em>bigrams</em>.</p>
-<p>This produces the most common collocations with statistical signifigance. Some of the terms are nonsensical like math math and are simply a product of us concatenating course descrptions. However we can examine the list and choose bigrams that we think ought to be included. Notable signifigant bigrams include:</p>
-<p>The thing im doing is supported by this paper: https://people.eng.unimelb.edu.au/tbaldwin/pubs/tslp2013-topiccoll.pdf</p>
-<p>It is suggested than you can go through your corpus and manually replace bigrams with a unigram representing the significant collocation to improve topic intelligibility. Therefore for all the significant bigrams I will do so except for the nonsensical ones such as math math or statistics data.</p>
-<div class="cell" data-hash="index_cache/html/Crease Bigrams_64599db145f3415e0599e1b953916bce">
+<p><em>Collocations</em> are terms that have a higher probability of appearing together adjacently than they do individually. Rather than just have a model of singular terms, <em>unigrams</em>, we can incorporate the most likely paired terms as their own token— <em>bigrams</em>. Lau et al.&nbsp;showed including Bigrams can signifigcantly improve topic intelligibility and leads to more parsimonious models (2013).</p>
+<div class="cell" data-hash="index_cache/html/Crease Bigrams_76aa3c8844b53146bb6afce0ad30fd70">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspecting BiGrams table</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>corpusq <span class="ot">&lt;-</span> quanteda<span class="sc">::</span><span class="fu">corpus</span>(corpus)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -394,7 +402,8 @@ lists queues priority queues trees graphs associated algorithms structures sorti
 6     hypothesis testing    10            0      2 8.155490 10.12133</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="index_cache/html/Plot Bigrams_f8015da5668dfb1505f683f69763e010">
+<p>Quanteda has functions to produce the most common collocations with statistical significance. Some of the terms are nonsensical like math math and are simply a product of our text preprocessing: likely stopword removal. However, we can examine the list and choose bigrams that we think ought to be included. Notable significant bigrams can be visualized:</p>
+<div class="cell" data-hash="index_cache/html/Plot Bigrams_5502ce6220a5974152db4ed1fc12ec52">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting BiGrams</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>plot1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(BiGrams, <span class="fu">aes</span>(<span class="at">fill=</span>count, <span class="at">y=</span>lambda, <span class="at">x=</span><span class="fu">reorder</span>(collocation, <span class="sc">-</span>lambda))) <span class="sc">+</span> </span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">position=</span><span class="st">"dodge"</span>, <span class="at">stat=</span><span class="st">"identity"</span>) <span class="sc">+</span> <span class="fu">coord_flip</span>()<span class="sc">+</span><span class="fu">labs</span>(<span class="at">x=</span> <span class="st">"Bigrams"</span>, <span class="at">y =</span> <span class="st">"lambda"</span>)</span>
@@ -407,8 +416,8 @@ lists queues priority queues trees graphs associated algorithms structures sorti
 <p><img src="index_files/figure-html/Plot%20Bigrams-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>We will need a couple custom functions for combing terms and making bigrams,</p>
-<div class="cell" data-hash="index_cache/html/Define combineCols_98fe9652dc1447ebb6b6b9149fdf2a3a">
+<p>We will need a couple custom functions for combing terms and making bigrams in our DTM.</p>
+<div class="cell" data-hash="index_cache/html/Define combineCols_1f9ea6de07fe9d31d6648d6f360e2923">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>combineCols <span class="ot">&lt;-</span> <span class="cf">function</span>(words, dtm, newColName){</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get indices of columns</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">colnames</span>(dtm) <span class="sc">%in%</span> words)</span>
@@ -433,7 +442,7 @@ lists queues priority queues trees graphs associated algorithms structures sorti
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="fu">return</span>(dtm)</span>
 <span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="index_cache/html/Define createBigram_3711605a5b98578377bf8617890edc70">
+<div class="cell" data-hash="index_cache/html/Define createBigram_bd9005611a13ab02507feed6b5308095">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>createBigram <span class="ot">&lt;-</span> <span class="cf">function</span>(df,term1,term2,replacement){</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  regex <span class="ot">&lt;-</span> <span class="fu">paste0</span>(term1,<span class="st">"</span><span class="sc">\\</span><span class="st">s+"</span>,term2)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df)) {</span>
@@ -443,8 +452,8 @@ lists queues priority queues trees graphs associated algorithms structures sorti
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(df)</span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now can add bigrams to our corpus,</p>
-<div class="cell" data-hash="index_cache/html/Create Bigrams_05284ff1172dd1477807fdede4efbfa5">
+<p>Now can add bigrams to our corpus.</p>
+<div class="cell" data-hash="index_cache/html/Create Bigrams_2a57cd9560d5905b3c491e852a2f93f9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate data frame</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>cor <span class="ot">&lt;-</span> <span class="fu">as.list</span>(corpus)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">data.frame</span>(<span class="st">"doc_id"</span> <span class="ot">=</span> <span class="fu">names</span>(cor)),<span class="fu">data.frame</span>(<span class="st">"text"</span><span class="ot">=</span><span class="fu">t</span>(<span class="fu">as.data.frame</span>(cor))))</span>
@@ -468,7 +477,7 @@ lists queues priority queues trees graphs associated algorithms structures sorti
 <span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"data"</span>,<span class="st">"sets"</span>,<span class="st">"data_sets"</span>)</span>
 <span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"text"</span>,<span class="st">"data"</span>,<span class="st">"text_data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="index_cache/html/Recreate Corpus_609d51a59c4a78362426f9d27b3016cd">
+<div class="cell" data-hash="index_cache/html/Recreate Corpus_722db3e37a1036cd126c021af90ae63d">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ds2 <span class="ot">&lt;-</span> <span class="fu">DataframeSource</span>(df)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>corpus2 <span class="ot">&lt;-</span> <span class="fu">Corpus</span>(ds2)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -481,8 +490,8 @@ lists queues priority queues trees graphs associated algorithms structures sorti
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> <span class="fu">DocumentTermMatrix</span>(corpus2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We also manually combine synonymous terms,</p>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-1_7314f27f2d868f6b70ad5fdcd4d0048d">
+<p>We also manually combine synonymous terms.</p>
+<div class="cell" data-hash="index_cache/html/Combine columns_7a3ec7b95258fa5169f2e91e0c78c6e9">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">combineCols</span>(<span class="fu">c</span>(<span class="st">"math"</span>, <span class="st">"mathematics"</span>, <span class="st">"mathematically"</span>, <span class="st">"mathematical"</span>),</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>              dtm,<span class="st">"mathematics"</span>)</span>
@@ -491,7 +500,7 @@ lists queues priority queues trees graphs associated algorithms structures sorti
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> <span class="fu">combineCols</span>(<span class="fu">c</span>(<span class="st">"database"</span>,<span class="st">"databases"</span>), dtm,<span class="st">"database"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Our DTM now includes Bigrams:</p>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-2_c81ebd4e111d15cc72df60ef29d0b854">
+<div class="cell" data-hash="index_cache/html/View DTM with Bigrams_482cec9a785878e41d4fe6b720ed85e5">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(dtm[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">50</span><span class="sc">:</span><span class="dv">55</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;&lt;DocumentTermMatrix (documents: 5, terms: 6)&gt;&gt;
@@ -524,7 +533,7 @@ Docs                         mathematics matrices
 <p>LDA, like many unsupervised learning methods, is extremely dependent on its parameters. One such parameter that requires meticulous tuning is the number of topics. In the literature there exist many metrics for discovering the optimal number of topics with several being readily available in R.</p>
 <section id="perplexity" class="level3">
 <h3 class="anchored" data-anchor-id="perplexity">Perplexity</h3>
-<p>Perplexity is a measure of a model’s ability to generalize to unseen data. It is the log-likelihood of a a test set of data and is given by Pleplé:</p>
+<p>Perplexity is a measure of a model’s ability to generalize to unseen data. It is the log-likelihood of a test set of data and is given by Pleplé:</p>
 <p><span class="math display">\[\ell(w)=\text{log}p(w|\Phi,\alpha)=\sum_d \text{log} p(w_d|\Phi,\alpha)\]</span></p>
 <ul>
 <li><span class="math inline">\(w_d\)</span>: the unseen document</li>
@@ -570,18 +579,18 @@ Docs                         mathematics matrices
 <p><img src="index_files/figure-html/Perplexity%203-fold%20CV-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<div class="cell" data-hash="index_cache/html/min Perplexity_53bbd5a18171c034f4600b3b2c436318">
+<div class="cell" data-hash="index_cache/html/min Perplexity_2f90dc7ec823df7d760349fca8c43e76">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieving K for minimum Perplexity</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>results[<span class="fu">which.min</span>(results<span class="sc">$</span>Perplexity),<span class="st">"K"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 8</code></pre>
+<pre><code>[1] 14</code></pre>
 </div>
 </div>
-<p>Looks like in terms of Perplexity 14 is our optimal number of topics though there is a sizable inital tip at <span class="math inline">\(K=8\)</span> that is work exploring.</p>
+<p>Looks like in terms of Perplexity 14 is our optimal number of topics though there is a sizable initial tip at <span class="math inline">\(K=8\)</span> that is work exploring.</p>
 </section>
 <section id="ldatuning" class="level3">
 <h3 class="anchored" data-anchor-id="ldatuning">ldatuning</h3>
-<p>The ldatuning package provides us with several metrics to evaluate the number topics all of which rely on find extrema. We seek to minimize Arun2010 and CaoJuan2009 and maximize Deveaud2014 and Griffiths2004.</p>
+<p>The ldatuning package provides us with several metrics to evaluate the number topics, all of which rely on finding extrema. We seek to minimize <a href="https://link.springer.com/chapter/10.1007/978-3-642-13657-3_43">Arun2010</a> and <a href="https://www.sciencedirect.com/science/article/pii/S092523120800372X?via%3Dihub">CaoJuan2009</a> and maximize <a href="https://dn.revuesonline.com/article.jsp?articleId=19419">Deveaud2014</a> and <a href="https://www.pnas.org/doi/full/10.1073/pnas.0307752101">Griffiths2004</a>.</p>
 <div class="cell" data-hash="index_cache/html/ldatuning1_b721e2b4f8a7af7730d411c3e48ede7c">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find number of topics</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">FindTopicsNumber</span>(</span>
@@ -620,14 +629,14 @@ Docs                         mathematics matrices
 </section>
 <section id="topic-visualization" class="level2">
 <h2 class="anchored" data-anchor-id="topic-visualization">Topic Visualization</h2>
-<p>Rather than individually fit each model model for our topic numbers the R package LDAvis creates a fantastic interactable visualization of our LDA model. LDAvis tries to answer 3 questions (Sievert &amp; Shirley, 2014):</p>
+<p>Rather than individually fit a model for each topic number and print the most likely generated terms, the R package LDAvis creates fantastic intractable visualizations. LDAvis tries to answer 3 questions (Sievert &amp; Shirley, 2014):</p>
 <ul>
 <li>How prevalent is each topic?</li>
 <li>How do the topics relate to each other?</li>
 <li>How do the topics relate to each other?</li>
 </ul>
 <p>To interpret these visualizations we fist need to define several quantities:</p>
-<p><em>Relevance</em> - Sievert and Shirley propose relevance as a metric to rank terms based on their usefulness for interpreting topics (2014). They define it as follows:</p>
+<p><em>Relevance</em> - Sievert and Shirley proposed relevance as a metric to rank terms based on their usefulness for interpreting topics (2014). They define it as follows:</p>
 <p><span class="math display">\[r(w,k|\lambda)=\lambda \text{log}(\phi_{kw}+(1-\lambda)\text{log}\left( \frac{\phi_{kw}}{p_w}\right)\]</span></p>
 <ul>
 <li><span class="math inline">\(\phi_{kw}\)</span>: the probability of term <span class="math inline">\(w\)</span> for topic <span class="math inline">\(k\)</span>.</li>
@@ -635,27 +644,27 @@ Docs                         mathematics matrices
 <li><span class="math inline">\(\lambda\)</span>: a weight parameter such that <span class="math inline">\(0 \leq \lambda \leq 1\)</span>.</li>
 <li><span class="math inline">\(\text{log}\left( \frac{\phi_{kw}}{p_w}\right)\)</span>: the lift of a term.</li>
 </ul>
-<p>A <span class="math inline">\(\lambda\)</span> of 1 orders terms based on their topic-specific probability whereas a <span class="math inline">\(\lambda\)</span> of 0 orders term based on their lift. Sievert and Shirley suggest <span class="math inline">\(\lambda = 6\)</span>. The higher this metric the better.</p>
+<p>A <span class="math inline">\(\lambda\)</span> of 1 orders terms based on their topic-specific probability whereas a <span class="math inline">\(\lambda\)</span> of 0 orders term based on their lift. Sievert and Shirley suggest <span class="math inline">\(\lambda = 0.6\)</span>. The higher this metric the better.</p>
 <p><em>Lift</em> - As seen above Lift is the ratio of a term’s probability in a given topic to its marginal probability. The metric downweights terms that are frequent throughout an entire corpus (Sievert &amp; Shirley 2014).</p>
 <p><em>Saliency</em> - Introuced by Chuang, Manning, and Heer, it is defined as follows (2012): <span class="math display">\[\begin{align} saliency(w) &amp;= P(W) \times distinctiveness(w) \\
 distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 \end{align}\]</span></p>
 <ul>
 <li><span class="math inline">\(P(T|w)\)</span>: the probability a word <span class="math inline">\(w\)</span> was genereted by a topic <span class="math inline">\(T\)</span></li>
-<li><span class="math inline">\(P(T)\)</span>: the marginal probability of the topic, i.e., the probability a word was produced b topic <span class="math inline">\(T\)</span></li>
+<li><span class="math inline">\(P(T)\)</span>: the marginal probability of the topic, i.e., the probability a word was produced by topic <span class="math inline">\(T\)</span></li>
 </ul>
 <p>The general idea is that distinctiveness is the Kullback-Leibler divergence between <span class="math inline">\(P(T|w)\)</span> and <span class="math inline">\(P(T)\)</span> and informs us how useful a <span class="math inline">\(w\)</span> is for determining a generating topic. Multiplying this by <span class="math inline">\(P(w)\)</span> yields saliency; a metric that ranks terms in their usefulness in identifying topics.</p>
 <p>With these we can understand our visuals:</p>
 <ul>
 <li><p>Topic circles: circles are drawn equal to the number of topics. Their areas are proportional to the estimated number of words produced by that topic. The centers of the circles are determined by computing the distances between topics which are then projected onto a 2D plane. The larger a circle is, the more prevalent it is.</p></li>
-<li><p>Red Bars: the estimated number of times a term was created by a topic. When you select a circle (topic) the red bars for the most relevant terms will be highlighted.</p></li>
+<li><p>Red Bars: the estimated number of times a term was created by a topic. When you select a circle the red bars for the most relevant terms will be highlighted.</p></li>
 <li><p>Blue Bars: each bar represents the frequency of each term. When no topic is selected the blue bars for the most salient terms are displayed. When a topic is selected the blue bars are the frequency of the most relevant terms.</p></li>
 <li><p>Topic-Term Circles: When you highlight a term the circles’ areas will change. These circles’ areas are proportional to the number of times a topic generated that specific term.</p></li>
 </ul>
 <p>If <span class="math inline">\(\lambda=1\)</span> terms are ranked in decreasing order of their topic-specific probability. <span class="math inline">\(\lambda=0\)</span> ranks terms solely by their lift. The suggested <span class="math inline">\(\lambda\)</span> is <span class="math inline">\(\lambda=0.6\)</span> though in our experimentation we found <span class="math inline">\(\lambda \in [0.6,0.8]\)</span> tends to provide good results.</p>
 <section id="k3-solution" class="level3">
 <h3 class="anchored" data-anchor-id="k3-solution">K=3 Solution</h3>
-<div class="cell" data-hash="index_cache/html/LDAvvis 3 Group Sol_87820141ceec5e2bc5e741d200a61acc">
+<div class="cell" data-hash="index_cache/html/LDAvvis 3 Group Sol_ec0428abccd677530ffca76be98d8886">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">3</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -686,12 +695,12 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./TestVis/K_3", open.browser = FALSE)</span></span>
 <span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>View the visualization <a href="https://danyulll.github.io/vis_k_3/">here</a>.</p>
-<p>As we might expect the overarching topics of any Data Science curriculum are programming, statistics, and mathematics. Importantly, models actually beats out statistics indicating that data scientists are primarily concerned with modelling as opposed to inference or estimation.</p>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k3/index.html">here</a>.</p>
+<p>As we might expect the overarching topics of any Data Science curriculum are programming, statistics, and mathematics. Interestingly, models actually beats out statistics indicating that data scientists are primarily concerned with modelling as opposed to inference or estimation.</p>
 </section>
 <section id="k5-solution" class="level3">
 <h3 class="anchored" data-anchor-id="k5-solution">K=5 Solution</h3>
-<div class="cell" data-hash="index_cache/html/LDAvvis 5 Group Sol_910ed833140057a89455add1fcbe9f07">
+<div class="cell" data-hash="index_cache/html/LDAvvis 5 Group Sol_a58a10ac74b8b1839389c3c78df12c5e">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -722,12 +731,19 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./TestVis/K_5", open.browser = FALSE)</span></span>
 <span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>View the visualization <a href="https://danyulll.github.io/vis_k_5/">here</a>.</p>
-<p>Now topics begin to become more nuanced: - Topic 1: statistics comes to the top with applications, random, theory, probability, estimation, and distributions trailing behind. Clearly a statistics topic. - Topic 2: software, database, and systems come to the top of this topic. Databases are an important part of any data scientist’s job and it makes sense this would be put into its own topic- its quite distinct from any of the others. - Topic 3: models, analysis, learning, regression, clustering, classification, and machine_learning. Very clearly a machine learning topic. - Topic 4: mathematics is by in large the most relevant term. This coupled with words such as calculus, equations, linear, integration shows this is a mathematics topic. - Topic 5: programming, algorithms, computer, objectorientated, this is likely the computer science and programming aspect of any data science program.</p>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k5/index.html">here</a>.</p>
+<p>Now topics begin to become more nuanced:</p>
+<ul>
+<li><p>Topic 1: statistics comes to the top with applications, random, theory, probability, estimation, and distributions trailing behind. Clearly a statistics topic.</p></li>
+<li><p>Topic 2: software, database, and systems come to the top of this topic. Databases are an important part of any data scientist’s job and it makes sense this would be put into its own topic- its quite distinct from any of the others.</p></li>
+<li><p>Topic 3: models, analysis, learning, regression, clustering, classification, and machine_learning. Very clearly a machine learning topic.</p></li>
+<li><p>Topic 4: mathematics is by in large the most relevant term. This coupled with words such as calculus, equations, linear, integration shows this is a mathematics topic.</p></li>
+<li><p>Topic 5: programming, algorithms, computer, objectorientated, this is likely the computer science and programming aspect of any data science program.</p></li>
+</ul>
 </section>
 <section id="k8-solution" class="level3">
 <h3 class="anchored" data-anchor-id="k8-solution">K=8 Solution</h3>
-<div class="cell" data-hash="index_cache/html/LDAvvis 8 Group Sol_d5620aac9a0aaed86302cde4211debb3">
+<div class="cell" data-hash="index_cache/html/LDAvvis 8 Group Sol_d2c5b3f8e956be3675aca317635bac3e">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">8</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -758,8 +774,8 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./TestVis/K_8", open.browser = FALSE)</span></span>
 <span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>View the visualization <a href="https://danyulll.github.io/vis_k_8/">here</a>.</p>
-<p>For the sake of brevity I will simply list what I consider to be the most likely topics from here on out. Note asterisks indicate noisey topics I am unsure of.</p>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k8/index.html">here</a>.</p>
+<p>For the sake of brevity I will simply list what I consider to be the most likely topics from here on out. Note asterisks indicate noisey topics I am unsure of and a ? indicates the topic is uninterpretable.</p>
 <ul>
 <li>Topic 1: statistics</li>
 <li>Topic 2: machine learning</li>
@@ -773,7 +789,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 </section>
 <section id="k9-solution" class="level3">
 <h3 class="anchored" data-anchor-id="k9-solution">K=9 Solution</h3>
-<div class="cell" data-hash="index_cache/html/LDAvvis 9 Group Sol_52843ff0e7af23220555aa061f5591ab">
+<div class="cell" data-hash="index_cache/html/LDAvvis 9 Group Sol_d64728b43051ef3888bb48e8ffefeafd">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">9</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -804,7 +820,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./TestVis/K_9", open.browser = FALSE)</span></span>
 <span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>View the visualization <a href="https://danyulll.github.io/vis_k_9/">here</a>.</p>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k9/index.html">here</a>.</p>
 <ul>
 <li>Topic 1: probability theory</li>
 <li>Topic 2: machine learning</li>
@@ -819,7 +835,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 </section>
 <section id="k12-solution" class="level3">
 <h3 class="anchored" data-anchor-id="k12-solution">K=12 Solution</h3>
-<div class="cell" data-hash="index_cache/html/LDAvvis 12 Group Sol_e5a9fb5e4e2eec230f379b9fc82cd9ba">
+<div class="cell" data-hash="index_cache/html/LDAvvis 12 Group Sol_c766b0926e27aa0970e4155816211a4d">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">12</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -850,7 +866,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./TestVis/K_12", open.browser = FALSE)</span></span>
 <span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>View the visualization <a href="https://danyulll.github.io/vis_k_12/">here</a>.</p>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k12/index.html">here</a>.</p>
 <ul>
 <li>Topic 1: machine learning</li>
 <li>Topic 2: probability theory</li>
@@ -868,7 +884,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 </section>
 <section id="k14-solution" class="level3">
 <h3 class="anchored" data-anchor-id="k14-solution">K=14 Solution</h3>
-<div class="cell" data-hash="index_cache/html/LDAvvis 14 Group Sol_91031c969457914ea3caaf86d513ea40">
+<div class="cell" data-hash="index_cache/html/LDAvvis 14 Group Sol_4cb7464691e4faf3a266e6466d2eb842">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">14</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -899,7 +915,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./TestVis/K_14", open.browser = FALSE)</span></span>
 <span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>View the visualization <a href="https://danyulll.github.io/vis_k_14/">here</a>.</p>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k14/index.html">here</a>.</p>
 <ul>
 <li>Topic 1: machine learning</li>
 <li>Topic 2: statistics</li>
@@ -919,7 +935,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 </section>
 <section id="k15-solution" class="level3">
 <h3 class="anchored" data-anchor-id="k15-solution">K=15 Solution</h3>
-<div class="cell" data-hash="index_cache/html/LDAvvis 15 Group Sol_a580bf3cda4b1f4644313eec7d864a80">
+<div class="cell" data-hash="index_cache/html/LDAvvis 15 Group Sol_866dd288db7f8d192b648704d3965be0">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">15</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -950,7 +966,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./TestVis/K_15", open.browser = FALSE)</span></span>
 <span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>View the visualization <a href="https://danyulll.github.io/vis_k_15/">here</a>.</p>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k15/index.html">here</a>.</p>
 <ul>
 <li>Topic 1: probability theory</li>
 <li>Topic 2: machine learning</li>
@@ -962,7 +978,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <li>Topic 8: databases</li>
 <li>Topic 9: programming</li>
 <li>Topic 10: algorithms/data structures</li>
-<li>Topic 11: linear regression or linear algebra</li>
+<li>Topic 11: linear algebra</li>
 <li>Topic 12: modelling</li>
 <li>Topic 13: statistics*</li>
 <li>Topic 14: experiment design</li>
@@ -971,7 +987,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 </section>
 <section id="k20-solution" class="level3">
 <h3 class="anchored" data-anchor-id="k20-solution">K=20 Solution</h3>
-<div class="cell" data-hash="index_cache/html/LDAvvis 20 Group Sol_fa74d531593b984cd6521388ead88b29">
+<div class="cell" data-hash="index_cache/html/LDAvvis 20 Group Sol_f97acb4d8ba78204fe198cae97b072ef">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">20</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1002,7 +1018,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./TestVis/K_20", open.browser = FALSE)</span></span>
 <span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>View the visualization <a href="https://danyulll.github.io/vis_k_20/">here</a>.</p>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k20/index.html">here</a>.</p>
 <ul>
 <li>Topic 1: probability theory</li>
 <li>Topic 2: machine learning</li>
@@ -1028,7 +1044,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 </section>
 <section id="k25-solution" class="level3">
 <h3 class="anchored" data-anchor-id="k25-solution">K=25 Solution</h3>
-<div class="cell" data-hash="index_cache/html/LDAvvis 25 Group Sol_cac8c0e9316850d034a7e3ccadd2548c">
+<div class="cell" data-hash="index_cache/html/LDAvvis 25 Group Sol_57dcb67906d4cefc81c02a1aa5d7ba61">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">25</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1059,7 +1075,7 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./TestVis/K_25", open.browser = FALSE)</span></span>
 <span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>View the visualization <a href="https://danyulll.github.io/vis_k_25/">here</a>.</p>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k25/index.html">here</a>.</p>
 <ul>
 <li>Topic 1: probability theory</li>
 <li>Topic 2: calculus</li>
@@ -1087,68 +1103,883 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <li>Topic 24: data analysis*</li>
 <li>Topic 25: research/marketing</li>
 </ul>
-<hr>
 </section>
 </section>
-<section id="inspecting-beta" class="level2">
-<h2 class="anchored" data-anchor-id="inspecting-beta">Inspecting <span class="math inline">\(\beta\)</span></h2>
-<p>Given our optimal model we may now move onto exploring what words comprise each of the topics. To do so we first plot the terms with the highest <span class="math inline">\(\beta\)</span> values and then move onto wordclouds. Recall <span class="math inline">\(\beta\)</span> provides us with the per-topic-per-word probabilities. These are the probability a term was created by a topic.</p>
-<div class="cell" data-hash="index_cache/html/Graph Beta University Level_c9eb169e82f9d65940fd37538afa414b">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>uni_topics <span class="ot">&lt;-</span> <span class="fu">tidy</span>(lda.out,<span class="at">matrix=</span><span class="st">"beta"</span>)</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>top_terms <span class="ot">&lt;-</span> uni_topics <span class="sc">%&gt;%</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a> <span class="fu">top_n</span>(<span class="dv">9</span>, beta) <span class="sc">%&gt;%</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a> <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a> <span class="fu">arrange</span>(topic, <span class="sc">-</span>beta) <span class="sc">%&gt;%</span></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">term =</span> <span class="fu">reorder</span>(term, beta))</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>top_terms <span class="sc">%&gt;%</span></span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a> <span class="fu">ggplot</span>(<span class="fu">aes</span>(term, beta, <span class="at">fill =</span> <span class="fu">factor</span>(topic))) <span class="sc">+</span></span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a> <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a> <span class="fu">facet_wrap</span>(<span class="sc">~</span> topic, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a> <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="resampling-course-pathways" class="level2">
+<h2 class="anchored" data-anchor-id="resampling-course-pathways">Resampling Course Pathways</h2>
+<p>Currently we are using 1 sampled degree pathway from each university. It would be interesting to see what happens if we sample say 100 students from each university. Will the variance in electives lead to different topics?</p>
+<div class="cell" data-hash="index_cache/html/Load in Data Total_9b550b8451c6603c31e39c011a6f086d">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"../data/RObjects/degree_corpus_total.RData"</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(degree_corpus_total) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"doc_id"</span>, <span class="st">"text"</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>degree_corpus_total <span class="ot">&lt;-</span> degree_corpus_total[degree_corpus_total<span class="sc">$</span>text <span class="sc">!=</span> <span class="st">""</span>,]</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>degree_corpus_total <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(degree_corpus_total)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>degree_corpus_total <span class="ot">&lt;-</span> degree_corpus_total[<span class="sc">!</span><span class="fu">duplicated</span>(degree_corpus_total<span class="sc">$</span>doc_id),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="index_cache/html/Construct Corpus Total_6aa17b2a7806fd9a7529847dd25c23db">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">DataframeSource</span>(degree_corpus_total)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">Corpus</span>(ds)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(corpus[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;&lt;SimpleCorpus&gt;&gt;
+Metadata:  corpus specific: 1, document level (indexed): 0
+Content:  documents: 1
+
+                                                                                                                                           Western Computer Science 2210A/B (1) 
+Lists, stacks, queues, priority queues, trees, graphs, and their associated algorithms; file structures; sorting, searching, and hashing techniques; time and space complexity. </code></pre>
+</div>
+</div>
+<div class="cell" data-hash="index_cache/html/Text Preprocessing Total_c1c3e145cb7d03e3830f6e762e589169">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove punctuation</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(removePunctuation))</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Send everything to lower case</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(tolower))</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove stopwords</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus,</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">content_transformer</span>(removeWords),</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">stopwords</span>(<span class="st">"english"</span>))</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove numbers</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(removeNumbers))</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove custom stop words</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>remove_words <span class="ot">&lt;-</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">"include"</span>,<span class="st">"methods"</span>,<span class="st">"topics"</span>,<span class="st">"design"</span>,<span class="st">"functions"</span>,<span class="st">"emphasis"</span>,<span class="st">"language"</span>,<span class="st">"introduction"</span>,<span class="st">"languages"</span>,<span class="st">"performance"</span>,<span class="st">"experience"</span>,<span class="st">"course"</span>,<span class="st">"techniques"</span>,<span class="st">"variables"</span>,<span class="st">"number"</span>,<span class="st">"department"</span>,<span class="st">"tools"</span>,<span class="st">"fundamental"</span>,<span class="st">"also"</span>,<span class="st">"major"</span>,<span class="st">"modern"</span>,<span class="st">"issues"</span>,<span class="st">"used"</span>,<span class="st">"methods"</span>,<span class="st">"using"</span>,<span class="st">"case"</span>,<span class="st">"architecture"</span>,<span class="st">"covered"</span>,<span class="st">"credit"</span>,<span class="st">"basic"</span>,<span class="st">"cosc"</span>,<span class="st">"granted"</span>,<span class="st">"use"</span>,<span class="st">"solutions"</span>,<span class="st">"will"</span>,<span class="st">"students"</span>,<span class="st">"fall"</span>,<span class="st">"spring"</span>,<span class="st">"important"</span>,<span class="st">"one"</span>,<span class="st">"considered"</span>,<span class="st">"stacks"</span>,<span class="st">"offers"</span>,<span class="st">"types"</span>,<span class="st">"may"</span>,<span class="st">"held"</span>,<span class="st">"former"</span>,<span class="st">"honours"</span>,<span class="st">"faculty"</span>,<span class="st">"related"</span>,<span class="st">"enter"</span>,<span class="st">"review"</span>,<span class="st">"enrolment"</span>,<span class="st">"exercises"</span>,<span class="st">"summer"</span>,<span class="st">"need"</span>,<span class="st">"offered"</span>,<span class="st">"social"</span>,<span class="st">"digital"</span>,<span class="st">"terms"</span>,<span class="st">"real"</span>,<span class="st">"concepts"</span>,<span class="st">"understanding"</span>,<span class="st">"can"</span>,<span class="st">"including"</span>,<span class="st">"programs"</span>,<span class="st">"program"</span>,<span class="st">"recommended"</span>,<span class="st">"examples"</span>,<span class="st">"introduced"</span>,<span class="st">"large"</span>,<span class="st">"search"</span>,<span class="st">"relations"</span>,<span class="st">"key"</span>,<span class="st">"etc"</span>,<span class="st">"reasoning"</span>,<span class="st">"intended"</span>,<span class="st">"fws"</span>,<span class="st">"general"</span>,<span class="st">"restricted"</span>,<span class="st">"version"</span>,<span class="st">"two"</span>,<span class="st">"comp"</span>,<span class="st">"well"</span>,<span class="st">"rich"</span>,<span class="st">"intended"</span>,<span class="st">"required"</span>,<span class="st">"internet"</span>,<span class="st">"recent"</span>,<span class="st">"phys"</span>,<span class="st">"sciences"</span>,<span class="st">"covers"</span>,<span class="st">"year"</span>,<span class="st">"selected"</span>,<span class="st">"renewal"</span>,<span class="st">"explored"</span>,<span class="st">"csch"</span>,<span class="st">"principles"</span>,<span class="st">"practice"</span>,<span class="st">"development"</span>,<span class="st">"studies"</span>,<span class="st">"security"</span>,<span class="st">"provides"</span>,<span class="st">"advanced"</span>,<span class="st">"instruction"</span>,<span class="st">"discussed"</span>,<span class="st">"processes"</span>,<span class="st">"death"</span>,<span class="st">"lower"</span>,<span class="st">"high"</span>,<span class="st">"crncr"</span>,<span class="st">"taken"</span>,<span class="st">"efficient"</span>,<span class="st">"includes"</span>,<span class="st">"core"</span>,<span class="st">"retrieval"</span>,<span class="st">"class"</span>,<span class="st">"within"</span>,<span class="st">"present"</span>,<span class="st">"option"</span>,<span class="st">"interested"</span>,<span class="st">"together"</span>,<span class="st">"session"</span>,<span class="st">"week"</span>,<span class="st">"new"</span>,<span class="st">"order"</span>,<span class="st">"tables"</span>,<span class="st">"small"</span>,<span class="st">"suitable"</span>,<span class="st">"wide"</span>,<span class="st">"without"</span>,<span class="st">"good"</span>,<span class="st">"introduces"</span>,<span class="st">"assignments"</span>,<span class="st">"current"</span>,<span class="st">"thinking"</span>,<span class="st">"completed"</span>,<span class="st">"basics"</span>,<span class="st">"essential"</span>,<span class="st">"gain"</span>,<span class="st">"effective"</span>,<span class="st">"file"</span>,<span class="st">"three"</span>,<span class="st">"many"</span>,<span class="st">"classes"</span>,<span class="st">"extensive"</span>,<span class="st">"tasks"</span>,<span class="st">"work"</span>,<span class="st">"meaningful"</span>,<span class="st">"first"</span>,<span class="st">"creating"</span>,<span class="st">"elementary"</span>,<span class="st">"image"</span>,<span class="st">"variety"</span>,<span class="st">"field"</span>,<span class="st">"engl"</span>,<span class="st">"skills"</span>,<span class="st">"evaluation"</span>,<span class="st">"advances"</span>,<span class="st">"however"</span>,<span class="st">"substantial"</span>,<span class="st">"ece"</span>,<span class="st">"fields"</span>,<span class="st">"sucessful"</span>,<span class="st">"effectively"</span>,<span class="st">"beyond"</span>,<span class="st">"explicit"</span>,<span class="st">"describe"</span>,<span class="st">"take"</span>,<span class="st">"earlier"</span>,<span class="st">"worstcase"</span>,<span class="st">"obtained"</span>,<span class="st">"rules"</span>,<span class="st">"previously"</span>,<span class="st">"life"</span>,<span class="st">"allow"</span>,<span class="st">"abstractions"</span>,<span class="st">"intensive"</span>,<span class="st">"agreement"</span>,<span class="st">"involving"</span>,<span class="st">"shared"</span>,<span class="st">"thus"</span>,<span class="st">"attached"</span>,<span class="st">"firsthand"</span>,<span class="st">"partners"</span>,<span class="st">"provider"</span>,<span class="st">"remain"</span>,<span class="st">"entity"</span>,<span class="st">"given"</span>,<span class="st">"delves"</span>,<span class="st">"offerings"</span>,<span class="st">"available"</span>,<span class="st">"testingand"</span>,<span class="st">"vary"</span>,<span class="st">"school"</span>,<span class="st">"complete"</span>,<span class="st">"choice"</span>,<span class="st">"certain"</span>,<span class="st">"identify"</span>,<span class="st">"ides"</span>,<span class="st">"term"</span>,<span class="st">"minimum"</span>,<span class="st">"upon"</span>,<span class="st">"working"</span>,<span class="st">"discusses"</span>,<span class="st">"final"</span>,<span class="st">"highlevel"</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="cf">function</span>(x) {</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">removeWords</span>(x, remove_words)</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove whitespace</span></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, stripWhitespace)</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(corpus[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;&lt;SimpleCorpus&gt;&gt;
+Metadata:  corpus specific: 1, document level (indexed): 0
+Content:  documents: 1
+
+                                                                                      Western Computer Science 2210A/B (1) 
+lists queues priority queues trees graphs associated algorithms structures sorting searching hashing time space complexity </code></pre>
+</div>
+</div>
+<p>We search for bigrams once again:</p>
+<div class="cell" data-hash="index_cache/html/Create Bigrams Total_466ee540876103e58a71fc6a7b6bcc20">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspecting BiGrams table</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>corpusq <span class="ot">&lt;-</span> quanteda<span class="sc">::</span><span class="fu">corpus</span>(corpus)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>corpuz_tokzd <span class="ot">&lt;-</span> quanteda<span class="sc">::</span><span class="fu">tokens</span>(corpusq)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>BiGrams <span class="ot">&lt;-</span> corpuz_tokzd <span class="sc">%&gt;%</span> </span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>       quanteda<span class="sc">::</span><span class="fu">tokens_select</span>(<span class="at">pattern =</span> <span class="st">"^[A-Z]"</span>, </span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>                               <span class="at">valuetype =</span> <span class="st">"regex"</span>,</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>                               <span class="at">case_insensitive =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>                               <span class="at">padding =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>       <span class="fu">textstat_collocations</span>(<span class="at">min_count =</span> <span class="dv">500</span>, <span class="at">tolower =</span> <span class="cn">FALSE</span>,<span class="at">size=</span><span class="dv">2</span>)</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>BiGrams</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  collocation count count_nested length     lambda          z
+1                   math math  3849            0      2  7.1236081 147.663228
+2      differential equations  1227            0      2  6.9945033 109.552975
+3                data science  2007            0      2  3.1165548 101.225615
+4            database systems   900            0      2  4.3045611  96.151115
+5                   stat stat   791            0      2  7.2490956  92.891146
+6             neural networks   697            0      2  8.2201796  87.922537
+7     conditional probability   560            0      2  5.9110985  87.473371
+8                queues trees   549            0      2  5.8782531  87.306766
+9             data structures  1435            0      2  4.0873762  86.860659
+10           machine learning   960            0      2  6.8334718  86.489570
+11  regression classification   680            0      2  5.6540018  86.143720
+12               graph theory   600            0      2  5.1489152  86.017550
+13          linear regression   819            0      2  3.7378780  85.662039
+14          computing science   646            0      2  4.3647462  81.399262
+15      statistical inference   520            0      2  4.6352065  78.268305
+16          analysis variance   657            0      2  5.0411811  74.408687
+17           computer science   604            0      2  3.6268005  73.105115
+18       computer programming   607            0      2  3.5937047  72.686506
+19           linear equations   582            0      2  3.6317445  72.377138
+20         hypothesis testing   786            0      2  8.8417868  71.912605
+21       statistical software   525            0      2  3.5336911  68.427885
+22                  data sets   871            0      2  3.3526943  68.424026
+23                data mining  1023            0      2  4.8592274  65.182590
+24         data visualization   629            0      2  3.1203219  57.195120
+25      ordinary differential   553            0      2  8.5019581  55.122070
+26 mathematically disciplines   727            0      2 11.6502774  54.133670
+27              data analysis  1078            0      2  1.7208998  50.088245
+28                   big data   709            0      2  5.2794043  49.391833
+29                monte carlo   602            0      2 17.5996629  12.198298
+30                  data data   713            0      2  0.1731121   4.426817</code></pre>
+</div>
+</div>
+<div class="cell" data-hash="index_cache/html/Plot Bigrams Total_454a60a8a86bfa1dfa69686e5f1736d1">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting BiGrams</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>plot1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(BiGrams, <span class="fu">aes</span>(<span class="at">fill=</span>count, <span class="at">y=</span>lambda, <span class="at">x=</span><span class="fu">reorder</span>(collocation, <span class="sc">-</span>lambda))) <span class="sc">+</span> </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">position=</span><span class="st">"dodge"</span>, <span class="at">stat=</span><span class="st">"identity"</span>) <span class="sc">+</span> <span class="fu">coord_flip</span>()<span class="sc">+</span><span class="fu">labs</span>(<span class="at">x=</span> <span class="st">"Bigrams"</span>, <span class="at">y =</span> <span class="st">"lambda"</span>)</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>plot2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(BiGrams, <span class="fu">aes</span>(<span class="at">fill=</span>count, <span class="at">y=</span>z, <span class="at">x=</span><span class="fu">reorder</span>(collocation, <span class="sc">-</span>z))) <span class="sc">+</span> </span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">position=</span><span class="st">"dodge"</span>, <span class="at">stat=</span><span class="st">"identity"</span>) <span class="sc">+</span> <span class="fu">coord_flip</span>()<span class="sc">+</span><span class="fu">labs</span>(<span class="at">x=</span> <span class="st">"Bigrams"</span>, <span class="at">y =</span> <span class="st">"z"</span>)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(plot1, plot2, <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/Graph%20Beta%20University%20Level-1.png" class="img-fluid" width="960"></p>
+<p><img src="index_files/figure-html/Plot%20Bigrams%20Total-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Examining word clouds may also prove fruitful.</p>
-<div class="cell" data-hash="index_cache/html/wordcloud beta topics in university_cb52a4eb756d751badf9c43629bb0086">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">87460945</span>)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>top_terms <span class="ot">&lt;-</span> uni_topics <span class="sc">%&gt;%</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a> <span class="fu">top_n</span>(<span class="dv">20</span>, beta) <span class="sc">%&gt;%</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a> <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a> <span class="fu">arrange</span>(topic, <span class="sc">-</span>beta) <span class="sc">%&gt;%</span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">term =</span> <span class="fu">reorder</span>(term, beta))</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co"># for (i in 1:20) {</span></span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># df &lt;- subset(as.data.frame(top_terms),topic==i)  </span></span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="co"># wordcloud(df$term, freq = df$beta,colors= c("indianred1","indianred2","indianred3","indianred"))</span></span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co"># title(paste("Topic ",i), font.main = 1)</span></span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/Add Bigrams Total_c86ae6146831f316027bad71bc4a9457">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate data frame</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>cor <span class="ot">&lt;-</span> <span class="fu">as.list</span>(corpus)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">data.frame</span>(<span class="st">"doc_id"</span> <span class="ot">=</span> <span class="fu">names</span>(cor)),<span class="fu">data.frame</span>(<span class="st">"text"</span><span class="ot">=</span><span class="fu">t</span>(<span class="fu">as.data.frame</span>(cor))))</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"data"</span>,<span class="st">"science"</span>,<span class="st">"data_science"</span>)</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"data"</span>,<span class="st">"structures"</span>,<span class="st">"data_structures"</span>)</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"data"</span>,<span class="st">"analysis"</span>,<span class="st">"data_analysis"</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"data"</span>,<span class="st">"mining"</span>,<span class="st">"data_mining"</span>)</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="co"># df &lt;- createBigram(df,"text","mining","text_mining")</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"machine"</span>,<span class="st">"learning"</span>,<span class="st">"machine_learning"</span>)</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"computer"</span>,<span class="st">"science"</span>,<span class="st">"computer_science"</span>)</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"time"</span>,<span class="st">"series"</span>,<span class="st">"time_series"</span>)</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"database"</span>,<span class="st">"systems"</span>,<span class="st">"database_systems"</span>)</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"data"</span>,<span class="st">"visualization"</span>,<span class="st">"data_visualization"</span>)</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"neural"</span>,<span class="st">"networks"</span>,<span class="st">"neural_networks"</span>)</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"graph"</span>,<span class="st">"theory"</span>,<span class="st">"graph_theory"</span>)</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"differential"</span>,<span class="st">"equations"</span>,<span class="st">"differential_equations"</span>)</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"big"</span>,<span class="st">"data"</span>,<span class="st">"big_data"</span>)</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"hypothesis"</span>,<span class="st">"testing"</span>,<span class="st">"hypothesis_testing"</span>)</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a><span class="co"># df &lt;- createBigram(df,"linear","regression","linear_regression")</span></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a><span class="co"># df &lt;- createBigram(df,"regression","models","regression_models")</span></span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"data"</span>,<span class="st">"sets"</span>,<span class="st">"data_sets"</span>)</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"text"</span>,<span class="st">"data"</span>,<span class="st">"text_data"</span>)</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"monte"</span>,<span class="st">"carlo"</span>,<span class="st">"monte_carlo"</span>)</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"markov"</span>,<span class="st">"chain"</span>,<span class="st">"markov_chain"</span>)</span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"markov"</span>,<span class="st">"chains"</span>,<span class="st">"markov_chains"</span>)</span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"actuarial"</span>,<span class="st">"science"</span>,<span class="st">"actuarial_science"</span>)</span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"exploratory"</span>,<span class="st">"data"</span>,<span class="st">"exploratory_data"</span>)</span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">createBigram</span>(df,<span class="st">"r"</span>,<span class="st">"programming"</span>,<span class="st">"r_programming"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="index_cache/html/Recreate Corpus Total_0d151a5b343e20b7f085ce6515c56700">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>ds2 <span class="ot">&lt;-</span> <span class="fu">DataframeSource</span>(df)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>corpus2 <span class="ot">&lt;-</span> <span class="fu">Corpus</span>(ds2)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>remove_words <span class="ot">&lt;-</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">"data"</span>,<span class="st">"science"</span>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>corpus2 <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus2, <span class="cf">function</span>(x) {</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">removeWords</span>(x, remove_words)</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> <span class="fu">DocumentTermMatrix</span>(corpus2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="index_cache/html/Combine Columns Total_b7386b7d6012cf01dc0c2eeb43ef0118">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">combineCols</span>(<span class="fu">c</span>(<span class="st">"math"</span>, <span class="st">"mathematics"</span>, <span class="st">"mathematically"</span>, <span class="st">"mathematical"</span>),</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>              dtm,<span class="st">"mathematics"</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> <span class="fu">combineCols</span>(<span class="fu">c</span>(<span class="st">"stat"</span>, <span class="st">"statistics"</span>,<span class="st">"statistical"</span>), dtm,<span class="st">"statistics"</span>)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> <span class="fu">combineCols</span>(<span class="fu">c</span>(<span class="st">"model"</span>,<span class="st">"models"</span>,<span class="st">"modeling"</span>), dtm,<span class="st">"models"</span>)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> <span class="fu">combineCols</span>(<span class="fu">c</span>(<span class="st">"database"</span>,<span class="st">"databases"</span>), dtm,<span class="st">"database"</span>)</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> <span class="fu">combineCols</span>(<span class="fu">c</span>(<span class="st">"markov_chains"</span>,<span class="st">"markov_chain"</span>), dtm,<span class="st">"markov_chains"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we must discover topic numbers. Unfortunately, we cannot use Perplexity here as the model is too big and the code will take too long to run. However, ldatuning is still an option.</p>
+<div class="cell" data-hash="index_cache/html/ldatuning1 total_9b68b7651da50390621b1d227ed5e9a1">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find number of topics</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">FindTopicsNumber</span>(</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  dtm,</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">topics =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">2</span>, <span class="at">to =</span> <span class="dv">20</span>, <span class="at">by =</span> <span class="dv">1</span>),</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"Griffiths2004"</span>, <span class="st">"CaoJuan2009"</span>, <span class="st">"Arun2010"</span>, <span class="st">"Deveaud2014"</span>),</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"Gibbs"</span>,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">77</span>),</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">mc.cores =</span> 2L,</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot metrics</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="fu">FindTopicsNumber_plot</span>(result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/ldatuning1%20total-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell" data-hash="index_cache/html/ldatuning2 total_ba444bfdd84c93ad181816d67377f51b">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find number of topics</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">FindTopicsNumber</span>(</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  dtm,</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">topics =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">20</span>, <span class="at">to =</span> <span class="dv">40</span>, <span class="at">by =</span> <span class="dv">1</span>),</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"Griffiths2004"</span>, <span class="st">"CaoJuan2009"</span>, <span class="st">"Arun2010"</span>, <span class="st">"Deveaud2014"</span>),</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"Gibbs"</span>,</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">77</span>),</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">mc.cores =</span> 2L,</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot metrics</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="fu">FindTopicsNumber_plot</span>(result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/ldatuning2%20total-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Potential Topic numbers from CaoJuan2009 are 23, 4. Arun2010 hits 0 at 20 and 40. Deveaud2014 suggests 3 and 23. Griffiths plateaus around 24.</p>
+<section id="k-3-solution" class="level3">
+<h3 class="anchored" data-anchor-id="k-3-solution">K = 3 Solution</h3>
+<p>We can start with the 3 topic solution to confirm our model is working good. We expect to see something similar to before: statistics, mathematics, and programming/computer science.</p>
+<div class="cell" data-hash="index_cache/html/LDAvis Total 3_05413000d7918e81a8a2371169024a49">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">LDA</span>(dtm, <span class="dv">3</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm)</span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./totalk3", open.browser = FALSE)</span></span>
+<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k3total/index.html">here</a>.</p>
+<ul>
+<li>Topic 1: statistics</li>
+<li>Topic 2: programming</li>
+<li>Topic 3: mathematics</li>
+</ul>
+</section>
+<section id="k-20-solution" class="level3">
+<h3 class="anchored" data-anchor-id="k-20-solution">K = 20 Solution</h3>
+<div class="cell" data-hash="index_cache/html/LDAvis Total 20_f4372433e30c7138a9c64f0af3069d99">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">20</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm)</span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./totalk20", open.browser = TRUE)</span></span>
+<span id="cb45-29"><a href="#cb45-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k20total/index.html">here</a>.</p>
+<ul>
+<li>Topic 1: Probability</li>
+<li>Topic 2: databases</li>
+<li>Topic 3: machine learning</li>
+<li>Topic 4: calculus</li>
+<li>Topic 5: business/communication</li>
+<li>Topic 6: mathematics</li>
+<li>Topic 7: optimization</li>
+<li>Topic 8: regression</li>
+<li>Topic 9: linear algebra</li>
+<li>Topic 10: statistics</li>
+<li>Topic 11: algorithms</li>
+<li>Topic 12: analytics</li>
+<li>Topic 13: simulation</li>
+<li>Topic 14: experimental design</li>
+<li>Topic 15: marketing</li>
+<li>Topic 16: graph theory</li>
+<li>Topic 17: data structures</li>
+<li>Topic 18: programming</li>
+<li>Topic 19: management</li>
+<li>Topic 20: computer ethics*</li>
+</ul>
+</section>
+<section id="k-23-solution" class="level3">
+<h3 class="anchored" data-anchor-id="k-23-solution">K = 23 Solution</h3>
+<div class="cell" data-hash="index_cache/html/LDAvis Total 23_05124956b47221a65cc1676d70a52679">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">23</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm)</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb46-25"><a href="#cb46-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb46-26"><a href="#cb46-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-27"><a href="#cb46-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb46-28"><a href="#cb46-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./totalk23", open.browser = TRUE)</span></span>
+<span id="cb46-29"><a href="#cb46-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k23total/index.html">here</a>.</p>
+<ul>
+<li>Topic 1: probability</li>
+<li>Topic 2: linear algebra</li>
+<li>Topic 3: machine learning</li>
+<li>Topic 4: communication</li>
+<li>Topic 5: marketing</li>
+<li>Topic 6: databases</li>
+<li>Topic 7: programming</li>
+<li>Topic 8: statistics</li>
+<li>Topic 9: inference</li>
+<li>Topic 10: regression</li>
+<li>Topic 11: experiment design*</li>
+<li>Topic 12: differential equations</li>
+<li>Topic 13: optimization</li>
+<li>Topic 14: mathematics</li>
+<li>Topic 15: algorithms (and maybe data structures)</li>
+<li>Topic 16: management*</li>
+<li>Topic 17: distributions and probability*</li>
+<li>Topic 18: finance*</li>
+<li>Topic 19: research*</li>
+<li>Topic 20: calculus</li>
+<li>Topic 21: business</li>
+<li>Topic 22: graph theory</li>
+<li>Topic 23: proofs</li>
+</ul>
+</section>
+<section id="k-24-solution" class="level3">
+<h3 class="anchored" data-anchor-id="k-24-solution">K = 24 Solution</h3>
+<div class="cell" data-hash="index_cache/html/LDAvis Total 24_c3f811712d0719581763555ed0eaa79b">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">24</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm)</span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-26"><a href="#cb47-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-27"><a href="#cb47-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb47-28"><a href="#cb47-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./totalk24", open.browser = TRUE)</span></span>
+<span id="cb47-29"><a href="#cb47-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k24total/index.html">here</a>.</p>
+<ul>
+<li>Topic 1: probability</li>
+<li>Topic 2: machine learning</li>
+<li>Topic 3: data mining*</li>
+<li>Topic 4: communication</li>
+<li>Topic 5: databases</li>
+<li>Topic 6: marketing</li>
+<li>Topic 7: regression</li>
+<li>Topic 8: data visualization</li>
+<li>Topic 9: simulation</li>
+<li>Topic 10: linear algebra</li>
+<li>Topic 11: programming</li>
+<li>Topic 12: differential equations*</li>
+<li>Topic 13: algorithms and data structures</li>
+<li>Topic 14: management</li>
+<li>Topic 15: mathematics</li>
+<li>Topic 16: experiment design</li>
+<li>Topic 17: Calculus</li>
+<li>Topic 18: neural networks*</li>
+<li>Topic 19: analytics</li>
+<li>Topic 20: software engineering</li>
+<li>Topic 21: logic*</li>
+<li>Topic 22: programming</li>
+<li>Topic 23: proofs</li>
+<li>Topic 24: graph theory</li>
+</ul>
+<section id="k-30-solution" class="level4">
+<h4 class="anchored" data-anchor-id="k-30-solution">K = 30 Solution</h4>
+<div class="cell" data-hash="index_cache/html/LDAvis Total 30_5a732f1eec302ae17a962735c14e910f">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">30</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm)</span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-27"><a href="#cb48-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb48-28"><a href="#cb48-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./totalk30", open.browser = TRUE)</span></span>
+<span id="cb48-29"><a href="#cb48-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k30total/index.html">here</a>.</p>
+<ul>
+<li>Topic 1: probability</li>
+<li>Topic 2: machine learning</li>
+<li>Topic 3: communication</li>
+<li>Topic 4: cleaning/collecting data*</li>
+<li>Topic 5: analysis</li>
+<li>Topic 6: deep learning</li>
+<li>Topic 7: ?</li>
+<li>Topic 8: programming</li>
+<li>Topic 9: data mining</li>
+<li>Topic 10: databases</li>
+<li>Topic 11: linear algebra</li>
+<li>Topic 12: calculus</li>
+<li>Topic 13: mathematics</li>
+<li>Topic 14: data structures</li>
+<li>Topic 15: algorithms</li>
+<li>Topic 16: ?</li>
+<li>Topic 17: proofs</li>
+<li>Topic 18: statistics</li>
+<li>Topic 19: inference</li>
+<li>Topic 20: regression</li>
+<li>Topic 21: calculus</li>
+<li>Topic 22: management</li>
+<li>Topic 23: finance/accounting</li>
+<li>Topic 24: research/presentation</li>
+<li>Topic 25: ? some programming topic</li>
+<li>Topic 26: physics</li>
+<li>Topic 27: r programming</li>
+<li>Topic 28: ?</li>
+<li>Topic 29: optimization</li>
+<li>Topic 30: ?</li>
+</ul>
+</section>
+</section>
+<section id="k-40-solution" class="level3">
+<h3 class="anchored" data-anchor-id="k-40-solution">K = 40 Solution</h3>
+<div class="cell" data-hash="index_cache/html/LDAvis Total 40_bda9fb9f0b8a13d6c42bc6cbe70e7a74">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit largest model</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">40</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find required quantities</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda.out)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> as.matrix</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(phi)</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>doc_length <span class="ot">&lt;-</span> <span class="fu">vector</span>()</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(corpus)) {</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">paste</span>(corpus[[i]]<span class="sc">$</span>content, <span class="at">collapse =</span> <span class="st">' '</span>)</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(doc_length, <span class="fu">stri_count</span>(temp, <span class="at">regex =</span> <span class="st">'</span><span class="sc">\\</span><span class="st">S+'</span>))</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>temp_frequency <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dtm)</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>freq_matrix <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ST =</span> <span class="fu">colnames</span>(temp_frequency),</span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">Freq =</span> <span class="fu">colSums</span>(temp_frequency))</span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to json</span></span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(</span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">phi =</span> phi,</span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> theta,</span>
+<span id="cb49-22"><a href="#cb49-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">vocab =</span> vocab,</span>
+<span id="cb49-23"><a href="#cb49-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb49-24"><a href="#cb49-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">term.frequency =</span> freq_matrix<span class="sc">$</span>Freq</span>
+<span id="cb49-25"><a href="#cb49-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb49-26"><a href="#cb49-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-27"><a href="#cb49-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Open server for visualization</span></span>
+<span id="cb49-28"><a href="#cb49-28" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, out.dir = "./totalk40", open.browser = TRUE)</span></span>
+<span id="cb49-29"><a href="#cb49-29" aria-hidden="true" tabindex="-1"></a><span class="co"># serVis(json_lda, open.browser = TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>View the visualization <a href="https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k40total/index.html">here</a>.</p>
+<ul>
+<li>Topic 1: probability/likelihood</li>
+<li>Topic 2: machine learning</li>
+<li>Topic 3: visualization</li>
+<li>Topic 4: programming</li>
+<li>Topic 5: mathematics</li>
+<li>Topic 6: analysis*</li>
+<li>Topic 7: business/communication</li>
+<li>Topic 8: linear algebra</li>
+<li>Topic 9: data mining</li>
+<li>Topic 10: regression</li>
+<li>Topic 11: ?</li>
+<li>Topic 12: marketing</li>
+<li>Topic 13: clac4*</li>
+<li>Topic 14: inference</li>
+<li>Topic 15: databases</li>
+<li>Topic 16: simulations</li>
+<li>Topic 17: physics</li>
+<li>Topic 18: proofs</li>
+<li>Topic 19: databases</li>
+<li>Topic 20: calculus</li>
+<li>Topic 21: probability</li>
+<li>Topic 22: management</li>
+<li>Topic 23: data structures</li>
+<li>Topic 24: differential equations</li>
+<li>Topic 25: graph theory</li>
+<li>Topic 26: ?</li>
+<li>Topic 27: finance</li>
+<li>Topic 28: research/communication</li>
+<li>Topic 29: experiment design</li>
+<li>Topic 30: optimization</li>
+<li>Topic 31: ?</li>
+<li>Topic 32: ?</li>
+<li>Topic 33: statistics</li>
+<li>Topic 34: ?</li>
+<li>Topic 35: programming</li>
+<li>Topic 36: algorithms</li>
+<li>Topic 37: logic</li>
+<li>Topic 38: ?</li>
+<li>Topic 39: ?</li>
+<li>Topic 40: ?</li>
+</ul>
+<p>Overall there are some topic differences but not too much change overall.</p>
+</section>
+</section>
+<section id="university-topic-composition" class="level2">
+<h2 class="anchored" data-anchor-id="university-topic-composition">University-Topic Composition</h2>
+<p>Another interesting question to explore is which topics do universities prioritize? Is one university’s Data Science program more heavily biased towards Math? How about Statistics? Recall the <span class="math inline">\(\gamma\)</span> matrix provides us with the per-document-per-topic probabilities. That is, it provides us with a percentage break down of which topics generated each document.</p>
+<p>Now that we have a few models and labelled topics we can look at what topics specific universities focus on. Let’s start with the 3 group solution.</p>
+<div class="cell" data-hash="index_cache/html/Graph Gamma University Level_56a2cffffc6eb4ac712be81c86f4928a">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">LDA</span>(dtm, <span class="dv">3</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>uni_topics <span class="ot">&lt;-</span> <span class="fu">tidy</span>(lda.out,<span class="at">matrix=</span><span class="st">"gamma"</span>)</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>universities <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Berkeley"</span>,<span class="st">"Concordia"</span>,<span class="st">"Laurier"</span>,<span class="st">"Manitoba"</span>,<span class="st">"SFU"</span>,<span class="st">"Toronto"</span>,<span class="st">"Waterloo"</span>,<span class="st">"Western"</span>,<span class="st">"UBCO"</span>)</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>vizdf <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">document =</span> <span class="cn">NA</span>, <span class="at">topic =</span> <span class="cn">NA</span>, <span class="at">gamma =</span> <span class="cn">NA</span>)</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (uni <span class="cf">in</span> universities) {</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>  regex <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"^"</span>, uni)</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>  test <span class="ot">&lt;-</span> <span class="fu">subset</span>(uni_topics, topic <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>  idx <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">str_detect</span>(test<span class="sc">$</span>document, regex))</span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>  gamma1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(test[idx, ]<span class="sc">$</span>gamma)</span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a>  test <span class="ot">&lt;-</span> <span class="fu">subset</span>(uni_topics, topic <span class="sc">==</span> <span class="dv">2</span>)</span>
+<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a>  idx <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">str_detect</span>(test<span class="sc">$</span>document, regex))</span>
+<span id="cb50-19"><a href="#cb50-19" aria-hidden="true" tabindex="-1"></a>  gamma2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(test[idx, ]<span class="sc">$</span>gamma)</span>
+<span id="cb50-20"><a href="#cb50-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-21"><a href="#cb50-21" aria-hidden="true" tabindex="-1"></a>  test <span class="ot">&lt;-</span> <span class="fu">subset</span>(uni_topics, topic <span class="sc">==</span> <span class="dv">3</span>)</span>
+<span id="cb50-22"><a href="#cb50-22" aria-hidden="true" tabindex="-1"></a>  idx <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">str_detect</span>(test<span class="sc">$</span>document, regex))</span>
+<span id="cb50-23"><a href="#cb50-23" aria-hidden="true" tabindex="-1"></a>  gamma3 <span class="ot">&lt;-</span> <span class="fu">sum</span>(test[idx, ]<span class="sc">$</span>gamma)</span>
+<span id="cb50-24"><a href="#cb50-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-25"><a href="#cb50-25" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">=</span> <span class="fu">c</span>(gamma1,gamma2,gamma3)</span>
+<span id="cb50-26"><a href="#cb50-26" aria-hidden="true" tabindex="-1"></a>  gammaz <span class="ot">&lt;-</span> <span class="fu">abs</span>(<span class="fu">scale</span>(gamma))</span>
+<span id="cb50-27"><a href="#cb50-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># gammaz &lt;- gamma</span></span>
+<span id="cb50-28"><a href="#cb50-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-29"><a href="#cb50-29" aria-hidden="true" tabindex="-1"></a><span class="co"># - Topic 1: statistics</span></span>
+<span id="cb50-30"><a href="#cb50-30" aria-hidden="true" tabindex="-1"></a><span class="co"># - Topic 2: programming</span></span>
+<span id="cb50-31"><a href="#cb50-31" aria-hidden="true" tabindex="-1"></a><span class="co"># - Topic 3: mathematic</span></span>
+<span id="cb50-32"><a href="#cb50-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-33"><a href="#cb50-33" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">document =</span> <span class="fu">rep</span>(uni,<span class="dv">3</span>), <span class="at">topic =</span> <span class="fu">c</span>(<span class="st">"Statistics"</span>,<span class="st">"Programming"</span>,<span class="st">"Mathematics"</span>), <span class="at">gamma =</span> gammaz)</span>
+<span id="cb50-34"><a href="#cb50-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-35"><a href="#cb50-35" aria-hidden="true" tabindex="-1"></a>  vizdf <span class="ot">&lt;-</span> <span class="fu">rbind</span>(vizdf,temp)</span>
+<span id="cb50-36"><a href="#cb50-36" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb50-37"><a href="#cb50-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-38"><a href="#cb50-38" aria-hidden="true" tabindex="-1"></a>vizdf <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(vizdf)</span>
+<span id="cb50-39"><a href="#cb50-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-40"><a href="#cb50-40" aria-hidden="true" tabindex="-1"></a>top_terms <span class="ot">&lt;-</span> vizdf <span class="sc">%&gt;%</span></span>
+<span id="cb50-41"><a href="#cb50-41" aria-hidden="true" tabindex="-1"></a> <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span></span>
+<span id="cb50-42"><a href="#cb50-42" aria-hidden="true" tabindex="-1"></a> <span class="fu">arrange</span>(topic, gamma)</span>
+<span id="cb50-43"><a href="#cb50-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-44"><a href="#cb50-44" aria-hidden="true" tabindex="-1"></a>top_terms <span class="sc">%&gt;%</span></span>
+<span id="cb50-45"><a href="#cb50-45" aria-hidden="true" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">topic =</span> <span class="fu">reorder</span>(topic, gamma)) <span class="sc">%&gt;%</span></span>
+<span id="cb50-46"><a href="#cb50-46" aria-hidden="true" tabindex="-1"></a> <span class="fu">ggplot</span>(<span class="fu">aes</span>(topic, gamma, <span class="at">fill =</span> <span class="fu">factor</span>(document))) <span class="sc">+</span></span>
+<span id="cb50-47"><a href="#cb50-47" aria-hidden="true" tabindex="-1"></a> <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb50-48"><a href="#cb50-48" aria-hidden="true" tabindex="-1"></a> <span class="fu">facet_wrap</span>(<span class="sc">~</span> document, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb50-49"><a href="#cb50-49" aria-hidden="true" tabindex="-1"></a> <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/Graph%20Gamma%20University%20Level-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The 20 group solution looked quite good so we will visualize this next:</p>
+<div class="cell" data-hash="index_cache/html/gamma 20 group_8ed727deb7572966db78b247c584dbc2">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span> <span class="fu">LDA</span>(dtm, <span class="dv">20</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>,<span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>uni_topics <span class="ot">&lt;-</span> <span class="fu">tidy</span>(lda.out,<span class="at">matrix=</span><span class="st">"gamma"</span>)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>universities <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Berkeley"</span>,<span class="st">"Concordia"</span>,<span class="st">"Laurier"</span>,<span class="st">"Manitoba"</span>,<span class="st">"SFU"</span>,<span class="st">"Toronto"</span>,<span class="st">"Waterloo"</span>,<span class="st">"Western"</span>,<span class="st">"UBCO"</span>)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>vizdf <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">document =</span> <span class="cn">NA</span>, <span class="at">topic =</span> <span class="cn">NA</span>, <span class="at">gamma =</span> <span class="cn">NA</span>)</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>topics <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"probability"</span>, <span class="st">"databases"</span>, <span class="st">"machine learning"</span>, <span class="st">"calculus"</span>, <span class="st">"business/communication"</span>, <span class="st">"mathematics"</span>, <span class="st">"optimization"</span>, <span class="st">"regression"</span>, <span class="st">"linear algebra"</span>, <span class="st">"statistics"</span>, <span class="st">"algorithms"</span>, <span class="st">"analytics"</span>, <span class="st">"simulation"</span>, <span class="st">"experimental design"</span>, <span class="st">"marketing"</span>, <span class="st">"graph theory"</span>, <span class="st">"data structures"</span>, <span class="st">"programming"</span>, <span class="st">"management"</span>, <span class="st">"computer ethics*"</span>)</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (uni <span class="cf">in</span> universities) {</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>  regex <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"^"</span>, uni)</span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(topics)) {</span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>  test <span class="ot">&lt;-</span> <span class="fu">subset</span>(uni_topics, topic <span class="sc">==</span> i)</span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>  idx <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">str_detect</span>(test<span class="sc">$</span>document, regex))</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">sum</span>(test[idx, ]<span class="sc">$</span>gamma), gamma) </span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>  gammaz <span class="ot">&lt;-</span> <span class="fu">abs</span>(<span class="fu">scale</span>(gamma))</span>
+<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">document =</span> <span class="fu">rep</span>(uni,<span class="dv">20</span>), <span class="at">topic =</span> topics, <span class="at">gamma =</span> gammaz)</span>
+<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a>  vizdf <span class="ot">&lt;-</span> <span class="fu">rbind</span>(vizdf,temp)</span>
+<span id="cb51-26"><a href="#cb51-26" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb51-27"><a href="#cb51-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-28"><a href="#cb51-28" aria-hidden="true" tabindex="-1"></a>vizdf <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(vizdf)</span>
+<span id="cb51-29"><a href="#cb51-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-30"><a href="#cb51-30" aria-hidden="true" tabindex="-1"></a>top_terms <span class="ot">&lt;-</span> vizdf <span class="sc">%&gt;%</span></span>
+<span id="cb51-31"><a href="#cb51-31" aria-hidden="true" tabindex="-1"></a> <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span></span>
+<span id="cb51-32"><a href="#cb51-32" aria-hidden="true" tabindex="-1"></a> <span class="fu">arrange</span>(topic, gamma)</span>
+<span id="cb51-33"><a href="#cb51-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-34"><a href="#cb51-34" aria-hidden="true" tabindex="-1"></a>top_terms <span class="sc">%&gt;%</span></span>
+<span id="cb51-35"><a href="#cb51-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">topic =</span> <span class="fu">reorder</span>(topic, gamma)) <span class="sc">%&gt;%</span></span>
+<span id="cb51-36"><a href="#cb51-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(topic, gamma, <span class="at">fill =</span> <span class="fu">factor</span>(document))) <span class="sc">+</span></span>
+<span id="cb51-37"><a href="#cb51-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">6</span>)) <span class="sc">+</span></span>
+<span id="cb51-38"><a href="#cb51-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb51-39"><a href="#cb51-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>( <span class="sc">~</span> document, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb51-40"><a href="#cb51-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/gamma%2020%20group-1.png" class="img-fluid" width="672"></p>
+</div>
 </div>
 </section>
-<section id="inspecting-gamma" class="level2">
-<h2 class="anchored" data-anchor-id="inspecting-gamma">Inspecting <span class="math inline">\(\gamma\)</span></h2>
-<p>Another interesting question to explore is which topics do universities prioritize? Is one university’s Data Science program more heavily biased towards Math? How about Statistics? Recall the <span class="math inline">\(\gamma\)</span> matrix provides us with the per-document-per-topic probabilities. That is, it provides us with a percentage break down of which topics generated each document.</p>
-<div class="cell" data-hash="index_cache/html/Graph Gamma University Level_25d6201a679e3ac6b7e8d2381f3ab71e">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># #| fig-width: 10</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co"># #| fig-height: 10</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co"># uni_topics &lt;- tidy(lda.out,matrix="gamma")</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co"># top_terms &lt;- uni_topics %&gt;%</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co">#  group_by(topic) %&gt;%</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co">#  arrange(topic, gamma)</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="co"># top_terms %&gt;%</span></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="co">#  mutate(topic = reorder(topic, gamma)) %&gt;%</span></span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="co">#  ggplot(aes(topic, gamma, fill = factor(document))) +</span></span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="co">#  geom_col(show.legend = FALSE) +</span></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="co">#  facet_wrap(~ document, scales = "free") +</span></span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="co">#  coord_flip()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="topic-word-composition" class="level2">
+<h2 class="anchored" data-anchor-id="topic-word-composition">Topic-Word Composition</h2>
+<p>Given our optimal models we may now move onto exploring what are the main words that comprise each of the topics. To do so we explore <span class="math inline">\(\beta\)</span> values using wordclouds. Recall that the $\beta$ matrix provides us with the per-topic-per-word probabilities.</p>
+<div class="cell" data-hash="index_cache/html/word cloud 3 group_6f0a489278d6057b48af1bf3edc17fa7">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">LDA</span>(dtm, <span class="dv">3</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>uni_topics <span class="ot">&lt;-</span> <span class="fu">tidy</span>(lda.out,<span class="at">matrix=</span><span class="st">"beta"</span>)</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>top_terms <span class="ot">&lt;-</span> uni_topics <span class="sc">%&gt;%</span></span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a> <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a> <span class="fu">top_n</span>(<span class="dv">30</span>, beta) <span class="sc">%&gt;%</span></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a> <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a> <span class="fu">arrange</span>(topic, <span class="sc">-</span>beta) <span class="sc">%&gt;%</span></span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">term =</span> <span class="fu">reorder</span>(term, beta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Topic 1</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Topic 2</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Topic 3</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-1_e103887f90df2f3194c7efa41c13aaf2">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-2_6dd331bd70af5b8eb22862548f0c5162">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-3_5149dc3326838422627dbc6fe92f6e68">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>We will also visualize the 20 group solution.</p>
+<div class="cell" data-hash="index_cache/html/20 group wordcloud_ff75c96ec4fcaa86b44d80fff30f0a5c">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>lda.out <span class="ot">&lt;-</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">LDA</span>(dtm, <span class="dv">20</span>, <span class="at">method =</span> <span class="st">"Gibbs"</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">87460945</span>))</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>uni_topics <span class="ot">&lt;-</span> <span class="fu">tidy</span>(lda.out,<span class="at">matrix=</span><span class="st">"beta"</span>)</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>top_terms <span class="ot">&lt;-</span> uni_topics <span class="sc">%&gt;%</span></span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a> <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a> <span class="fu">top_n</span>(<span class="dv">30</span>, beta) <span class="sc">%&gt;%</span></span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a> <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a> <span class="fu">arrange</span>(topic, <span class="sc">-</span>beta) <span class="sc">%&gt;%</span></span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">term =</span> <span class="fu">reorder</span>(term, beta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Topic 1</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Topic 2</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Topic 3</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" role="tab" aria-controls="tabset-2-4" aria-selected="false" href="">Topic 4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-5" role="tab" aria-controls="tabset-2-5" aria-selected="false" href="">Topic 5</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-6" role="tab" aria-controls="tabset-2-6" aria-selected="false" href="">Topic 6</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-7" role="tab" aria-controls="tabset-2-7" aria-selected="false" href="">Topic 7</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-8-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-8" role="tab" aria-controls="tabset-2-8" aria-selected="false" href="">Topic 8</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-9-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-9" role="tab" aria-controls="tabset-2-9" aria-selected="false" href="">Topic 9</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-10-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-10" role="tab" aria-controls="tabset-2-10" aria-selected="false" href="">Topic 10</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-11-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-11" role="tab" aria-controls="tabset-2-11" aria-selected="false" href="">Topic 11</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-12-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-12" role="tab" aria-controls="tabset-2-12" aria-selected="false" href="">Topic 12</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-13-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-13" role="tab" aria-controls="tabset-2-13" aria-selected="false" href="">Topic 13</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-14-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-14" role="tab" aria-controls="tabset-2-14" aria-selected="false" href="">Topic 14</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-15-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-15" role="tab" aria-controls="tabset-2-15" aria-selected="false" href="">Topic 15</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-16-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-16" role="tab" aria-controls="tabset-2-16" aria-selected="false" href="">Topic 16</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-17-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-17" role="tab" aria-controls="tabset-2-17" aria-selected="false" href="">Topic 17</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-18-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-18" role="tab" aria-controls="tabset-2-18" aria-selected="false" href="">Topic 18</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-19-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-19" role="tab" aria-controls="tabset-2-19" aria-selected="false" href="">Topic 19</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-20-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-20" role="tab" aria-controls="tabset-2-20" aria-selected="false" href="">Topic 20</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-4_2461825ade13c0776e073b02e33d4d92">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-5_cab8747d5c4f1474ef9a292996b354aa">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-6_e0636980fbd798e161863d05ebebc9ec">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-7_2382655441ee71b485f404c72fb9cb70">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-5-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-8_d3599e8983f31abe1f19d717f5eed2f1">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-6-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-9_6b9c96f2191b9a356a6f4202756a6707">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-7" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-7-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-10_ef5c33d0779e417212c3a031b238efc7">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-8" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-8-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-11_f56582500830d33c929ab53888883382">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-9" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-9-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-12_01393a714b4ef996c6a65557d895b1a4">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-10" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-10-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-13_cd0a81507884260c6b78148b6e189b34">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-11" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-11-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-14_4d052880bb1321904ed6b3d5ac63cc5b">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-12" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-12-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-15_e0d6482a6442b87c8ab21b6a216c2ce2">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-13" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-13-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-16_7dabaaad28a6d97c1a35c1df62ef0848">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-14" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-14-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-17_b6acbbcc8a50d7af20c087c94bc61ec1">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-15" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-15-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-18_e3541cfb8b95f232968d9b239f5d46af">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-16" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-16-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-19_aea2ae2679c11048a10111278fdfd357">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-17" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-17-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-20_8114eac254c865c5059c4107a8a84de3">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-18" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-18-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-21_170ab81a92dbfb86b300db8f4d5c2f87">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-19" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-19-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-22_dd925f3f705d206209806b2f82118e05">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-20" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-20-tab">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-23_1db1f3eefec925e50df149f4da1da2f8">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
 </div>
 </section>
 <section id="references" class="level2">
@@ -1159,12 +1990,12 @@ distinctiveness(w) &amp;= \sum_T P(T|w)\text{log}\frac{P(T|w)}{P(T)}
 <p>Fernandes, E. (2019, November 2). Text preprocessing for NLP and Machine Learning Using R. DataMathStat. Retrieved March 20, 2023, from &nbsp;&nbsp;&nbsp;&nbsp;https://datamathstat.wordpress.com/2019/10/25/text-preprocessing-for-nlp-and-machine-learning-using-r/</p>
 <p>Gandrud, C. (2015, May 8). A Link Between topicmodels LDA and LDAvis. R. Retrieved March 20, &nbsp;&nbsp;&nbsp;&nbsp;2023, from https://www.r-bloggers.com/2015/05/a-link-between-topicmodels-lda-and-ldavis/</p>
 <p>Grimmer, J., Roberts, M. E., &amp; Stewart, B. M. (2022). Text as data: A New Framework for Machine &nbsp;&nbsp;&nbsp;&nbsp;Learning and the Social Sciences. Princeton University Press.</p>
+<p>Lau, J. H., Baldwin, T., &amp; Newman, D. (2013). On collocations and topic models. <em>ACM Transactions on</em> &nbsp;&nbsp;&nbsp;&nbsp;<em>Speech and Language Processing</em>, <em>10</em>(3), 1–14. https://doi.org/10.1145/2483969.2483972</p>
 <p>Meza, D. (2015, July 20). Topic modeling using R · Knowledger. knowledgeR. Retrieved March 20, &nbsp;&nbsp;&nbsp;&nbsp;2023,from https://knowledger.rbind.io/post/topic-modeling-using-r/</p>
 <p>Pleplé, Q. (n.d.). Perplexity To Evaluate Topic Models. qpleple. Retrieved March 20, 2023, from &nbsp;&nbsp;&nbsp;&nbsp;http://qpleple.com/perplexity-to-evaluate-topic-models/</p>
-<p>Sievert, C., &amp; Shirley, K. (2014, June). LDAvis: A method for visualizing and interpreting topics. In Proceedings of the workshop on interactive language learning, visualization, and interfaces (pp.&nbsp;63-70).</p>
+<p>Sievert, C., &amp; Shirley, K. (2014, June). LDAvis: A method for visualizing and interpreting topics. In Proceedings of the workshop on interactive language learning, visualization, and interfaces (pp. 63-70).</p>
 <p>Silge, J., Robinson, D., &amp; ProQuest (Firm). (2017). Text mining with R: A tidy approach (First ed.). &nbsp;&nbsp;&nbsp;&nbsp;O’Reilly Media.</p>
 <p>Tufts, C. (n.d.). The Little Book of LDA. Latest Posts – Mining the Details. Retrieved March 20, 2023, &nbsp;&nbsp;&nbsp;&nbsp;from https://miningthedetails.com/LDA_Inference_Book/lda-inference.html</p>
-<p>https://ladal.edu.au/coll.html</p>
 </section>
 
 </main>
