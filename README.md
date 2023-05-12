@@ -1,6 +1,8 @@
-# Data Science Curricula Topic Modeling
+# Data Science Curricula Topic Modeling (Under Construction)
 
 This project aims to apply Topic Modeling to various Data Science course calendars. The goal is to leverage Latent Dirichlet Allocation (LDA) to model pathways through degrees as a three-level hierarchical Bayesian model. This model defines a collection of documents as a random mixture over some underlying topic set where each topic is itself a distribution over our vocabulary. This then allows us to cluster words into latent topics and discover common learning outcomes in Data Science Curricula.
+
+The notebook is viewable [here](https://danyulll.github.io/UBCO-Curriucla-Analysis/)
 
 # Data Generating Process
 
