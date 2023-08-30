@@ -546,7 +546,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k3/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k3/index.html).
 
 As we might expect the overarching topics of any Data Science curriculum
 are programming, statistics, and mathematics. Interestingly, models
@@ -589,7 +589,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k5/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k5/index.html).
 
 Now topics begin to become more nuanced:
 
@@ -649,7 +649,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k8/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k8/index.html).
 
 For the sake of brevity I will simply list what I consider to be the
 most likely topics from here on out. Note asterisks indicate noisey
@@ -699,7 +699,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k9/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k9/index.html).
 
 -   Topic 1: probability theory
 -   Topic 2: machine learning
@@ -746,7 +746,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k12/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k12/index.html).
 
 -   Topic 1: machine learning
 -   Topic 2: probability theory
@@ -796,7 +796,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k14/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k14/index.html).
 
 -   Topic 1: machine learning
 -   Topic 2: statistics
@@ -848,7 +848,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k15/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k15/index.html).
 
 -   Topic 1: probability theory
 -   Topic 2: machine learning
@@ -901,7 +901,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k20/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k20/index.html).
 
 -   Topic 1: probability theory
 -   Topic 2: machine learning
@@ -959,7 +959,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k25/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k25/index.html).
 
 -   Topic 1: probability theory
 -   Topic 2: calculus
@@ -1193,7 +1193,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k3total/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k3total/index.html).
 
 -   Topic 1: statistics
 -   Topic 2: programming
@@ -1234,7 +1234,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k20total/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k20total/index.html).
 
 -   Topic 1: Probability
 -   Topic 2: databases
@@ -1292,7 +1292,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k23total/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k23total/index.html).
 
 -   Topic 1: probability
 -   Topic 2: linear algebra
@@ -1353,7 +1353,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k24total/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k24total/index.html).
 
 -   Topic 1: probability
 -   Topic 2: machine learning
@@ -1415,7 +1415,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k30total/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k30total/index.html).
 
 -   Topic 1: probability
 -   Topic 2: machine learning
@@ -1483,7 +1483,7 @@ json_lda <- LDAvis::createJSON(
 ```
 
 View the visualization
-[here](https://danyulll.github.io/Curricula-Topic-Modeling-Vis/k40total/index.html).
+[here](https://danyulll.github.io/Curricula-Topic-Modeling/Vis/k40total/index.html).
 
 -   Topic 1: probability/likelihood
 -   Topic 2: machine learning
