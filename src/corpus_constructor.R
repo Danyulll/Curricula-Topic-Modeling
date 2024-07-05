@@ -1872,4 +1872,4 @@ degree_corpus_total <- rbind(
   ubco_total
 )
 
-save(degree_corpus_total,file="./data/RObjects/degree_corpus_total.RData")
+# save(degree_corpus_total,file="./data/RObjects/degree_corpus_total.RData")

@@ -198,7 +198,7 @@ BiGrams <- corpuz_tokzd %>%
                                valuetype = "regex",
                                case_insensitive = TRUE, 
                                padding = TRUE) %>% 
-       textstat_collocations(min_count = 8, tolower = FALSE,size=2)
+       textstat_collocations(min_count = 80, tolower = FALSE,size=2)
 
 head(BiGrams)
 ```
